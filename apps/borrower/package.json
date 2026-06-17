@@ -19,6 +19,8 @@
     "@leapmoney/analytics": "workspace:*",
     "@leapmoney/supabase": "workspace:*",
     "@leapmoney/credit": "workspace:*",
+    "@leapmoney/match": "workspace:*",
+    "@leapmoney/outcomes": "workspace:*",
     "@supabase/ssr": "^0.5.2",
     "@supabase/supabase-js": "^2.46.1",
     "lucide-react": "^1.20.0"

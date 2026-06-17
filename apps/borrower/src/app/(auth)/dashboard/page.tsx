@@ -1,65 +1,71 @@
 import Link from "next/link";
-import { FileText, Gauge, Sparkles } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import { Button, Card, Heading, Paragraph } from "@leapmoney/ui";
 import { getProfile } from "@/lib/auth";
-import { EmptyState } from "@/components/dashboard/EmptyState";
-import { OnboardingChecklist } from "@/components/onboarding/OnboardingChecklist";
+import { getDashboardData } from "@/lib/dashboard-demo";
+import {
+  CreditSnapshot,
+  HealthSnapshot,
+  MatchSnapshot,
+  OutcomeSnapshot,
+} from "@/components/dashboard/SnapshotWidgets";
+import { CreditJourneyTimeline } from "@/components/dashboard/CreditJourneyTimeline";
+import { ImprovementTracker } from "@/components/dashboard/ImprovementTracker";
+import { NotificationCenter } from "@/components/dashboard/NotificationCenter";
 
 export const metadata = { title: "Dashboard — LeapMoney" };
 
 export default async function DashboardPage() {
   const profile = await getProfile();
   const firstName = profile?.full_name?.split(" ")[0] ?? "there";
-  const step = profile?.onboarding_step ?? "registered";
+  const { leapScore, health, match, analytics, scoreHistory } = getDashboardData();
 
   return (
     <div className="mx-auto flex max-w-content flex-col gap-8">
       <div>
-        <Heading level={1} size="display-large" className="mb-1">
-          Welcome, {firstName}
-        </Heading>
+        <Heading level={1} size="display-large" className="mb-1">Welcome, {firstName}</Heading>
         <Paragraph color="secondary">
-          This is your LeapMoney dashboard. Your score, applications, and credit
-          health will appear here as you progress.
+          Your credit intelligence at a glance. Sample data shown — your live view appears
+          once your profile and consent are complete.
         </Paragraph>
       </div>
 
-      {/* Onboarding */}
-      <section>
-        <Heading level={2} size="h1" className="mb-4">Get set up</Heading>
-        <OnboardingChecklist current={step} />
+      {/* Credit journey */}
+      <section className="rounded-lg border border-border-token-default bg-background-card p-5 shadow-1">
+        <h2 className="mb-4 text-label-caps uppercase tracking-wider text-foreground-tertiary">Your credit journey</h2>
+        <CreditJourneyTimeline current="apply" />
       </section>
 
-      {/* Empty states */}
+      {/* Snapshot widgets */}
+      <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <CreditSnapshot score={leapScore} />
+        <HealthSnapshot health={health} />
+        <MatchSnapshot match={match} />
+        <OutcomeSnapshot analytics={analytics} />
+      </section>
+
+      {/* Tracker + alerts */}
       <section className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-        <EmptyState
-          icon={<Gauge size={28} />}
-          title="No LeapScore yet"
-          description="Once you complete your profile, we'll calculate your LeapScore — a 0–100 view of how loan-ready you are."
-          action={
-            <Button variant="secondary" size="sm">
-              <Link href="/profile">Complete profile</Link>
-            </Button>
-          }
+        <ImprovementTracker
+          currentScore={leapScore.leapscore ?? scoreHistory[scoreHistory.length - 1]?.score ?? 742}
+          milestone={leapScore.next_milestone}
+          history={scoreHistory}
         />
-        <EmptyState
-          icon={<FileText size={28} />}
-          title="No applications yet"
-          description="When you apply for a loan, you'll be able to track every application and its status right here."
-        />
+        <NotificationCenter />
       </section>
 
       {/* Next step */}
       <Card variant="feature" className="flex flex-col gap-3">
         <Sparkles size={24} className="text-premium" />
-        <Heading level={2} size="h2" color="on-dark">Your next step</Heading>
+        <Heading level={2} size="h2" color="on-dark">Ready to apply?</Heading>
         <Paragraph color="on-dark" className="opacity-80">
-          Complete your profile so we can personalise your experience and prepare
-          your eligibility check.
+          {match.matched_lenders.length > 0
+            ? `${match.matched_lenders.length} lenders match your profile. Review your Credit Health and apply where you're most likely to be approved.`
+            : "Complete your profile so we can match you to lenders."}
         </Paragraph>
         <div>
           <Button variant="secondary" size="md">
-            <Link href="/profile">Go to profile</Link>
+            <Link href="/health">View Credit Health</Link>
           </Button>
         </div>
       </Card>

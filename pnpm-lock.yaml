@@ -72,6 +72,12 @@ importers:
       '@leapmoney/credit':
         specifier: workspace:*
         version: link:../../packages/credit
+      '@leapmoney/match':
+        specifier: workspace:*
+        version: link:../../packages/match
+      '@leapmoney/outcomes':
+        specifier: workspace:*
+        version: link:../../packages/outcomes
       '@leapmoney/supabase':
         specifier: workspace:*
         version: link:../../packages/supabase

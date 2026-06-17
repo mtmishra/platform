@@ -40,4 +40,7 @@ export type {
   OutcomeResultName,
   ApplicationRow,
   ApplicationEventRow,
+  ScoreSnapshotRow,
+  HealthSnapshotRow,
+  MatchSnapshotRow,
 } from "./types";

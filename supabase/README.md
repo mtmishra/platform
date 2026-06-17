@@ -15,7 +15,9 @@ supabase/
     ├── 0005_credit_rls.sql       # RLS for credit tables; append-only bureau/score history
     ├── 0006_lender_schema.sql    # Sprint 8: lender, lender_product (catalog); RLS read-all/admin-write
     ├── 0007_application_schema.sql # Sprint 10: application, application_event; outcome + match tracking
-    └── 0008_application_rls.sql  # RLS for applications; append-only application_event
+    ├── 0008_application_rls.sql  # RLS for applications; append-only application_event
+    ├── 0009_snapshot_schema.sql  # Sprint 11: score_snapshot, health_snapshot, match_snapshot (time series)
+    └── 0010_snapshot_rls.sql     # RLS for snapshots; append-only
 ```
 
 ## Applying migrations
@@ -75,6 +77,17 @@ not-matched lenders with approval odds.
 These feed `@leapmoney/outcomes` — the feedback loop (predicted vs actual →
 calibration) and analytics (approval rate, match accuracy, conversion rate),
 which is the data foundation for the R3 §10.3 ML-calibration phase.
+
+## Schema overview (Sprint 11 — Dashboard snapshots)
+
+| Table | Purpose | Notes |
+|-------|---------|-------|
+| `score_snapshot` | LeapScore time series | **Append-only**; powers the dashboard improvement tracker |
+| `health_snapshot` | Credit Health time series | **Append-only** |
+| `match_snapshot` | Top-match time series | **Append-only**; top lender + approval prob + match count |
+
+These are lightweight, dashboard-oriented time-series rows — distinct from the
+engine's full `leapscore_snapshot` payload table (Sprint 7).
 
 ## Conventions (Phase 7)
 

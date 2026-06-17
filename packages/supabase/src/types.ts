@@ -244,6 +244,33 @@ export interface ApplicationEventRow {
   created_at: string;
 }
 
+// ── Dashboard snapshots (Sprint 11; mirrors 0009_snapshot_schema.sql) ─────────
+export interface ScoreSnapshotRow {
+  id: string;
+  user_id: string;
+  score: number;
+  band: string;
+  captured_at: string;
+}
+
+export interface HealthSnapshotRow {
+  id: string;
+  user_id: string;
+  health_score: number;
+  band: string;
+  captured_at: string;
+}
+
+export interface MatchSnapshotRow {
+  id: string;
+  user_id: string;
+  loan_type: MatchLoanTypeName;
+  top_lender_id: string | null;
+  top_approval_probability: number | null;
+  match_count: number;
+  captured_at: string;
+}
+
 type Insertable<T, Auto extends keyof T> = Omit<T, Auto> & Partial<Pick<T, Auto>>;
 
 export interface Database {
@@ -368,6 +395,24 @@ export interface Database {
         Insert: Insertable<
           ApplicationEventRow,
           "id" | "created_at" | "from_status" | "to_status" | "metadata"
+        >;
+        Update: never;
+      };
+      score_snapshot: {
+        Row: ScoreSnapshotRow;
+        Insert: Insertable<ScoreSnapshotRow, "id" | "captured_at">;
+        Update: never;
+      };
+      health_snapshot: {
+        Row: HealthSnapshotRow;
+        Insert: Insertable<HealthSnapshotRow, "id" | "captured_at">;
+        Update: never;
+      };
+      match_snapshot: {
+        Row: MatchSnapshotRow;
+        Insert: Insertable<
+          MatchSnapshotRow,
+          "id" | "captured_at" | "top_lender_id" | "top_approval_probability" | "match_count"
         >;
         Update: never;
       };
