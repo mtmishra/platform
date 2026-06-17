@@ -93,3 +93,34 @@ export type {
   CashFlowIntelligence,
 } from "./cashflow/types";
 export { computeCashFlowIntelligence } from "./cashflow/engine";
+
+// ── Financial Intelligence (Sprint 13.5) ──────────────────────────────────────
+export { emi, totalInterest } from "./finance";
+export type {
+  EmployerCategory,
+  StabilityBand,
+  IncomeStabilityBand,
+  EmployerIntelligence,
+  IncomeStabilityInput,
+  IncomeStabilityResult,
+} from "./employer";
+export { computeEmployerIntelligence, computeIncomeStability } from "./employer";
+export type { FoirRiskBand, AdvancedFoirInput, AdvancedFoirResult } from "./foir";
+export { computeAdvancedFoir } from "./foir";
+export type {
+  BalanceTransferInput,
+  BtLenderOption,
+  BtEligibleLender,
+  BalanceTransferResult,
+} from "./balance-transfer";
+export { computeBalanceTransfer } from "./balance-transfer";
+export type { DebtType, Debt, DebtStructure, ConsolidationResult } from "./consolidation";
+export { computeConsolidation } from "./consolidation";
+export type {
+  RecommendationPriority,
+  Recommendation,
+  SavingsOpportunity,
+  RecommendationInput,
+  FinancialGuidance,
+} from "./recommendations";
+export { computeRecommendations } from "./recommendations";

@@ -292,6 +292,31 @@ export interface IncomeSnapshotRow {
   created_at: string;
 }
 
+export interface FinancialSnapshotRow {
+  id: string;
+  user_id: string;
+  score: number | null;
+  foir: number | null;
+  monthly_savings: number;
+  annual_savings: number;
+  lifetime_savings: number;
+  generated_at: string;
+  created_at: string;
+}
+
+export interface RecommendationSnapshotRow {
+  id: string;
+  user_id: string;
+  financial_snapshot_id: string | null;
+  recommendation_id: string;
+  title: string;
+  priority: string;
+  expected_score_impact: number;
+  expected_savings: number;
+  generated_at: string;
+  created_at: string;
+}
+
 type Insertable<T, Auto extends keyof T> = Omit<T, Auto> & Partial<Pick<T, Auto>>;
 
 export interface Database {
@@ -450,6 +475,22 @@ export interface Database {
         Insert: Insertable<
           IncomeSnapshotRow,
           "id" | "created_at" | "generated_at" | "verification_status"
+        >;
+        Update: never;
+      };
+      financial_snapshot: {
+        Row: FinancialSnapshotRow;
+        Insert: Insertable<
+          FinancialSnapshotRow,
+          "id" | "created_at" | "generated_at" | "score" | "foir" | "monthly_savings" | "annual_savings" | "lifetime_savings"
+        >;
+        Update: never;
+      };
+      recommendation_snapshot: {
+        Row: RecommendationSnapshotRow;
+        Insert: Insertable<
+          RecommendationSnapshotRow,
+          "id" | "created_at" | "generated_at" | "financial_snapshot_id" | "expected_score_impact" | "expected_savings"
         >;
         Update: never;
       };

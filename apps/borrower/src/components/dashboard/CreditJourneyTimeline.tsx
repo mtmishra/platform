@@ -7,6 +7,7 @@ export type JourneyStepKey =
   | "health"
   | "connect_bank"
   | "cashflow"
+  | "financial"
   | "match"
   | "apply";
 
@@ -16,6 +17,7 @@ const STEPS: Array<{ key: JourneyStepKey; label: string }> = [
   { key: "health", label: "Credit Health" },
   { key: "connect_bank", label: "Connect Bank" },
   { key: "cashflow", label: "Cash Flow" },
+  { key: "financial", label: "Financial Intel" },
   { key: "match", label: "LeapMatch" },
   { key: "apply", label: "Apply" },
 ];

@@ -19,7 +19,8 @@ supabase/
     ├── 0009_snapshot_schema.sql  # Sprint 11: score_snapshot, health_snapshot, match_snapshot (time series)
     ├── 0010_snapshot_rls.sql     # RLS for snapshots; append-only
     ├── 0011_report_snapshot.sql  # Sprint 12: report_snapshot (pull event + consent reference) + RLS
-    └── 0012_income_snapshot.sql  # Sprint 13: income_snapshot (verified income + cashflow score + FOIR) + RLS
+    ├── 0012_income_snapshot.sql  # Sprint 13: income_snapshot (verified income + cashflow score + FOIR) + RLS
+    └── 0013_financial_snapshot.sql # Sprint 13.5: financial_snapshot + recommendation_snapshot + RLS
 ```
 
 ## Applying migrations

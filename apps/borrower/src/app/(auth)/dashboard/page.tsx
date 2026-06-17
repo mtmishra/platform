@@ -4,6 +4,8 @@ import { Button, Card, Heading, Paragraph } from "@leapmoney/ui";
 import { getProfile } from "@/lib/auth";
 import { getDashboardData } from "@/lib/dashboard-demo";
 import { getCashFlowIntelligence } from "@/lib/cashflow-demo";
+import { getFinancialIntelligence } from "@/lib/financial-demo";
+import { SavingsWidget, RecommendationCard } from "@/components/financial/FinancialWidgets";
 import {
   CreditSnapshot,
   HealthSnapshot,
@@ -27,6 +29,8 @@ export default async function DashboardPage() {
   const firstName = profile?.full_name?.split(" ")[0] ?? "there";
   const { leapScore, health, match, analytics, scoreHistory } = getDashboardData();
   const cashFlow = getCashFlowIntelligence();
+  const financial = getFinancialIntelligence();
+  const topRecs = financial.guidance.recommendations.slice(0, 3);
 
   return (
     <div className="mx-auto flex max-w-content flex-col gap-8">
@@ -94,6 +98,22 @@ export default async function DashboardPage() {
           <IncomeIntelligenceWidget income={cashFlow.income} />
           <CashFlowScoreWidget score={cashFlow.cash_flow_score} />
           <FoirWidget foir={cashFlow.foir} />
+        </div>
+      </section>
+
+      {/* Financial Intelligence */}
+      <section className="flex flex-col gap-4">
+        <div className="flex items-center justify-between">
+          <Heading level={2} size="h1">Financial Intelligence</Heading>
+          <Link href="/financial" className="inline-flex items-center gap-1 text-body-sm font-medium text-interactive-primary">
+            View all <ArrowRight size={14} />
+          </Link>
+        </div>
+        <SavingsWidget savings={financial.guidance.savings} />
+        <div className="grid grid-cols-1 gap-3 lg:grid-cols-3">
+          {topRecs.map((rec) => (
+            <RecommendationCard key={rec.id} rec={rec} />
+          ))}
         </div>
       </section>
 
