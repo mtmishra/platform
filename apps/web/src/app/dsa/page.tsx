@@ -13,7 +13,13 @@ import { JsonLd } from "@/components/seo/JsonLd";
 import { FeatureBreadcrumb } from "@/components/feature/FeatureBreadcrumb";
 import { FaqAccordion } from "@/components/feature/FaqAccordion";
 import { FeatureCta } from "@/components/feature/FeatureCta";
-import { buildMetadata, breadcrumbSchema, faqPageSchema } from "@/lib/seo";
+import {
+  buildMetadata,
+  breadcrumbSchema,
+  faqPageSchema,
+  organizationSchema,
+  serviceSchema,
+} from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
   title: "DSA Suite — Earn More, Work Smarter | LeapMoney",
@@ -46,6 +52,14 @@ export default function Page() {
       <Header />
       <JsonLd
         data={[
+          organizationSchema(),
+          serviceSchema({
+            name: "LeapMoney DSA Suite",
+            description:
+              "A platform for DSA agents to manage leads, submit applications to 30+ lenders, and track commissions.",
+            url: "/dsa",
+            serviceType: "DSA partner platform",
+          }),
           faqPageSchema(FAQS),
           breadcrumbSchema([
             { name: "Home", path: "/" },
@@ -112,7 +126,87 @@ export default function Page() {
           </Container>
         </Section>
 
-        <FaqAccordion faqs={FAQS} heading="DSA Suite — frequently asked questions" background="card" />
+        {/* Lead flow */}
+        <Section background="card">
+          <Container>
+            <div className="mb-8">
+              <Label caps className="mb-3 block">Lead flow</Label>
+              <Heading level={2} size="h1">From first contact to commission</Heading>
+            </div>
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-5">
+              {[
+                { step: "Capture", body: "Add a borrower lead in seconds." },
+                { step: "Match", body: "LeapMatch™ finds the right lenders." },
+                { step: "Submit", body: "Send applications with documents ready." },
+                { step: "Track", body: "Follow status to disbursal." },
+                { step: "Get paid", body: "Commission credited transparently." },
+              ].map((s, i) => (
+                <div key={s.step} className="flex flex-col gap-2">
+                  <span className="font-mono text-h2 font-bold text-interactive-primary opacity-40">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <Heading level={3} size="h3">{s.step}</Heading>
+                  <Paragraph color="secondary">{s.body}</Paragraph>
+                </div>
+              ))}
+            </div>
+          </Container>
+        </Section>
+
+        {/* Commission model */}
+        <Section background="page">
+          <Container>
+            <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-2">
+              <div>
+                <Label caps className="mb-3 block">Commission model</Label>
+                <Heading level={2} size="h1" className="mb-3">Transparent, performance-based payouts</Heading>
+                <Paragraph size="lg" color="secondary">
+                  You earn a commission on every loan you source that gets disbursed.
+                  Rates vary by lender and product and are shown clearly for each deal —
+                  with projected and paid amounts tracked in real time. No opaque slabs,
+                  no surprises.
+                </Paragraph>
+              </div>
+              <Card className="flex flex-col gap-3">
+                <Heading level={3} size="h2">What you see per deal</Heading>
+                {[
+                  "Projected commission before you submit",
+                  "Status from submission to disbursal",
+                  "Confirmed payout and statement on disbursal",
+                ].map((line) => (
+                  <p key={line} className="text-body-lg text-foreground-secondary">• {line}</p>
+                ))}
+              </Card>
+            </div>
+          </Container>
+        </Section>
+
+        {/* Partner onboarding */}
+        <Section background="card">
+          <Container>
+            <div className="mb-8">
+              <Label caps className="mb-3 block">Partner onboarding</Label>
+              <Heading level={2} size="h1">Up and running in three steps</Heading>
+            </div>
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
+              {[
+                { step: "Apply", body: "Submit the partner application form with your details." },
+                { step: "Verify", body: "Our team verifies your details and activates your account." },
+                { step: "Start earning", body: "Access the DSA Suite and begin sourcing loans." },
+              ].map((s, i) => (
+                <div key={s.step} className="flex flex-col gap-2">
+                  <span className="font-mono text-display-large font-bold text-interactive-primary opacity-30">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <Heading level={3} size="h2">{s.step}</Heading>
+                  <Paragraph color="secondary">{s.body}</Paragraph>
+                </div>
+              ))}
+            </div>
+          </Container>
+        </Section>
+
+        <FaqAccordion faqs={FAQS} heading="DSA Suite — frequently asked questions" />
         <FeatureCta
           heading="Join the DSA Suite"
           body="Apply to become a LeapMoney DSA partner and start closing more loans."

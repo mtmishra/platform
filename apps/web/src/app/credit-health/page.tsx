@@ -14,7 +14,13 @@ import { FeatureBreadcrumb } from "@/components/feature/FeatureBreadcrumb";
 import { JourneyStrip } from "@/components/feature/JourneyStrip";
 import { FaqAccordion } from "@/components/feature/FaqAccordion";
 import { FeatureCta } from "@/components/feature/FeatureCta";
-import { buildMetadata, breadcrumbSchema, faqPageSchema } from "@/lib/seo";
+import {
+  buildMetadata,
+  breadcrumbSchema,
+  faqPageSchema,
+  organizationSchema,
+  serviceSchema,
+} from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
   title: "Credit Health Dashboard — Improve Your Score | LeapMoney",
@@ -46,6 +52,14 @@ export default function Page() {
       <Header />
       <JsonLd
         data={[
+          organizationSchema(),
+          serviceSchema({
+            name: "Credit Health Dashboard",
+            description:
+              "A structured view of your credit health across 7 factors, with a personalised, prioritised improvement plan.",
+            url: "/credit-health",
+            serviceType: "Credit monitoring",
+          }),
           faqPageSchema(FAQS),
           breadcrumbSchema([
             { name: "Home", path: "/" },
@@ -115,12 +129,71 @@ export default function Page() {
           </Container>
         </Section>
 
+        {/* Risk indicators */}
+        <Section background="card">
+          <Container>
+            <div className="mb-8">
+              <Label caps className="mb-3 block">Risk indicators</Label>
+              <Heading level={2} size="h1">We flag what&apos;s holding you back</Heading>
+            </div>
+            <div className="flex flex-wrap gap-3">
+              {[
+                { label: "High credit utilisation", tone: "danger" },
+                { label: "Recent missed payment (DPD)", tone: "danger" },
+                { label: "Multiple recent enquiries", tone: "warning" },
+                { label: "Thin credit file", tone: "warning" },
+                { label: "High FOIR", tone: "warning" },
+                { label: "Healthy repayment history", tone: "success" },
+              ].map((chip) => {
+                const tones: Record<string, string> = {
+                  danger: "border-status-danger/30 text-status-danger",
+                  warning: "border-status-warning/30 text-status-warning",
+                  success: "border-status-success/30 text-status-success",
+                };
+                return (
+                  <span
+                    key={chip.label}
+                    className={`rounded-full border px-4 py-2 text-body-md font-medium ${tones[chip.tone]}`}
+                  >
+                    {chip.label}
+                  </span>
+                );
+              })}
+            </div>
+            <p className="mt-4 text-body-sm text-foreground-tertiary">
+              Illustrative indicators. Yours are detected automatically from your bureau profile.
+            </p>
+          </Container>
+        </Section>
+
+        {/* Sample insights */}
+        <Section background="page">
+          <Container>
+            <div className="mb-8">
+              <Label caps className="mb-3 block">Sample insights</Label>
+              <Heading level={2} size="h1">Insights written in plain English</Heading>
+            </div>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+              {[
+                "Your utilisation is 62%. Bringing it under 30% could lift your score within 1–2 cycles.",
+                "You have no missed payments in 12 months — keep it up to stay loan-ready.",
+                "Your FOIR is borderline. Reducing one EMI would meaningfully raise your eligibility.",
+              ].map((insight, i) => (
+                <Card key={i} className="flex flex-col gap-2">
+                  <span className="font-mono text-body-sm text-interactive-primary">Insight {i + 1}</span>
+                  <Paragraph color="secondary">{insight}</Paragraph>
+                </Card>
+              ))}
+            </div>
+          </Container>
+        </Section>
+
         <JourneyStrip activeKey="credit-health" />
         <FaqAccordion faqs={FAQS} heading="Credit Health — frequently asked questions" />
         <FeatureCta
-          heading="Check your credit health"
+          heading="Get your free credit analysis"
           body="See the factors behind your score and get a free, personalised improvement plan."
-          ctaLabel="See my credit health"
+          ctaLabel="Get free credit analysis"
           ctaHref="/register"
         />
       </main>

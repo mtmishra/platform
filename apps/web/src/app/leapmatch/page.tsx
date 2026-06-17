@@ -14,7 +14,13 @@ import { FeatureBreadcrumb } from "@/components/feature/FeatureBreadcrumb";
 import { JourneyStrip } from "@/components/feature/JourneyStrip";
 import { FaqAccordion } from "@/components/feature/FaqAccordion";
 import { FeatureCta } from "@/components/feature/FeatureCta";
-import { buildMetadata, breadcrumbSchema, faqPageSchema } from "@/lib/seo";
+import {
+  buildMetadata,
+  breadcrumbSchema,
+  faqPageSchema,
+  organizationSchema,
+  serviceSchema,
+} from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
   title: "LeapMatch™ — AI Loan Matching in India | LeapMoney",
@@ -43,6 +49,14 @@ export default function Page() {
       <Header />
       <JsonLd
         data={[
+          organizationSchema(),
+          serviceSchema({
+            name: "LeapMatch™",
+            description:
+              "AI loan matching that screens you against 30+ lenders and ranks those most likely to approve you, with a confidence band for each.",
+            url: "/leapmatch",
+            serviceType: "Loan matching",
+          }),
           faqPageSchema(FAQS),
           breadcrumbSchema([
             { name: "Home", path: "/" },
@@ -116,12 +130,60 @@ export default function Page() {
           </Container>
         </Section>
 
+        {/* Match confidence concept */}
+        <Section background="card">
+          <Container>
+            <div className="mb-8">
+              <Label caps className="mb-3 block">Match confidence</Label>
+              <Heading level={2} size="h1">Every match gets a confidence band</Heading>
+              <Paragraph color="secondary" className="mt-3 max-w-xl">
+                We translate each lender&apos;s approval probability into a simple band,
+                so you instantly know which matches are worth pursuing.
+              </Paragraph>
+            </div>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+              {[
+                { band: "HIGH", body: "You comfortably exceed the lender's thresholds — strong chance of approval.", tone: "text-status-success" },
+                { band: "MEDIUM", body: "You meet the criteria but with less headroom — approval is possible.", tone: "text-status-warning" },
+                { band: "LOW", body: "You're close to the limits — consider improving your profile first.", tone: "text-status-danger" },
+              ].map((c) => (
+                <Card key={c.band} className="flex flex-col gap-2">
+                  <span className={`font-mono text-h2 font-bold ${c.tone}`}>{c.band}</span>
+                  <Paragraph color="secondary">{c.body}</Paragraph>
+                </Card>
+              ))}
+            </div>
+          </Container>
+        </Section>
+
+        {/* Eligibility intelligence */}
+        <Section background="page">
+          <Container>
+            <div className="mb-8">
+              <Label caps className="mb-3 block">Eligibility intelligence</Label>
+              <Heading level={2} size="h1">Smarter than a rate comparison</Heading>
+            </div>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+              {[
+                { title: "Hard eligibility filters", body: "We first remove any lender whose basic criteria you don't meet — no false hope." },
+                { title: "Approval probability", body: "For each remaining lender we estimate how well your profile fits their policy." },
+                { title: "Ranked by real value", body: "Matches are ordered by approval odds and true cost — not just the lowest rate." },
+              ].map((c) => (
+                <Card key={c.title} className="flex flex-col gap-2">
+                  <Heading level={3} size="h3">{c.title}</Heading>
+                  <Paragraph color="secondary">{c.body}</Paragraph>
+                </Card>
+              ))}
+            </div>
+          </Container>
+        </Section>
+
         <JourneyStrip activeKey="leapmatch" />
         <FaqAccordion faqs={FAQS} heading="LeapMatch — frequently asked questions" />
         <FeatureCta
-          heading="See your matches"
+          heading="See your matching banks"
           body="Find the lenders most likely to approve you — free, with no credit score impact."
-          ctaLabel="Check my matches"
+          ctaLabel="See matching banks"
           ctaHref="/register"
         />
       </main>

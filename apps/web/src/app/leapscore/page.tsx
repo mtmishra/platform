@@ -14,7 +14,14 @@ import { FeatureBreadcrumb } from "@/components/feature/FeatureBreadcrumb";
 import { JourneyStrip } from "@/components/feature/JourneyStrip";
 import { FaqAccordion } from "@/components/feature/FaqAccordion";
 import { FeatureCta } from "@/components/feature/FeatureCta";
-import { buildMetadata, breadcrumbSchema, faqPageSchema } from "@/lib/seo";
+import { ScoreRing } from "@/components/feature/ScoreRing";
+import {
+  buildMetadata,
+  breadcrumbSchema,
+  faqPageSchema,
+  organizationSchema,
+  serviceSchema,
+} from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
   title: "LeapScore™ — Check Your Credit Score Free | LeapMoney",
@@ -33,11 +40,11 @@ const COMPONENTS = [
 ];
 
 const BANDS = [
-  { band: "A+", range: "85–100", label: "Loan Ready", tone: "text-status-success" },
-  { band: "A", range: "70–84", label: "Strong", tone: "text-status-success" },
-  { band: "B", range: "55–69", label: "Improvable", tone: "text-status-warning" },
-  { band: "C", range: "40–54", label: "Developing", tone: "text-status-warning" },
-  { band: "D", range: "0–39", label: "Not Ready Yet", tone: "text-status-danger" },
+  { band: "Band 5", range: "85–100", label: "Strong profile — most lenders approve at competitive rates", tone: "text-status-success" },
+  { band: "Band 4", range: "70–84", label: "Good profile — likely approval at standard rates", tone: "text-status-success" },
+  { band: "Band 3", range: "55–69", label: "Improvable — eligible for select products; better FOIR unlocks better rates", tone: "text-status-warning" },
+  { band: "Band 2", range: "40–54", label: "Developing — limited to NBFC products; clear overdue accounts first", tone: "text-status-warning" },
+  { band: "Band 1", range: "0–39", label: "Not ready — focus on your improvement plan before applying", tone: "text-status-danger" },
 ];
 
 const FAQS = [
@@ -53,6 +60,14 @@ export default function Page() {
       <Header />
       <JsonLd
         data={[
+          organizationSchema(),
+          serviceSchema({
+            name: "LeapScore™",
+            description:
+              "A proprietary 0–100 loan-readiness score combining credit health, income stability, FOIR, and more.",
+            url: "/leapscore",
+            serviceType: "Credit scoring",
+          }),
           faqPageSchema(FAQS),
           breadcrumbSchema([
             { name: "Home", path: "/" },
@@ -128,10 +143,55 @@ export default function Page() {
           </Container>
         </Section>
 
+        {/* Sample score visualization */}
+        <Section background="card">
+          <Container>
+            <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-2">
+              <div>
+                <Label caps className="mb-3 block">Sample score</Label>
+                <Heading level={2} size="h1" className="mb-3">This is what you&apos;ll see</Heading>
+                <Paragraph size="lg" color="secondary">
+                  Your LeapScore™ is shown as a single, easy-to-read number with your
+                  band and what it means for your next loan. The example here shows a
+                  Band 4 profile — likely approval at standard rates.
+                </Paragraph>
+              </div>
+              <div className="flex justify-center">
+                <ScoreRing score={78} band="Band 4" label="Good profile — likely approval" tone="text-status-success" />
+              </div>
+            </div>
+          </Container>
+        </Section>
+
+        {/* Future dashboard preview */}
+        <Section background="page">
+          <Container>
+            <div className="mb-8">
+              <Label caps className="mb-3 block">Coming to your dashboard</Label>
+              <Heading level={2} size="h1">A living view of your score</Heading>
+            </div>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+              {[
+                { title: "Score over time", body: "Track how your LeapScore™ changes month to month." },
+                { title: "Factor breakdown", body: "See exactly which factors lift or hold back your score." },
+                { title: "Improvement plan", body: "Get 3–5 prioritised actions to reach the next band." },
+              ].map((c) => (
+                <Card key={c.title} className="flex flex-col gap-2">
+                  <Heading level={3} size="h3">{c.title}</Heading>
+                  <Paragraph color="secondary">{c.body}</Paragraph>
+                </Card>
+              ))}
+            </div>
+            <p className="mt-4 text-body-sm text-foreground-tertiary">
+              Dashboard preview — available after you create your free account.
+            </p>
+          </Container>
+        </Section>
+
         <JourneyStrip activeKey="leapscore" />
         <FaqAccordion faqs={FAQS} heading="LeapScore — frequently asked questions" />
         <FeatureCta
-          heading="Get your LeapScore free"
+          heading="Explore your LeapScore free"
           body="See how loan-ready you are in under 2 minutes — no impact on your credit score."
           ctaLabel="Get my LeapScore"
           ctaHref="/register"

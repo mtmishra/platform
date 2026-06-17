@@ -120,6 +120,24 @@ export function articleSchema(input: {
   };
 }
 
+export function serviceSchema(input: {
+  name: string;
+  description: string;
+  url: string;
+  serviceType?: string;
+}) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    name: input.name,
+    description: input.description,
+    url: `${SITE_URL}${input.url}`,
+    serviceType: input.serviceType ?? input.name,
+    areaServed: { "@type": "Country", name: "India" },
+    provider: { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
+  };
+}
+
 export function breadcrumbSchema(items: { name: string; path: string }[]) {
   return {
     "@context": "https://schema.org",

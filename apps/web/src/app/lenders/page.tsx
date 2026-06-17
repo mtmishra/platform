@@ -13,7 +13,13 @@ import { JsonLd } from "@/components/seo/JsonLd";
 import { FeatureBreadcrumb } from "@/components/feature/FeatureBreadcrumb";
 import { FaqAccordion } from "@/components/feature/FaqAccordion";
 import { FeatureCta } from "@/components/feature/FeatureCta";
-import { buildMetadata, breadcrumbSchema, faqPageSchema } from "@/lib/seo";
+import {
+  buildMetadata,
+  breadcrumbSchema,
+  faqPageSchema,
+  organizationSchema,
+  serviceSchema,
+} from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
   title: "For Lenders — Pre-Qualified Loan Leads | LeapMoney",
@@ -42,6 +48,14 @@ export default function Page() {
       <Header />
       <JsonLd
         data={[
+          organizationSchema(),
+          serviceSchema({
+            name: "LeapMoney for Lenders",
+            description:
+              "Pre-qualified, FOIR-checked, document-ready loan applications matched to your policy, delivered via the lender portal.",
+            url: "/lenders",
+            serviceType: "Lead origination for lenders",
+          }),
           faqPageSchema(FAQS),
           breadcrumbSchema([
             { name: "Home", path: "/" },
@@ -108,6 +122,54 @@ export default function Page() {
             <p className="mt-4 text-center text-body-sm text-foreground-tertiary">
               Illustrative. Specific pool metrics are shared during your demo.
             </p>
+          </Container>
+        </Section>
+
+        {/* Lead quality process */}
+        <Section background="card">
+          <Container>
+            <div className="mb-8">
+              <Label caps className="mb-3 block">Lead quality process</Label>
+              <Heading level={2} size="h1">How every lead is qualified before it reaches you</Heading>
+            </div>
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+              {[
+                { step: "Score", body: "Each borrower is scored 0–100 by LeapScore™." },
+                { step: "Filter", body: "Hard eligibility filters remove anyone who doesn't fit your policy." },
+                { step: "Assess", body: "FOIR and affordability are checked before routing." },
+                { step: "Package", body: "KYC and income documents are collected and organised." },
+              ].map((s, i) => (
+                <div key={s.step} className="flex flex-col gap-2">
+                  <span className="font-mono text-h2 font-bold text-interactive-primary opacity-40">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <Heading level={3} size="h3">{s.step}</Heading>
+                  <Paragraph color="secondary">{s.body}</Paragraph>
+                </div>
+              ))}
+            </div>
+          </Container>
+        </Section>
+
+        {/* Match engine benefits */}
+        <Section background="page">
+          <Container>
+            <div className="mb-8">
+              <Label caps className="mb-3 block">Match engine benefits</Label>
+              <Heading level={2} size="h1">Why our matching works for lenders</Heading>
+            </div>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+              {[
+                { title: "Policy-aligned routing", body: "Leads are routed only to lenders whose criteria they meet — less noise, higher conversion." },
+                { title: "Lower acquisition cost", body: "Pre-qualification reduces wasted underwriting on unviable applications." },
+                { title: "Privacy by design", body: "You receive LeapScore band and derived metrics — never raw bureau reports — with access controls enforced." },
+              ].map((c) => (
+                <Card key={c.title} className="flex flex-col gap-2">
+                  <Heading level={3} size="h3">{c.title}</Heading>
+                  <Paragraph color="secondary">{c.body}</Paragraph>
+                </Card>
+              ))}
+            </div>
           </Container>
         </Section>
 

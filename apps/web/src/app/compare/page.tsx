@@ -13,7 +13,13 @@ import { FeatureBreadcrumb } from "@/components/feature/FeatureBreadcrumb";
 import { JourneyStrip } from "@/components/feature/JourneyStrip";
 import { FaqAccordion } from "@/components/feature/FaqAccordion";
 import { FeatureCta } from "@/components/feature/FeatureCta";
-import { buildMetadata, breadcrumbSchema, faqPageSchema } from "@/lib/seo";
+import {
+  buildMetadata,
+  breadcrumbSchema,
+  faqPageSchema,
+  organizationSchema,
+  serviceSchema,
+} from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
   title: "Compare Loans on True Cost of Borrowing | LeapMoney",
@@ -40,6 +46,14 @@ export default function Page() {
       <Header />
       <JsonLd
         data={[
+          organizationSchema(),
+          serviceSchema({
+            name: "AI Bank Comparison",
+            description:
+              "Compare lenders on Total Cost of Borrowing, features, and eligibility fit — not just the headline rate.",
+            url: "/compare",
+            serviceType: "Loan comparison",
+          }),
           faqPageSchema(FAQS),
           breadcrumbSchema([
             { name: "Home", path: "/" },
@@ -114,12 +128,56 @@ export default function Page() {
           </Container>
         </Section>
 
+        {/* Multi-dimension comparison */}
+        <Section background="page">
+          <Container>
+            <div className="mb-8">
+              <Label caps className="mb-3 block">Compare on what matters</Label>
+              <Heading level={2} size="h1">Rate, features, and eligibility — together</Heading>
+              <Paragraph color="secondary" className="mt-3 max-w-xl">
+                We compare your matches across every dimension that affects the
+                decision, not just the interest rate.
+              </Paragraph>
+            </div>
+            <div className="overflow-x-auto rounded-lg border border-border-token-default">
+              <table className="w-full min-w-[640px] text-left">
+                <thead className="bg-background-feature text-foreground-on-dark">
+                  <tr>
+                    <th className="px-4 py-3 text-body-md font-semibold">Dimension</th>
+                    <th className="px-4 py-3 text-body-md font-semibold">Lender A</th>
+                    <th className="px-4 py-3 text-body-md font-semibold">Lender B</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    { dim: "Interest rate", a: "10.5%", b: "10.9%" },
+                    { dim: "Processing fee", a: "₹12,000", b: "₹3,000" },
+                    { dim: "Total cost (TCB)", a: "₹1,98,400", b: "₹1,91,200" },
+                    { dim: "Prepayment charges", a: "2%", b: "Nil" },
+                    { dim: "Approval confidence", a: "MEDIUM", b: "HIGH" },
+                    { dim: "Eligibility fit", a: "Meets criteria", b: "Comfortably meets" },
+                  ].map((row, i) => (
+                    <tr key={row.dim} className={i % 2 === 0 ? "bg-background-card" : "bg-background-page"}>
+                      <td className="px-4 py-3 text-body-md font-medium text-foreground-primary">{row.dim}</td>
+                      <td className="px-4 py-3 font-mono text-body-md text-foreground-secondary">{row.a}</td>
+                      <td className="px-4 py-3 font-mono text-body-md text-foreground-secondary">{row.b}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <p className="mt-4 text-body-sm text-foreground-tertiary">
+              Illustrative. Your comparison uses your real matches and live lender data.
+            </p>
+          </Container>
+        </Section>
+
         <JourneyStrip activeKey="compare" />
         <FaqAccordion faqs={FAQS} heading="Comparison — frequently asked questions" />
         <FeatureCta
-          heading="Compare your matches"
+          heading="Check your eligibility"
           body="See your real options ranked by true cost of borrowing — free, no credit score impact."
-          ctaLabel="Compare lenders"
+          ctaLabel="Check eligibility"
           ctaHref="/register"
         />
       </main>
