@@ -4,6 +4,9 @@ export type { ButtonProps } from "./components/button";
 export { Input } from "./components/input";
 export type { InputProps } from "./components/input";
 
+export { Textarea } from "./components/textarea";
+export type { TextareaProps } from "./components/textarea";
+
 export { Card, CardHeader, CardBody } from "./components/card";
 export type { CardProps, CardHeaderProps, CardBodyProps } from "./components/card";
 

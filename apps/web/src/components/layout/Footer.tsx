@@ -2,6 +2,7 @@ import React from "react";
 import Link from "next/link";
 import { Container } from "@leapmoney/ui";
 import { FOOTER_GROUPS } from "@/data/navigation";
+import { RbiDisclaimer } from "@/components/trust/RbiDisclaimer";
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
@@ -53,6 +54,11 @@ export function Footer() {
               </span>
             )
           )}
+        </div>
+
+        {/* RBI / facilitation disclaimer */}
+        <div className="border-t border-white/10 py-6">
+          <RbiDisclaimer />
         </div>
 
         {/* Bottom bar */}

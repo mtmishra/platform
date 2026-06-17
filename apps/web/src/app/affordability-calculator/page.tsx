@@ -3,15 +3,15 @@ import Link from "next/link";
 import { Container, Heading, Label, Paragraph, Section } from "@leapmoney/ui";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
-import { EmiCalculator } from "@/components/calculators/EmiCalculator";
+import { AffordabilityCalculator } from "@/components/calculators/AffordabilityCalculator";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { buildMetadata, breadcrumbSchema } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
-  title: "EMI Calculator — Loan EMI & Interest | LeapMoney",
+  title: "Loan Affordability Calculator | LeapMoney",
   description:
-    "Calculate your loan EMI, total interest, and total payment instantly. Free EMI calculator for personal, home, and business loans. Then see your real rate.",
-  path: "/emi-calculator",
+    "Find a loan amount that fits a monthly EMI you're comfortable paying. Free affordability calculator for India. Borrow within your means with LeapMoney.",
+  path: "/affordability-calculator",
 });
 
 export default function Page() {
@@ -22,7 +22,7 @@ export default function Page() {
         data={breadcrumbSchema([
           { name: "Home", path: "/" },
           { name: "Calculators", path: "/calculators" },
-          { name: "EMI Calculator", path: "/emi-calculator" },
+          { name: "Affordability Calculator", path: "/affordability-calculator" },
         ])}
       />
       <main>
@@ -33,7 +33,7 @@ export default function Page() {
               <li aria-hidden="true">/</li>
               <li><Link href="/calculators" className="hover:text-foreground-primary">Calculators</Link></li>
               <li aria-hidden="true">/</li>
-              <li className="text-foreground-secondary">EMI Calculator</li>
+              <li className="text-foreground-secondary">Affordability</li>
             </ol>
           </nav>
         </Container>
@@ -41,38 +41,32 @@ export default function Page() {
         <Section background="page" className="py-10 lg:py-12">
           <Container>
             <div className="mb-8 max-w-2xl">
-              <Label caps className="mb-3 block">EMI Calculator</Label>
+              <Label caps className="mb-3 block">Affordability Calculator</Label>
               <Heading level={1} size="display-large" className="mb-3">
-                Calculate your loan EMI
+                What can you comfortably afford?
               </Heading>
               <Paragraph size="lg" color="secondary">
-                Adjust the amount, rate, and tenure to see your monthly EMI, total
-                interest, and total payment. Then check the rate you actually qualify for.
+                Start with the monthly EMI you&apos;re comfortable paying and see the
+                loan amount it supports. Always borrow within your means.
               </Paragraph>
             </div>
-            <EmiCalculator />
+            <AffordabilityCalculator />
           </Container>
         </Section>
 
         <Section background="card">
           <Container>
             <div className="flex flex-col items-start gap-4">
-              <Heading level={2} size="h1">See your real rate, not just an estimate</Heading>
+              <Heading level={2} size="h1">Ready to find your match?</Heading>
               <Paragraph color="secondary" className="max-w-xl">
-                This calculator uses an indicative rate. LeapMatch™ shows the rate
-                you actually qualify for across 30+ lenders — with no credit score impact.
+                Once you know your comfortable budget, let LeapMatch™ find the lenders
+                most likely to approve you — free, with no credit score impact.
               </Paragraph>
               <Link
                 href="/register"
                 className="text-body-lg font-semibold text-interactive-primary hover:underline"
               >
                 Check my eligibility →
-              </Link>
-              <Link
-                href="/calculators"
-                className="text-body-md font-medium text-foreground-secondary hover:text-foreground-primary"
-              >
-                Explore all calculators
               </Link>
             </div>
           </Container>

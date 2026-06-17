@@ -5,7 +5,8 @@
 import type { Metadata } from "next";
 import type { FaqItem } from "@/data/loans";
 
-export const SITE_URL = "https://leapmoney.net";
+export const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://leapmoney.net";
 export const SITE_NAME = "LeapMoney";
 export const DEFAULT_OG_IMAGE = "/og/leapmoney-default.svg"; // 1200×630 branded placeholder
 
@@ -91,6 +92,31 @@ export function loanOrCreditSchema(input: {
     loanType: input.name,
     currency: "INR",
     provider: { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
+  };
+}
+
+export function articleSchema(input: {
+  title: string;
+  description: string;
+  url: string;
+  datePublished: string;
+  author: string;
+  image?: string;
+}) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: input.title,
+    description: input.description,
+    url: `${SITE_URL}${input.url}`,
+    datePublished: input.datePublished,
+    image: input.image ?? `${SITE_URL}${DEFAULT_OG_IMAGE}`,
+    author: { "@type": "Organization", name: input.author },
+    publisher: {
+      "@type": "Organization",
+      name: SITE_NAME,
+      logo: { "@type": "ImageObject", url: `${SITE_URL}/og/leapmoney-logo.png` },
+    },
   };
 }
 

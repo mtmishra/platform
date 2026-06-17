@@ -6,7 +6,7 @@ export interface InputProps
   extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "size"> {
   label?: string;
   hint?: string;
-  error?: string;
+  error?: string | undefined;
   size?: "sm" | "md" | "lg";
   prefixIcon?: React.ReactNode;
   suffixIcon?: React.ReactNode;

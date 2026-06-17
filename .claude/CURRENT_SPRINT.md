@@ -1,44 +1,31 @@
-# Current Sprint: Sprint 3 — Loan Pages & SEO Foundation
+# Current Sprint: Sprint 4 — Website V2 Launch Readiness
 
-**Sprint:** 3
+**Sprint:** 4
 **Status:** Complete
 **Date:** 2026-06-17
-**Goal:** Build the Website V2 loan product pages, SEO foundation, and IA per Phase 5
+**Goal:** Make Website V2 publicly reviewable and Vercel-deployment ready
 
 ## Source of Truth
+Phase 5 (IA), Phase 6 (design tokens), Phase 7 (engineering). See [[website-v2-ia]].
 
-Phase 5 Website V2 Gap Analysis (`docs/audits/Phase5_Website_Gap_Analysis.docx`) governs all
-information architecture: flat loan URLs, header/footer navigation, page inventory, and SEO strategy.
-
-## Sprint 3 Scope
-
-### Completed
-- [x] Reusable loan page template (`components/loan/LoanPageTemplate.tsx`)
-- [x] Loan pages: /personal-loan, /home-loan, /business-loan, /loan-against-property
-- [x] Conversion sections on all loan pages: Eligibility, Documents, Benefits, Process, FAQ, CTA
-- [x] SEO foundation: unique title + meta per page, self-referential canonical, OG image placeholder, JSON-LD structured data (Organization, FAQPage, LoanOrCredit, BreadcrumbList)
-- [x] sitemap.xml + robots.txt (Next.js metadata routes)
-- [x] Header rebuilt to Phase 5 IA (Products▾ + Loans▾ mega-menus, For DSAs, For Lenders, Blog, Calculators)
-- [x] Footer rebuilt to Phase 5 IA (Products, Loans, For Partners, Company, Legal + trust signals)
-- [x] Internal linking between loan products (related products section)
-- [x] Legal pages: /privacy-policy, /terms-of-service (placeholder content, DPDP + RBI aware)
-- [x] Placeholder pages for all remaining nav routes — zero broken internal links
-- [x] Homepage loan links migrated from /loans/* to flat Phase 5 URLs
-
-### Notes / Deviations
-- Task 21 requested `/terms-and-conditions`; Phase 5 (declared source of truth) specifies
-  `/terms-of-service`. Built at `/terms-of-service` to honour Phase 5 IA.
-- Loan-Against-Property page added (beyond the 3 requested) because Phase 5 lists it as a P0
-  launch page and the Loans mega-menu links to it — required to keep "no broken links" true.
+## Sprint 4 Scope — Completed
+- [x] Blog foundation: index with category structure, `/blog/[slug]` SSG template, 6 seeded articles, Article + Breadcrumb JSON-LD
+- [x] Calculators: hub (/calculators), EMI, Loan Eligibility, Affordability (live client calculators)
+- [x] Lead capture: LeadForm (homepage hero) + ContactForm (/contact) — validation, success/error states
+- [x] Analytics: GA4 framework in @leapmoney/analytics, Consent Mode v2, page_view + cta_click + form events
+- [x] Cookie & consent layer: DPDP-aware banner, preferences, analytics opt-in gating GA4
+- [x] Trust layer: TrustSection (homepage), RBI/facilitation disclaimer in footer
+- [x] Legal: expanded Privacy + Terms (Sprint 3), new /disclaimer page
+- [x] SEO completion: sitemap (33 URLs), robots.txt, canonical, OG, structured data verified in built HTML
+- [x] Deployment readiness: src/lib/env.ts validation, production metadata, NEXT_PUBLIC_ env vars
 
 ## Validation
-- pnpm --filter @leapmoney/web type-check: PASS (0 errors)
-- pnpm turbo build --filter=@leapmoney/web: SUCCESS — 29 static pages (all SSG), + robots.txt + sitemap.xml
-- Internal link audit: every referenced internal path resolves to a real route (0 broken)
+- pnpm turbo type-check: 11/11 PASS (0 errors)
+- pnpm turbo build --filter=@leapmoney/web: SUCCESS — 39 pages, all Static/SSG
+- Internal link audit: 0 broken (every referenced path resolves)
+- SEO audit: canonical + OG + JSON-LD present; sitemap.xml (33 URLs) + robots.txt generated
 
-## Branch Strategy
-```
-main          ← production releases only
-develop       ← integration branch, all sprints merge here
-feature/*     ← individual feature branches
-```
+## Vercel notes
+- All pages static/SSG; no server-only runtime deps. Set Vercel project root to `apps/web`
+  (or use Turborepo remote caching). Configure NEXT_PUBLIC_SITE_URL and
+  NEXT_PUBLIC_GA4_MEASUREMENT_ID in Vercel env. No secrets required to build.

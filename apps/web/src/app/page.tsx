@@ -16,43 +16,46 @@ import { Footer } from "@/components/layout/Footer";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { organizationSchema } from "@/lib/seo";
 import { LOAN_PRODUCTS } from "@/data/loans";
+import { TrustSection } from "@/components/trust/TrustSection";
+import { LeadForm } from "@/components/forms/LeadForm";
 import { ArrowRight, ShieldCheck, Zap, TrendingUp, CheckCircle } from "lucide-react";
 
 // ── Hero ─────────────────────────────────────────────────────────────────
 
 function Hero() {
   return (
-    <Section background="page" className="py-16 lg:py-24">
+    <Section background="page" className="py-12 lg:py-20">
       <Container>
-        <div className="mx-auto max-w-3xl text-center">
-          <Label caps className="mb-6 block">
-            Powered by LeapMatch™ AI
-          </Label>
+        <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-2">
+          <div>
+            <Label caps className="mb-6 block">
+              Powered by LeapMatch™ AI
+            </Label>
 
-          <Heading level={1} size="display-hero" className="mb-6">
-            Your Intelligent Loan Marketplace
-          </Heading>
+            <Heading level={1} size="display-hero" className="mb-6">
+              Your Intelligent Loan Marketplace
+            </Heading>
 
-          <Paragraph size="lg" color="secondary" className="mb-8 mx-auto max-w-xl">
-            LeapMoney matches you to the right lender in minutes — not days.
-            No guesswork. No hidden charges. Just the loan you qualify for.
-          </Paragraph>
+            <Paragraph size="lg" color="secondary" className="mb-8 max-w-xl">
+              LeapMoney matches you to the right lender in minutes — not days.
+              No guesswork. No hidden charges. Just the loan you qualify for.
+            </Paragraph>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Button variant="primary" size="lg">
-              <Link href="/register" className="flex items-center gap-2">
-                Check Your Eligibility
-                <ArrowRight size={16} />
-              </Link>
-            </Button>
-            <Button variant="secondary" size="lg">
-              <Link href="/emi-calculator">Calculate EMI</Link>
-            </Button>
+            <div className="flex flex-col sm:flex-row items-start gap-4">
+              <Button variant="secondary" size="lg">
+                <Link href="/calculators">Explore Calculators</Link>
+              </Button>
+              <Button variant="ghost" size="lg">
+                <Link href="/leapmatch" className="flex items-center gap-2">
+                  How LeapMatch™ works <ArrowRight size={16} />
+                </Link>
+              </Button>
+            </div>
           </div>
 
-          <p className="mt-6 text-body-sm text-foreground-tertiary">
-            No credit score impact · Takes 2 minutes · Free forever
-          </p>
+          <div className="lg:pl-8">
+            <LeadForm formId="hero_lead_form" />
+          </div>
         </div>
       </Container>
     </Section>
@@ -259,6 +262,7 @@ export default function HomePage() {
         <LoanCategories />
         <HowItWorks />
         <WhyLeapMoney />
+        <TrustSection />
         <CtaBanner />
       </main>
       <Footer />

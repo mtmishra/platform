@@ -76,6 +76,7 @@ export const FOOTER_GROUPS: NavGroup[] = [
     links: [
       { label: "Privacy Policy",      href: "/privacy-policy" },
       { label: "Terms of Service",    href: "/terms-of-service" },
+      { label: "Disclaimer",          href: "/disclaimer" },
       { label: "Grievance Redressal", href: "/grievance-redressal" },
       { label: "Fair Practices Code", href: "/fair-practices-code" },
       { label: "Cookie Policy",       href: "/cookie-policy" },
