@@ -18,6 +18,10 @@ import { organizationSchema } from "@/lib/seo";
 import { LOAN_PRODUCTS } from "@/data/loans";
 import { TrustSection } from "@/components/trust/TrustSection";
 import { LeadForm } from "@/components/forms/LeadForm";
+import { HeroTrustStrip } from "@/components/feature/HeroTrustStrip";
+import { AnimatedScoreRing } from "@/components/feature/AnimatedScoreRing";
+import { MatchPreviewCard } from "@/components/feature/MatchPreviewCard";
+import { StickyMobileCta } from "@/components/feature/StickyMobileCta";
 import { ArrowRight, ShieldCheck, Zap, TrendingUp, CheckCircle } from "lucide-react";
 
 // ── Hero ─────────────────────────────────────────────────────────────────
@@ -51,10 +55,64 @@ function Hero() {
                 </Link>
               </Button>
             </div>
+
+            <HeroTrustStrip />
           </div>
 
           <div className="lg:pl-8">
             <LeadForm formId="hero_lead_form" />
+          </div>
+        </div>
+      </Container>
+    </Section>
+  );
+}
+
+// ── Product Preview (premium dark section) ─────────────────────────────────
+
+function ProductPreview() {
+  return (
+    <Section background="feature">
+      <Container>
+        <div className="mb-10 text-center">
+          <Label caps className="mb-3 block">See it in action</Label>
+          <Heading level={2} size="h1" color="on-dark">
+            Your LeapScore™, and the lenders most likely to say yes
+          </Heading>
+        </div>
+
+        <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-2">
+          <div className="flex justify-center">
+            <AnimatedScoreRing
+              score={742}
+              band="Very Good"
+              label="All banks · competitive rates"
+              tone="text-status-success"
+              onDark
+            />
+          </div>
+
+          <div className="flex flex-col gap-4">
+            <MatchPreviewCard
+              lender="HDFC Bank"
+              approvalPct={87}
+              confidence="high"
+              rate="11.0% p.a."
+              emi="₹21,740/mo"
+              bestMatch
+              onDark
+            />
+            <MatchPreviewCard
+              lender="Bajaj Finance"
+              approvalPct={72}
+              confidence="medium"
+              rate="13.5% p.a."
+              emi="₹22,850/mo"
+              onDark
+            />
+            <p className="text-body-sm text-white/50">
+              Illustrative. Your real LeapScore and matches depend on your profile and live lender policies.
+            </p>
           </div>
         </div>
       </Container>
@@ -259,12 +317,14 @@ export default function HomePage() {
       <main>
         <Hero />
         <TrustBar />
+        <ProductPreview />
         <LoanCategories />
         <HowItWorks />
         <WhyLeapMoney />
         <TrustSection />
         <CtaBanner />
       </main>
+      <StickyMobileCta label="Check your eligibility" href="/register" note="Free · No credit score impact" />
       <Footer />
     </>
   );

@@ -14,6 +14,8 @@ import { FeatureBreadcrumb } from "@/components/feature/FeatureBreadcrumb";
 import { JourneyStrip } from "@/components/feature/JourneyStrip";
 import { FaqAccordion } from "@/components/feature/FaqAccordion";
 import { FeatureCta } from "@/components/feature/FeatureCta";
+import { MatchPreviewCard } from "@/components/feature/MatchPreviewCard";
+import { StickyMobileCta } from "@/components/feature/StickyMobileCta";
 import {
   buildMetadata,
   breadcrumbSchema,
@@ -111,21 +113,15 @@ export default function Page() {
               <Label caps className="mb-3 block">What you&apos;ll see</Label>
               <Heading level={2} size="h1">A clear, ranked shortlist</Heading>
             </div>
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-              {[
-                { lender: "Lender A", ape: "72%", tone: "text-status-success", note: "High approval probability" },
-                { lender: "Lender B", ape: "58%", tone: "text-status-warning", note: "Medium approval probability" },
-                { lender: "Lender C", ape: "34%", tone: "text-status-danger", note: "Lower approval probability" },
-              ].map((m) => (
-                <Card key={m.lender} className="flex flex-col gap-2">
-                  <Heading level={3} size="h3">{m.lender}</Heading>
-                  <span className={`font-mono text-display-large font-bold ${m.tone}`}>{m.ape}</span>
-                  <Paragraph color="secondary">{m.note}</Paragraph>
-                </Card>
-              ))}
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
+              <MatchPreviewCard lender="HDFC Bank" approvalPct={87} confidence="high" rate="11.0% p.a." emi="₹21,740/mo" bestMatch />
+              <MatchPreviewCard lender="Bajaj Finance" approvalPct={72} confidence="medium" rate="13.5% p.a." emi="₹22,850/mo" />
+              <MatchPreviewCard lender="Tata Capital" approvalPct={34} confidence="low" rate="16.0% p.a." emi="₹24,320/mo" />
             </div>
             <p className="mt-4 text-body-sm text-foreground-tertiary">
               Illustrative example. Your real matches depend on your profile and live lender policies.
+              Every offer shows its APR, fees and approval odds before you apply — all eligible
+              lenders are shown (RBI Digital Lending Directions 2025).
             </p>
           </Container>
         </Section>
@@ -187,6 +183,7 @@ export default function Page() {
           ctaHref="/register"
         />
       </main>
+      <StickyMobileCta label="See matching banks" href="/register" note="Free · No credit score impact" />
       <Footer />
     </>
   );
