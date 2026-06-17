@@ -1,40 +1,42 @@
-# Current Sprint: Sprint 1.1 — Repository Hardening
+# Current Sprint: Sprint 3 — Loan Pages & SEO Foundation
 
-**Sprint:** 1.1
-**Status:** In Progress
-**Start Date:** 2026-06-17
-**Goal:** Harden the repository scaffold so the team can begin feature development in Sprint 2
+**Sprint:** 3
+**Status:** Complete
+**Date:** 2026-06-17
+**Goal:** Build the Website V2 loan product pages, SEO foundation, and IA per Phase 5
 
-## Sprint 1.1 Scope
+## Source of Truth
+
+Phase 5 Website V2 Gap Analysis (`docs/audits/Phase5_Website_Gap_Analysis.docx`) governs all
+information architecture: flat loan URLs, header/footer navigation, page inventory, and SEO strategy.
+
+## Sprint 3 Scope
 
 ### Completed
-- [x] Repository created at `github.com/mtmishra/platform`
-- [x] `develop` branch with monorepo scaffold (pnpm + Turborepo + Next.js 14)
-- [x] 6 apps scaffolded: web, borrower, dsa, lender, admin, referral
-- [x] 5 packages scaffolded: ui, types, supabase, analytics, config
-- [x] All Phase 1–12 docs uploaded to `docs/`
-- [x] `CLAUDE.md` created
-- [x] `.claude/` context files created
-- [x] `.env.example` created
-- [x] `packages/_intercept_test.txt` removed
-- [x] `apps/*/public/.gitkeep` added to all 6 apps
+- [x] Reusable loan page template (`components/loan/LoanPageTemplate.tsx`)
+- [x] Loan pages: /personal-loan, /home-loan, /business-loan, /loan-against-property
+- [x] Conversion sections on all loan pages: Eligibility, Documents, Benefits, Process, FAQ, CTA
+- [x] SEO foundation: unique title + meta per page, self-referential canonical, OG image placeholder, JSON-LD structured data (Organization, FAQPage, LoanOrCredit, BreadcrumbList)
+- [x] sitemap.xml + robots.txt (Next.js metadata routes)
+- [x] Header rebuilt to Phase 5 IA (Products▾ + Loans▾ mega-menus, For DSAs, For Lenders, Blog, Calculators)
+- [x] Footer rebuilt to Phase 5 IA (Products, Loans, For Partners, Company, Legal + trust signals)
+- [x] Internal linking between loan products (related products section)
+- [x] Legal pages: /privacy-policy, /terms-of-service (placeholder content, DPDP + RBI aware)
+- [x] Placeholder pages for all remaining nav routes — zero broken internal links
+- [x] Homepage loan links migrated from /loans/* to flat Phase 5 URLs
 
-### Remaining (Sprint 1.1)
-- [ ] `pnpm install` — verify clean install
-- [ ] `pnpm type-check` — verify zero TypeScript errors
-- [ ] Add `.env.local` to each app (local dev setup, not committed)
-- [ ] Verify `pnpm dev` starts all 6 apps without errors
+### Notes / Deviations
+- Task 21 requested `/terms-and-conditions`; Phase 5 (declared source of truth) specifies
+  `/terms-of-service`. Built at `/terms-of-service` to honour Phase 5 IA.
+- Loan-Against-Property page added (beyond the 3 requested) because Phase 5 lists it as a P0
+  launch page and the Loans mega-menu links to it — required to keep "no broken links" true.
 
-## Next Sprint: Sprint 2 — Authentication & Core Routing
-
-Sprint 2 will implement:
-- Supabase Auth integration across all portals
-- Role-based routing (borrower / DSA / lender / admin)
-- Shared auth session management via `packages/supabase`
-- Landing pages for each portal
+## Validation
+- pnpm --filter @leapmoney/web type-check: PASS (0 errors)
+- pnpm turbo build --filter=@leapmoney/web: SUCCESS — 29 static pages (all SSG), + robots.txt + sitemap.xml
+- Internal link audit: every referenced internal path resolves to a real route (0 broken)
 
 ## Branch Strategy
-
 ```
 main          ← production releases only
 develop       ← integration branch, all sprints merge here

@@ -1,27 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { Container } from "@leapmoney/ui";
-
-const footerLinks = {
-  Products: [
-    { label: "Home Loan",     href: "/loans/home-loan" },
-    { label: "Personal Loan", href: "/loans/personal-loan" },
-    { label: "Business Loan", href: "/loans/business-loan" },
-    { label: "EMI Calculator",href: "/emi-calculator" },
-  ],
-  Company: [
-    { label: "About",   href: "/about" },
-    { label: "Blog",    href: "/blog" },
-    { label: "Careers", href: "/careers" },
-    { label: "Contact", href: "/contact" },
-  ],
-  Legal: [
-    { label: "Privacy Policy",    href: "/privacy" },
-    { label: "Terms of Service",  href: "/terms" },
-    { label: "Grievance Redressal", href: "/grievance" },
-    { label: "Fair Practices Code", href: "/fair-practices" },
-  ],
-} as const;
+import { FOOTER_GROUPS } from "@/data/navigation";
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
@@ -29,37 +9,48 @@ export function Footer() {
   return (
     <footer className="bg-background-feature text-foreground-on-dark">
       <Container>
-        {/* Top section */}
-        <div className="grid grid-cols-1 gap-10 py-12 sm:grid-cols-2 lg:grid-cols-4">
+        {/* Link grid */}
+        <div className="grid grid-cols-2 gap-8 py-12 md:grid-cols-3 lg:grid-cols-6">
           {/* Brand column */}
-          <div className="flex flex-col gap-4">
+          <div className="col-span-2 md:col-span-3 lg:col-span-1 flex flex-col gap-4">
             <span className="text-h2 font-bold tracking-tight">LEAPMONEY</span>
             <p className="text-body-sm text-foreground-tertiary leading-relaxed">
               India&apos;s AI-powered loan marketplace. Intelligent matching.
-              Transparent terms. Your financial leap starts here.
+              Transparent terms.
             </p>
           </div>
 
-          {/* Nav columns */}
-          {(Object.entries(footerLinks) as [string, readonly { label: string; href: string }[]][]).map(
-            ([category, links]) => (
-              <div key={category} className="flex flex-col gap-3">
-                <span className="text-label-caps font-semibold uppercase tracking-wider text-foreground-tertiary">
-                  {category}
-                </span>
-                <ul className="flex flex-col gap-2">
-                  {links.map((link) => (
-                    <li key={link.href}>
-                      <Link
-                        href={link.href}
-                        className="text-body-sm text-foreground-tertiary hover:text-foreground-on-dark transition-colors duration-fast ease-standard"
-                      >
-                        {link.label}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+          {FOOTER_GROUPS.map((group) => (
+            <div key={group.label} className="flex flex-col gap-3">
+              <span className="text-label-caps font-semibold uppercase tracking-wider text-foreground-tertiary">
+                {group.label}
+              </span>
+              <ul className="flex flex-col gap-2">
+                {group.links.map((link) => (
+                  <li key={`${group.label}-${link.label}`}>
+                    <Link
+                      href={link.href}
+                      className="text-body-sm text-foreground-tertiary hover:text-foreground-on-dark transition-colors duration-fast"
+                    >
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+
+        {/* Trust signals */}
+        <div className="flex flex-wrap items-center gap-3 border-t border-white/10 py-6">
+          {["CIBIL Partner", "Experian Partner", "RBI Registered", "DPDP Compliant"].map(
+            (badge) => (
+              <span
+                key={badge}
+                className="rounded-full border border-white/15 px-3 py-1 text-body-sm text-foreground-tertiary"
+              >
+                {badge}
+              </span>
             )
           )}
         </div>
@@ -70,8 +61,7 @@ export function Footer() {
             &copy; {currentYear} LeapMoney. All rights reserved.
           </p>
           <p className="text-body-sm text-foreground-tertiary text-center sm:text-right">
-            Regulated under RBI Digital Lending Guidelines 2022.
-            Data stored in India (AWS Mumbai).
+            Regulated under RBI Digital Lending Guidelines 2022. Data stored in India (AWS Mumbai).
           </p>
         </div>
       </Container>

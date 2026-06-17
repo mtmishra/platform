@@ -13,6 +13,9 @@ import {
 } from "@leapmoney/ui";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { organizationSchema } from "@/lib/seo";
+import { LOAN_PRODUCTS } from "@/data/loans";
 import { ArrowRight, ShieldCheck, Zap, TrendingUp, CheckCircle } from "lucide-react";
 
 // ── Hero ─────────────────────────────────────────────────────────────────
@@ -89,15 +92,6 @@ function TrustBar() {
 // ── Loan Categories ──────────────────────────────────────────────────────
 
 function LoanCategories() {
-  const categories = [
-    { title: "Home Loan",      subtitle: "Up to ₹5 Cr · 8.5% onwards",   href: "/loans/home-loan" },
-    { title: "Personal Loan",  subtitle: "Up to ₹40 L · 10.5% onwards",  href: "/loans/personal-loan" },
-    { title: "Business Loan",  subtitle: "Up to ₹2 Cr · 14% onwards",    href: "/loans/business-loan" },
-    { title: "Car Loan",       subtitle: "Up to ₹1 Cr · 8.7% onwards",   href: "/loans/car-loan" },
-    { title: "Education Loan", subtitle: "Up to ₹75 L · 9% onwards",     href: "/loans/education-loan" },
-    { title: "Loan Against Property", subtitle: "Up to ₹10 Cr · 9.5% onwards", href: "/loans/lap" },
-  ] as const;
-
   return (
     <Section background="page">
       <Container>
@@ -110,16 +104,16 @@ function LoanCategories() {
           </Paragraph>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {categories.map((cat) => (
-            <Link key={cat.href} href={cat.href}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4">
+          {LOAN_PRODUCTS.map((product) => (
+            <Link key={product.slug} href={`/${product.slug}`}>
               <Card hoverable className="h-full">
                 <CardHeader>
-                  <Heading level={3} size="h3">{cat.title}</Heading>
+                  <Heading level={3} size="h3">{product.name}</Heading>
                 </CardHeader>
                 <CardBody>
                   <p className="text-body-sm text-foreground-tertiary">
-                    {cat.subtitle}
+                    {product.amountRange} · {product.rateFrom}
                   </p>
                   <span className="mt-4 inline-flex items-center gap-1 text-body-sm font-medium text-interactive-primary">
                     Apply Now <ArrowRight size={14} />
@@ -258,6 +252,7 @@ export default function HomePage() {
   return (
     <>
       <Header />
+      <JsonLd data={organizationSchema()} />
       <main>
         <Hero />
         <TrustBar />
