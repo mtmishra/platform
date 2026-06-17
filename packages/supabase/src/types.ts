@@ -281,6 +281,17 @@ export interface ReportSnapshotRow {
   created_at: string;
 }
 
+export interface IncomeSnapshotRow {
+  id: string;
+  user_id: string;
+  income: number;
+  cashflow_score: number;
+  foir: number;
+  verification_status: string;
+  generated_at: string;
+  created_at: string;
+}
+
 type Insertable<T, Auto extends keyof T> = Omit<T, Auto> & Partial<Pick<T, Auto>>;
 
 export interface Database {
@@ -431,6 +442,14 @@ export interface Database {
         Insert: Insertable<
           ReportSnapshotRow,
           "id" | "created_at" | "pull_timestamp" | "consent_reference" | "pull_type"
+        >;
+        Update: never;
+      };
+      income_snapshot: {
+        Row: IncomeSnapshotRow;
+        Insert: Insertable<
+          IncomeSnapshotRow,
+          "id" | "created_at" | "generated_at" | "verification_status"
         >;
         Update: never;
       };

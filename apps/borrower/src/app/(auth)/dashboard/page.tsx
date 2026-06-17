@@ -1,14 +1,21 @@
 import Link from "next/link";
-import { Sparkles, FileSearch, ArrowRight } from "lucide-react";
+import { Sparkles, FileSearch, Landmark, ArrowRight } from "lucide-react";
 import { Button, Card, Heading, Paragraph } from "@leapmoney/ui";
 import { getProfile } from "@/lib/auth";
 import { getDashboardData } from "@/lib/dashboard-demo";
+import { getCashFlowIntelligence } from "@/lib/cashflow-demo";
 import {
   CreditSnapshot,
   HealthSnapshot,
   MatchSnapshot,
   OutcomeSnapshot,
 } from "@/components/dashboard/SnapshotWidgets";
+import {
+  VerifiedIncomeBadge,
+  IncomeIntelligenceWidget,
+  CashFlowScoreWidget,
+  FoirWidget,
+} from "@/components/cashflow/CashFlowWidgets";
 import { CreditJourneyTimeline } from "@/components/dashboard/CreditJourneyTimeline";
 import { ImprovementTracker } from "@/components/dashboard/ImprovementTracker";
 import { NotificationCenter } from "@/components/dashboard/NotificationCenter";
@@ -19,6 +26,7 @@ export default async function DashboardPage() {
   const profile = await getProfile();
   const firstName = profile?.full_name?.split(" ")[0] ?? "there";
   const { leapScore, health, match, analytics, scoreHistory } = getDashboardData();
+  const cashFlow = getCashFlowIntelligence();
 
   return (
     <div className="mx-auto flex max-w-content flex-col gap-8">
@@ -47,6 +55,23 @@ export default async function DashboardPage() {
         <ArrowRight size={18} className="text-interactive-primary transition-transform duration-fast group-hover:translate-x-0.5" />
       </Link>
 
+      {/* Secondary entry point — connect bank (AA cash-flow) */}
+      <Link
+        href="/connect-bank"
+        className="group flex items-center gap-4 rounded-lg border border-border-token-default bg-background-card p-5 shadow-1 transition-shadow duration-normal ease-standard hover:shadow-2"
+      >
+        <span className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full bg-status-success/10 text-status-success">
+          <Landmark size={20} />
+        </span>
+        <div className="flex-1">
+          <p className="text-body-md font-semibold text-foreground-primary">Connect your bank for Cash Flow Intelligence</p>
+          <p className="text-body-sm text-foreground-secondary">
+            Verify income and strengthen your LeapScore via Account Aggregator — read-only, revocable.
+          </p>
+        </div>
+        <ArrowRight size={18} className="text-foreground-tertiary transition-transform duration-fast group-hover:translate-x-0.5" />
+      </Link>
+
       {/* Credit journey */}
       <section className="rounded-lg border border-border-token-default bg-background-card p-5 shadow-1">
         <h2 className="mb-4 text-label-caps uppercase tracking-wider text-foreground-tertiary">Your credit journey</h2>
@@ -59,6 +84,17 @@ export default async function DashboardPage() {
         <HealthSnapshot health={health} />
         <MatchSnapshot match={match} />
         <OutcomeSnapshot analytics={analytics} />
+      </section>
+
+      {/* Cash Flow Intelligence */}
+      <section className="flex flex-col gap-4">
+        <Heading level={2} size="h1">Income &amp; Cash Flow Intelligence</Heading>
+        <VerifiedIncomeBadge verified={cashFlow.verified_income} />
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+          <IncomeIntelligenceWidget income={cashFlow.income} />
+          <CashFlowScoreWidget score={cashFlow.cash_flow_score} />
+          <FoirWidget foir={cashFlow.foir} />
+        </div>
       </section>
 
       {/* Tracker + alerts */}

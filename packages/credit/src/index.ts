@@ -79,3 +79,17 @@ export { computeCreditHealth } from "./health/engine";
 export { translateDpd, worstDpd, worstDpdAcrossReports, hasDerogatory } from "./health/dpd";
 export { buildImprovementPlan } from "./health/improvement";
 export { simulateScenario, simulateAll } from "./health/simulator";
+
+// ── Cash Flow / Income Intelligence (Sprint 13) ───────────────────────────────
+export type {
+  IncomeConfidence,
+  CashFlowBand,
+  FoirRisk,
+  VerificationStatus,
+  IncomeIntelligence,
+  CashFlowScoreResult,
+  FoirAnalysis,
+  VerifiedIncome,
+  CashFlowIntelligence,
+} from "./cashflow/types";
+export { computeCashFlowIntelligence } from "./cashflow/engine";

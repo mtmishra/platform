@@ -1,48 +1,46 @@
-# Current Sprint: Sprint 12 — Complete Borrower Demo Experience
+# Current Sprint: Sprint 13 — Account Aggregator (Cash Flow Intelligence) Demo
 
-**Sprint:** 12
+**Sprint:** 13
 **Status:** Complete
 **Date:** 2026-06-17
-**Goal:** Investor-ready end-to-end borrower demo: Login → Credit Pull → Consent → Processing
-→ Report Ready → Dashboard. DEMO MODE ONLY — uses the Sprint 7 mock bureau framework.
-No Decentro / CIBIL / Experian / CRIF / Equifax / lender APIs.
+**Goal:** Extend LeapScore beyond bureau data with Income + Cash Flow Intelligence via an
+Account-Aggregator-style demo. DEMO MODE ONLY — mock cash-flow data; no Sahamati / Finvu /
+OneMoney / Anumati / Perfios / Decentro AA / bank APIs.
 
-## Demo-mode access (key enabler)
-When Supabase is NOT configured, the borrower app now runs as a demo: middleware allows
-the protected routes through and `lib/auth` returns a demo guest, so the full flow has no
-dead ends. Production auth (configured Supabase) is unchanged.
-
-## Sprint 12 Scope — Completed
-- [x] Credit-pull flow: /credit-report/start → consent → fetching → report → dashboard
-- [x] PAN capture (/credit-report/start): PAN format + required-field validation, error states
-- [x] Consent (/credit-report/consent): purpose, data usage, retention, withdrawal; mock consent record (sessionStorage)
-- [x] Fetching simulation (/credit-report/fetching): 5 animated steps (~4s), then redirect to report
-- [x] Report Ready (/credit-report/report): bureau scores (4, Equifax on /999), active accounts, utilization, enquiries, credit age, DPD summary — from Sprint 7 mock data
-- [x] Dashboard auto-population: LeapScore / Credit Health / LeapMatch via existing engines
-- [x] report_snapshot (0011): report_id, pull_timestamp, consent_reference (append-only, RLS) + row type
-- [x] Journey experience: Credit Report → LeapScore → Health → Match → Apply (report + dashboard)
-- [x] Empty-state removal: login "Explore the demo" + dashboard "Get your free credit report" entry CTA
-- [x] Visual QA passed (login, PAN+validation, consent, fetching, report, dashboard population, mobile, 0 console errors)
+## Sprint 13 Scope — Completed
+- [x] Cash Flow engine (packages/credit/src/cashflow): income, salary detection, consistency, volatility, confidence
+- [x] Cash Flow Score (0–100; Strong/Moderate/Weak) with insights
+- [x] FOIR analysis (current / recommended / risk level / EMI headroom)
+- [x] Verified Income (monthly income, status, last updated)
+- [x] Bank connection flow: /connect-bank → consent → fetching (5 AA steps) → /cash-flow
+- [x] AA consent screen (purpose / data shared / access duration / revocation); mock consent record
+- [x] Dashboard widgets: Income Intelligence, Cash Flow Score, FOIR, Verified Income badge
+- [x] Dashboard integration: cash-flow section + "Connect your bank" entry CTA
+- [x] Journey updated: Credit Report → LeapScore → Credit Health → Connect Bank → Cash Flow → LeapMatch → Apply
+- [x] income_snapshot (0012): income, cashflow_score, foir, verification_status (append-only, RLS) + row type
+- [x] Visual QA passed (bank select, consent, fetching, income dashboard, cash flow score, FOIR, dashboard, mobile, 0 console errors)
 
 ## Files
 ```
+packages/credit/src/cashflow/{types.ts, engine.ts}     # computeCashFlowIntelligence
 apps/borrower/src/
-  lib/credit-report-demo.ts                     # buildCreditReport(pan) from Sprint 7 mock framework
-  components/credit-report/FlowSteps.tsx
-  app/(auth)/credit-report/start|consent|fetching|report/page.tsx
-  app/(auth)/dashboard/page.tsx                 # + entry CTA
-  components/auth/LoginForm.tsx                 # + "Explore the demo"
-  lib/auth.ts, lib/supabase/middleware.ts       # demo-mode guest / allow-through
-supabase/migrations/0011_report_snapshot.sql
-packages/supabase/src/types.ts                  # ReportSnapshotRow
+  lib/cashflow-demo.ts
+  components/connect-bank/BankFlowSteps.tsx
+  components/cashflow/CashFlowWidgets.tsx                # VerifiedIncomeBadge + 3 widgets
+  app/(auth)/connect-bank/{page,consent,fetching}.tsx
+  app/(auth)/cash-flow/page.tsx
+  app/(auth)/dashboard/page.tsx                          # + cash-flow section + connect-bank CTA
+  components/dashboard/CreditJourneyTimeline.tsx         # 7-step journey
+supabase/migrations/0012_income_snapshot.sql
+packages/supabase/src/types.ts                           # IncomeSnapshotRow
 ```
 
 ## Validation
 - pnpm turbo type-check: 14/14 PASS (0 errors)
-- pnpm turbo build: SUCCESS — all 6 apps; borrower emits /credit-report/{start,consent,fetching,report}
-- Visual QA: full flow verified on desktop + mobile; 0 console errors
+- pnpm turbo build: SUCCESS — all 6 apps; borrower emits /connect-bank/{,consent,fetching} + /cash-flow
+- Visual QA: full AA flow verified desktop + mobile; 0 console errors
 
-## NOT built (out of scope)
-Live bureau APIs (Decentro/CIBIL/Experian/CRIF/Equifax), lender APIs, CRM, server-side
-persistence of the demo flow (consent + report snapshots are mocked client-side; the
-report_snapshot table is the wired-later target).
+## End result
+Credit Bureau Intelligence + Income Intelligence + Cash Flow Intelligence + LeapMatch all
+visible in the borrower experience. NOT built: live AA/bank APIs, server-side persistence of
+the demo flow (income_snapshot is the wired-later target).

@@ -18,7 +18,8 @@ supabase/
     ├── 0008_application_rls.sql  # RLS for applications; append-only application_event
     ├── 0009_snapshot_schema.sql  # Sprint 11: score_snapshot, health_snapshot, match_snapshot (time series)
     ├── 0010_snapshot_rls.sql     # RLS for snapshots; append-only
-    └── 0011_report_snapshot.sql  # Sprint 12: report_snapshot (pull event + consent reference) + RLS
+    ├── 0011_report_snapshot.sql  # Sprint 12: report_snapshot (pull event + consent reference) + RLS
+    └── 0012_income_snapshot.sql  # Sprint 13: income_snapshot (verified income + cashflow score + FOIR) + RLS
 ```
 
 ## Applying migrations

@@ -1,12 +1,21 @@
 import React from "react";
 import { Check } from "lucide-react";
 
-export type JourneyStepKey = "report" | "leapscore" | "health" | "match" | "apply";
+export type JourneyStepKey =
+  | "report"
+  | "leapscore"
+  | "health"
+  | "connect_bank"
+  | "cashflow"
+  | "match"
+  | "apply";
 
 const STEPS: Array<{ key: JourneyStepKey; label: string }> = [
   { key: "report", label: "Credit Report" },
   { key: "leapscore", label: "LeapScore" },
   { key: "health", label: "Credit Health" },
+  { key: "connect_bank", label: "Connect Bank" },
+  { key: "cashflow", label: "Cash Flow" },
   { key: "match", label: "LeapMatch" },
   { key: "apply", label: "Apply" },
 ];
