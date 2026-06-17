@@ -23,7 +23,7 @@ export interface NavItem {
 const NAV: NavItem[] = [
   { label: "Dashboard", href: "/dashboard", icon: <LayoutDashboard size={18} /> },
   { label: "Profile", href: "/profile", icon: <User size={18} /> },
-  { label: "Applications", href: "/applications", icon: <FileText size={18} />, disabled: true },
+  { label: "Applications", href: "/applications", icon: <FileText size={18} /> },
   { label: "LeapScore", href: "/score", icon: <Gauge size={18} />, disabled: true },
   { label: "Credit Health", href: "/health", icon: <HeartPulse size={18} /> },
   { label: "Settings", href: "/settings", icon: <Settings size={18} />, disabled: true },

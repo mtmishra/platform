@@ -47,4 +47,5 @@ export type {
   IncomeSnapshotRow,
   FinancialSnapshotRow,
   RecommendationSnapshotRow,
+  ApplicationSnapshotRow,
 } from "./types";

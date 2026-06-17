@@ -9,7 +9,8 @@ export type JourneyStepKey =
   | "cashflow"
   | "financial"
   | "match"
-  | "apply";
+  | "apply"
+  | "track_status";
 
 const STEPS: Array<{ key: JourneyStepKey; label: string }> = [
   { key: "report", label: "Credit Report" },
@@ -20,6 +21,7 @@ const STEPS: Array<{ key: JourneyStepKey; label: string }> = [
   { key: "financial", label: "Financial Intel" },
   { key: "match", label: "LeapMatch" },
   { key: "apply", label: "Apply" },
+  { key: "track_status", label: "Track Status" },
 ];
 
 /**

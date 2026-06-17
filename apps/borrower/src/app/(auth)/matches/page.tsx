@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Heading, Paragraph } from "@leapmoney/ui";
 import { Sparkles, Info } from "lucide-react";
 import { getDashboardData } from "@/lib/dashboard-demo";
@@ -53,9 +54,9 @@ export default function MatchesPage() {
             </div>
             <div className="flex items-center justify-between">
               <span className="text-body-sm text-foreground-tertiary">{m.processing_fee_display} · ⭐ {m.user_review_score} ({m.review_count})</span>
-              <span className="inline-flex items-center gap-1 rounded-md bg-interactive-primary px-3 py-1.5 text-body-sm font-semibold text-foreground-on-dark">
+              <Link href="/applications/new" className="inline-flex items-center gap-1 rounded-md bg-interactive-primary px-3 py-1.5 text-body-sm font-semibold text-foreground-on-dark transition-colors duration-fast hover:bg-interactive-hover">
                 <Sparkles size={14} /> Apply
-              </span>
+              </Link>
             </div>
           </div>
         ))}

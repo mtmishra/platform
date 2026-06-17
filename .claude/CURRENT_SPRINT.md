@@ -1,44 +1,47 @@
-# Current Sprint: Sprint 13.5 (expanded) — Financial Intelligence & Recommendation Engine
+# Current Sprint: Sprint 14 — Loan Application Journey Demo
 
-**Sprint:** 13.5 (expanded)
+**Sprint:** 14
 **Status:** Complete
 **Date:** 2026-06-18
-**Goal:** Analyse the borrower profile BEFORE showing lenders — findings, risks, opportunities,
-savings, recommendations — then a pre-match approval gate, then LeapMatch results. DEMO MODE,
-rule-based, no APIs/ML/lender integrations.
+**Goal:** Borrower-side journey from LeapMatch → Apply → Track Status. Mock workflow only —
+no APIs, CRM, lender integrations, KYC providers, or document storage.
 
-## Built on top of the prior 13.5 (commit 6319d75)
-The employer/FOIR/balance-transfer/consolidation/recommendations/savings engines + dashboard
-Financial Intelligence section + journey already shipped. This expansion adds:
-- [x] Findings engine (packages/credit/src/findings): computeFindings → Critical/Warning/Info findings
-- [x] Financial Analysis report (/financial): investor-grade Current Position (LeapScore / Health / Cash Flow / FOIR) + Findings section
-- [x] Dashboard Financial Intelligence: Key findings + Recommended actions cards alongside Savings
-- [x] User Approval Layer (/matches/review): "Improve before you apply?" + View opportunities / Continue anyway
-- [x] LeapMatch results (/matches): ranked matched lenders (approval %, rate, EMI, APR, disbursal, reasons) + not-matched + ranking methodology
-- [x] Snapshot persistence (0014): financial_snapshot.findings + .opportunities jsonb columns + row type
-- [x] Dashboard LeapMatch snapshot now routes to /matches/review (approval gate before matches)
-- [x] Visual QA passed (Current Position, Findings, approval gate, matches results; 0 console errors)
+## Sprint 14 Scope — Completed
+- [x] Application workspace: /applications, /applications/new, /applications/[id], /applications/[id]/timeline
+- [x] 7-step Application Wizard: Loan selection → Personal → Employment → Income → Documents → Review → Submit (progress indicator)
+- [x] My Applications list + status summary (Draft/Submitted/Under Review/Approved/Rejected/Disbursed)
+- [x] Document vault (PAN/Aadhaar/Salary Slip/Bank Statement/ITR; Uploaded/Missing — mock)
+- [x] KYC module (Pending/In Progress/Verified) + progress card
+- [x] Status timeline (Created → Documents → KYC → Under review → Decision → Disbursal), visual
+- [x] Application detail page (summary, approval simulation + why-this-lender, KYC, documents, timeline, notifications)
+- [x] Approval simulation (probability/confidence/expected decision time) reusing Sprint 8 outputs
+- [x] Application notifications (submitted/verified/under review/approved/disbursed)
+- [x] application_snapshot (0015; append-only, RLS) + row type
+- [x] Dashboard integration: My Applications section + status summary + recent activity
+- [x] Journey updated: … → LeapMatch → Apply → Track Status (9 steps); Applications sidebar enabled; /matches Apply → /applications/new
+- [x] Visual QA passed (wizard, vault, KYC, timeline, detail, status, notifications, dashboard, mobile; 0 console errors)
 
-## New files
+## Files
 ```
-packages/credit/src/findings/index.ts
-apps/borrower/src/app/(auth)/matches/page.tsx           # LeapMatch results
-apps/borrower/src/app/(auth)/matches/review/page.tsx    # approval gate
-supabase/migrations/0014_financial_snapshot_findings.sql
+apps/borrower/src/
+  lib/applications-demo.ts                       # seed applications + timeline/status helpers
+  components/applications/ApplicationWidgets.tsx # StatusBadge, ApplicationCard, Timeline, DocumentVault, KycCard, ApprovalCard, Notifications
+  components/applications/ApplicationWizard.tsx  # 7-step client wizard
+  app/(auth)/applications/{page, new, [id], [id]/timeline}.tsx
+  app/(auth)/dashboard/page.tsx                  # + My Applications section
+  components/dashboard/CreditJourneyTimeline.tsx # + Track Status step
+  components/layout/Sidebar.tsx                  # Applications enabled
+  app/(auth)/matches/page.tsx                    # Apply → /applications/new
+supabase/migrations/0015_application_snapshot.sql
+packages/supabase/src/types.ts                  # ApplicationSnapshotRow
 ```
-Modified: financial-demo.ts (+findings), FinancialWidgets.tsx (+CurrentPosition/+FindingsList),
-financial/page.tsx (Financial Analysis report), dashboard/page.tsx (findings card + match routing),
-SnapshotWidgets.tsx (match → /matches/review), supabase types.
-
-## Borrower flow (full)
-Login → Credit Report → LeapScore → Credit Health → Connect Bank → Cash Flow → **Financial Analysis
-(findings + savings + recommendations)** → **Approval gate** → **LeapMatch results** → Apply.
 
 ## Validation
 - pnpm turbo type-check: 14/14 PASS (0 errors)
-- pnpm turbo build: SUCCESS — all 6 apps; borrower emits /financial, /matches, /matches/review
+- pnpm turbo build: SUCCESS — all 6 apps; borrower emits /applications, /applications/new, /applications/[id], /applications/[id]/timeline
 - Visual QA: desktop + mobile; 0 console errors
 
-## NOT built
-Live APIs/ML/lender integrations; server-side persistence of the analysis (financial_snapshot /
-recommendation_snapshot are the wired-later targets; Apply is a demo CTA).
+## End result
+The borrower journey is now complete end-to-end: Credit Report → LeapScore → Credit Health →
+Connect Bank → Cash Flow → Financial Analysis → LeapMatch → Apply → Track Status. NOT built:
+live APIs/CRM/lender/KYC/storage; server-side persistence (application_snapshot is the wired-later target).

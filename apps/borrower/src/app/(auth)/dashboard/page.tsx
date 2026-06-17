@@ -6,6 +6,8 @@ import { getDashboardData } from "@/lib/dashboard-demo";
 import { getCashFlowIntelligence } from "@/lib/cashflow-demo";
 import { getFinancialIntelligence } from "@/lib/financial-demo";
 import { SavingsWidget, RecommendationCard, FindingsList } from "@/components/financial/FinancialWidgets";
+import { getApplications, getStatusSummary } from "@/lib/applications-demo";
+import { ApplicationCard } from "@/components/applications/ApplicationWidgets";
 import {
   CreditSnapshot,
   HealthSnapshot,
@@ -31,6 +33,11 @@ export default async function DashboardPage() {
   const cashFlow = getCashFlowIntelligence();
   const financial = getFinancialIntelligence();
   const topRecs = financial.guidance.recommendations.slice(0, 3);
+  const applications = getApplications();
+  const statusSummary = getStatusSummary();
+  const recentActivity = [...applications]
+    .sort((a, b) => new Date(b.last_updated).getTime() - new Date(a.last_updated).getTime())
+    .slice(0, 3);
 
   return (
     <div className="mx-auto flex max-w-content flex-col gap-8">
@@ -121,6 +128,38 @@ export default async function DashboardPage() {
               <RecommendationCard key={rec.id} rec={rec} />
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* My Applications */}
+      <section className="flex flex-col gap-4">
+        <div className="flex items-center justify-between">
+          <Heading level={2} size="h1">My Applications</Heading>
+          <Link href="/applications" className="inline-flex items-center gap-1 text-body-sm font-medium text-interactive-primary">
+            View all <ArrowRight size={14} />
+          </Link>
+        </div>
+        {/* Status summary */}
+        <div className="grid grid-cols-3 gap-3 sm:grid-cols-6">
+          {([
+            ["under_review", "Under Review"],
+            ["approved", "Approved"],
+            ["disbursed", "Disbursed"],
+            ["draft", "Draft"],
+            ["submitted", "Submitted"],
+            ["rejected", "Rejected"],
+          ] as const).map(([key, label]) => (
+            <div key={key} className="rounded-lg border border-border-token-default bg-background-card p-3 text-center shadow-1">
+              <p className="font-mono text-h1 font-bold tabular-nums text-foreground-primary">{statusSummary[key]}</p>
+              <p className="text-body-sm text-foreground-tertiary">{label}</p>
+            </div>
+          ))}
+        </div>
+        {/* Recent activity */}
+        <div className="flex flex-col gap-3">
+          {recentActivity.map((app) => (
+            <ApplicationCard key={app.id} app={app} />
+          ))}
         </div>
       </section>
 

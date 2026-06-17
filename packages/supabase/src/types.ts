@@ -306,6 +306,17 @@ export interface FinancialSnapshotRow {
   created_at: string;
 }
 
+export interface ApplicationSnapshotRow {
+  id: string;
+  user_id: string;
+  application_id: string;
+  lender: string | null;
+  status: ApplicationStatusName;
+  probability: number | null;
+  timeline: unknown[];
+  created_at: string;
+}
+
 export interface RecommendationSnapshotRow {
   id: string;
   user_id: string;
@@ -502,6 +513,14 @@ export interface Database {
         Insert: Insertable<
           RecommendationSnapshotRow,
           "id" | "created_at" | "generated_at" | "financial_snapshot_id" | "expected_score_impact" | "expected_savings"
+        >;
+        Update: never;
+      };
+      application_snapshot: {
+        Row: ApplicationSnapshotRow;
+        Insert: Insertable<
+          ApplicationSnapshotRow,
+          "id" | "created_at" | "lender" | "probability" | "timeline"
         >;
         Update: never;
       };
