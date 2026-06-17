@@ -1,31 +1,29 @@
-# Current Sprint: Sprint 4 — Website V2 Launch Readiness
+# Current Sprint: Sprint 5 — Product Experience & Differentiator Pages
 
-**Sprint:** 4
+**Sprint:** 5
 **Status:** Complete
 **Date:** 2026-06-17
-**Goal:** Make Website V2 publicly reviewable and Vercel-deployment ready
+**Goal:** Convert the 6 product/feature placeholders into real, conversion-focused pages
 
 ## Source of Truth
-Phase 5 (IA), Phase 6 (design tokens), Phase 7 (engineering). See [[website-v2-ia]].
+Phase 5 (IA + per-page content elements §10), Phase 6 (tokens), Phase 3 (LeapScore components, Credit Health modules). See [[website-v2-ia]].
 
-## Sprint 4 Scope — Completed
-- [x] Blog foundation: index with category structure, `/blog/[slug]` SSG template, 6 seeded articles, Article + Breadcrumb JSON-LD
-- [x] Calculators: hub (/calculators), EMI, Loan Eligibility, Affordability (live client calculators)
-- [x] Lead capture: LeadForm (homepage hero) + ContactForm (/contact) — validation, success/error states
-- [x] Analytics: GA4 framework in @leapmoney/analytics, Consent Mode v2, page_view + cta_click + form events
-- [x] Cookie & consent layer: DPDP-aware banner, preferences, analytics opt-in gating GA4
-- [x] Trust layer: TrustSection (homepage), RBI/facilitation disclaimer in footer
-- [x] Legal: expanded Privacy + Terms (Sprint 3), new /disclaimer page
-- [x] SEO completion: sitemap (33 URLs), robots.txt, canonical, OG, structured data verified in built HTML
-- [x] Deployment readiness: src/lib/env.ts validation, production metadata, NEXT_PUBLIC_ env vars
+## Sprint 5 Scope — Completed
+- [x] /leapscore — 6 components, A+–D band table, "vs CIBIL" FAQ, no-impact messaging
+- [x] /leapmatch — 4-step how-it-works, sample approval-probability output, FAQ
+- [x] /credit-health — 7-module explainer, improvement-plan preview, FAQ
+- [x] /compare — TCB explainer, sample comparison table (lower rate ≠ cheaper), FAQ
+- [x] /dsa — "Earn more. Work smarter.", 8-module suite, why-partner stats, FAQ
+- [x] /lenders — pre-qualified lead value props, applicant-pool snapshot, Request Demo CTA, FAQ
+- [x] Shared journey strip: Credit Report → LeapScore → Credit Health → LeapMatch → Compare → Apply
+  (rendered on all 4 borrower pages, cross-links the full flow)
+- [x] SEO: unique title/meta + canonical per page; FAQPage + BreadcrumbList JSON-LD
+- [x] New shared components: JourneyStrip, FaqAccordion, FeatureCta, FeatureBreadcrumb; data/journey.ts
 
 ## Validation
 - pnpm turbo type-check: 11/11 PASS (0 errors)
-- pnpm turbo build --filter=@leapmoney/web: SUCCESS — 39 pages, all Static/SSG
-- Internal link audit: 0 broken (every referenced path resolves)
-- SEO audit: canonical + OG + JSON-LD present; sitemap.xml (33 URLs) + robots.txt generated
+- pnpm turbo build --filter=@leapmoney/web: SUCCESS — all pages Static/SSG
 
-## Vercel notes
-- All pages static/SSG; no server-only runtime deps. Set Vercel project root to `apps/web`
-  (or use Turborepo remote caching). Configure NEXT_PUBLIC_SITE_URL and
-  NEXT_PUBLIC_GA4_MEASUREMENT_ID in Vercel env. No secrets required to build.
+## Notes
+- No Supabase / auth / backend (website experience only).
+- Borrower-page CTAs → /register; /dsa → /partners; /lenders → /contact (all resolve).

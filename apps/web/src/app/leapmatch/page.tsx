@@ -1,19 +1,131 @@
-﻿import type { Metadata } from "next";
-import { PlaceholderPage } from "@/components/layout/PlaceholderPage";
-import { buildMetadata } from "@/lib/seo";
+import type { Metadata } from "next";
+import {
+  Card,
+  Container,
+  Heading,
+  Label,
+  Paragraph,
+  Section,
+} from "@leapmoney/ui";
+import { Header } from "@/components/layout/Header";
+import { Footer } from "@/components/layout/Footer";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { FeatureBreadcrumb } from "@/components/feature/FeatureBreadcrumb";
+import { JourneyStrip } from "@/components/feature/JourneyStrip";
+import { FaqAccordion } from "@/components/feature/FaqAccordion";
+import { FeatureCta } from "@/components/feature/FeatureCta";
+import { buildMetadata, breadcrumbSchema, faqPageSchema } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
-  title: "LeapMatch — AI Loan Matching | LeapMoney",
-  description: "Our AI engine matches you to the lenders most likely to approve you. The full LeapMatch product page is coming soon.",
+  title: "LeapMatch™ — AI Loan Matching in India | LeapMoney",
+  description:
+    "LeapMatch™ screens you against 30+ lenders and shows the ones most likely to approve you, with an approval probability for each. Free, no credit score impact.",
   path: "/leapmatch",
 });
 
+const STEPS = [
+  { title: "Share your profile", body: "Tell us about your income, employment, and the loan you need — in about 2 minutes." },
+  { title: "We screen 30+ lenders", body: "LeapMatch™ applies each lender's eligibility rules to your profile instantly." },
+  { title: "See your approval odds", body: "Every match comes with an approval probability — e.g. 72% — so you know where you stand." },
+  { title: "Apply with confidence", body: "Apply only where you're likely to be approved, avoiding needless rejections." },
+];
+
+const FAQS = [
+  { question: "What is approval probability?", answer: "It's an estimate — for example 72% — of how likely a specific lender is to approve your application, based on how your profile fits their policy. It helps you apply where you're most likely to succeed." },
+  { question: "How is this different from a loan comparison site?", answer: "Comparison sites show you everyone's advertised rates. LeapMatch™ shows the lenders likely to approve you specifically, ranked by approval probability and true cost — so you don't waste applications." },
+  { question: "Does using LeapMatch affect my credit score?", answer: "No. LeapMatch™ uses a soft inquiry, which has no impact on your CIBIL or bureau score." },
+  { question: "Is LeapMatch free?", answer: "Yes. Getting your matches is free and there's no obligation to apply." },
+];
+
 export default function Page() {
   return (
-    <PlaceholderPage
-      eyebrow="Product"
-      title="LeapMatch™ — AI Loan Matching"
-      description="Our AI engine matches you to the lenders most likely to approve you. The full LeapMatch product page is coming soon."
-    />
+    <>
+      <Header />
+      <JsonLd
+        data={[
+          faqPageSchema(FAQS),
+          breadcrumbSchema([
+            { name: "Home", path: "/" },
+            { name: "LeapMatch", path: "/leapmatch" },
+          ]),
+        ]}
+      />
+      <main>
+        <FeatureBreadcrumb title="LeapMatch™" />
+
+        <Section background="page" className="py-10 lg:py-16">
+          <Container>
+            <div className="max-w-2xl">
+              <Label caps className="mb-4 block">LeapMatch™</Label>
+              <Heading level={1} size="display-hero" className="mb-4">
+                AI that matches you to the right lender
+              </Heading>
+              <Paragraph size="lg" color="secondary" className="mb-6">
+                Stop guessing which lender will approve you. LeapMatch™ screens you
+                against 30+ lenders and ranks the ones most likely to say yes — each
+                with an approval probability. Free, with no credit score impact.
+              </Paragraph>
+            </div>
+          </Container>
+        </Section>
+
+        {/* 4 steps */}
+        <Section background="card">
+          <Container>
+            <div className="mb-8">
+              <Label caps className="mb-3 block">How LeapMatch works</Label>
+              <Heading level={2} size="h1">Four steps to your matches</Heading>
+            </div>
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+              {STEPS.map((s, i) => (
+                <div key={s.title} className="flex flex-col gap-3">
+                  <span className="text-display-large font-bold text-interactive-primary opacity-30">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <Heading level={3} size="h2">{s.title}</Heading>
+                  <Paragraph color="secondary">{s.body}</Paragraph>
+                </div>
+              ))}
+            </div>
+          </Container>
+        </Section>
+
+        {/* Sample output */}
+        <Section background="page">
+          <Container>
+            <div className="mb-8">
+              <Label caps className="mb-3 block">What you&apos;ll see</Label>
+              <Heading level={2} size="h1">A clear, ranked shortlist</Heading>
+            </div>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+              {[
+                { lender: "Lender A", ape: "72%", tone: "text-status-success", note: "High approval probability" },
+                { lender: "Lender B", ape: "58%", tone: "text-status-warning", note: "Medium approval probability" },
+                { lender: "Lender C", ape: "34%", tone: "text-status-danger", note: "Lower approval probability" },
+              ].map((m) => (
+                <Card key={m.lender} className="flex flex-col gap-2">
+                  <Heading level={3} size="h3">{m.lender}</Heading>
+                  <span className={`font-mono text-display-large font-bold ${m.tone}`}>{m.ape}</span>
+                  <Paragraph color="secondary">{m.note}</Paragraph>
+                </Card>
+              ))}
+            </div>
+            <p className="mt-4 text-body-sm text-foreground-tertiary">
+              Illustrative example. Your real matches depend on your profile and live lender policies.
+            </p>
+          </Container>
+        </Section>
+
+        <JourneyStrip activeKey="leapmatch" />
+        <FaqAccordion faqs={FAQS} heading="LeapMatch — frequently asked questions" />
+        <FeatureCta
+          heading="See your matches"
+          body="Find the lenders most likely to approve you — free, with no credit score impact."
+          ctaLabel="Check my matches"
+          ctaHref="/register"
+        />
+      </main>
+      <Footer />
+    </>
   );
 }
