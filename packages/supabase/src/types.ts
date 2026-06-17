@@ -300,6 +300,8 @@ export interface FinancialSnapshotRow {
   monthly_savings: number;
   annual_savings: number;
   lifetime_savings: number;
+  findings: unknown[];
+  opportunities: unknown[];
   generated_at: string;
   created_at: string;
 }
@@ -482,7 +484,16 @@ export interface Database {
         Row: FinancialSnapshotRow;
         Insert: Insertable<
           FinancialSnapshotRow,
-          "id" | "created_at" | "generated_at" | "score" | "foir" | "monthly_savings" | "annual_savings" | "lifetime_savings"
+          | "id"
+          | "created_at"
+          | "generated_at"
+          | "score"
+          | "foir"
+          | "monthly_savings"
+          | "annual_savings"
+          | "lifetime_savings"
+          | "findings"
+          | "opportunities"
         >;
         Update: never;
       };

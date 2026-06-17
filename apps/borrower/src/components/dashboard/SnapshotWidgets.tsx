@@ -81,7 +81,7 @@ export function HealthSnapshot({ health }: { health: CreditHealthResult }) {
 export function MatchSnapshot({ match }: { match: MatchResult }) {
   const best = match.matched_lenders[0];
   return (
-    <SnapshotCard icon={<Sparkles size={15} />} label="LeapMatch" href="/health">
+    <SnapshotCard icon={<Sparkles size={15} />} label="LeapMatch" href="/matches/review">
       {best ? (
         <>
           <div className="flex items-baseline gap-2">

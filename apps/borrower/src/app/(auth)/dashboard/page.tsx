@@ -5,7 +5,7 @@ import { getProfile } from "@/lib/auth";
 import { getDashboardData } from "@/lib/dashboard-demo";
 import { getCashFlowIntelligence } from "@/lib/cashflow-demo";
 import { getFinancialIntelligence } from "@/lib/financial-demo";
-import { SavingsWidget, RecommendationCard } from "@/components/financial/FinancialWidgets";
+import { SavingsWidget, RecommendationCard, FindingsList } from "@/components/financial/FinancialWidgets";
 import {
   CreditSnapshot,
   HealthSnapshot,
@@ -110,10 +110,17 @@ export default async function DashboardPage() {
           </Link>
         </div>
         <SavingsWidget savings={financial.guidance.savings} />
-        <div className="grid grid-cols-1 gap-3 lg:grid-cols-3">
-          {topRecs.map((rec) => (
-            <RecommendationCard key={rec.id} rec={rec} />
-          ))}
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+          <div className="flex flex-col gap-3">
+            <h3 className="text-label-caps uppercase tracking-wider text-foreground-tertiary">Key findings</h3>
+            <FindingsList findings={financial.findings.slice(0, 3)} />
+          </div>
+          <div className="flex flex-col gap-3">
+            <h3 className="text-label-caps uppercase tracking-wider text-foreground-tertiary">Recommended actions</h3>
+            {topRecs.map((rec) => (
+              <RecommendationCard key={rec.id} rec={rec} />
+            ))}
+          </div>
         </div>
       </section>
 

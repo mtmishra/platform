@@ -7,6 +7,7 @@ import {
   computeBalanceTransfer,
   computeConsolidation,
   computeEmployerIntelligence,
+  computeFindings,
   computeIncomeStability,
   computeRecommendations,
   type AdvancedFoirResult,
@@ -14,6 +15,7 @@ import {
   type ConsolidationResult,
   type Debt,
   type EmployerIntelligence,
+  type Finding,
   type FinancialGuidance,
   type IncomeStabilityResult,
 } from "@leapmoney/credit";
@@ -25,6 +27,7 @@ export interface FinancialIntelligenceBundle {
   foir: AdvancedFoirResult;
   balanceTransfer: BalanceTransferResult;
   consolidation: ConsolidationResult;
+  findings: Finding[];
   guidance: FinancialGuidance;
 }
 
@@ -65,6 +68,17 @@ export function getFinancialIntelligence(): FinancialIntelligenceBundle {
 
   const consolidation = computeConsolidation(DEMO_DEBTS);
 
+  const findings = computeFindings({
+    utilization: 0.18,
+    foir_risk: foir.risk_band,
+    has_derogatory: false,
+    hard_inquiries_6m: 1,
+    highest_loan_rate: Math.max(...DEMO_DEBTS.map((d) => d.rate)),
+    employer_rating: employer.stability_rating,
+    job_tenure_months: 60,
+    income_stability_band: incomeStability.stability_band,
+  });
+
   const guidance = computeRecommendations({
     utilization: 0.18,
     hard_inquiries_6m: 1,
@@ -84,5 +98,5 @@ export function getFinancialIntelligence(): FinancialIntelligenceBundle {
     low_salary_balance: false,
   });
 
-  return { employer, incomeStability, foir, balanceTransfer, consolidation, guidance };
+  return { employer, incomeStability, foir, balanceTransfer, consolidation, findings, guidance };
 }

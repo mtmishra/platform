@@ -124,3 +124,5 @@ export type {
   FinancialGuidance,
 } from "./recommendations";
 export { computeRecommendations } from "./recommendations";
+export type { FindingSeverity, Finding, FindingsInput } from "./findings";
+export { computeFindings } from "./findings";

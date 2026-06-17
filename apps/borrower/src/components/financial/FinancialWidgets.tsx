@@ -1,10 +1,12 @@
 import React from "react";
-import { Briefcase, ShieldCheck, Gauge, ArrowLeftRight, Layers, PiggyBank } from "lucide-react";
+import { Briefcase, ShieldCheck, Gauge, ArrowLeftRight, Layers, PiggyBank, AlertTriangle, AlertCircle, Info } from "lucide-react";
 import type {
   AdvancedFoirResult,
   BalanceTransferResult,
   ConsolidationResult,
   EmployerIntelligence,
+  Finding,
+  FindingSeverity,
   IncomeStabilityResult,
   Recommendation,
   RecommendationPriority,
@@ -43,6 +45,66 @@ function Shell({ icon, label, children }: { icon: React.ReactNode; label: string
         {icon} {label}
       </span>
       {children}
+    </div>
+  );
+}
+
+// ── Current Position (investor-grade scorecard) ───────────────────────────────
+export interface CurrentPosition {
+  leapscore: number | null;
+  health_score: number;
+  cash_flow_score: number;
+  foir_pct: number;
+}
+
+export function CurrentPositionWidget({ position }: { position: CurrentPosition }) {
+  const tiles = [
+    { label: "LeapScore", value: position.leapscore === null ? "—" : String(position.leapscore), scale: "/ 900" },
+    { label: "Health", value: String(position.health_score), scale: "/ 100" },
+    { label: "Cash Flow", value: String(position.cash_flow_score), scale: "/ 100" },
+    { label: "FOIR", value: `${position.foir_pct}%`, scale: "committed" },
+  ];
+  return (
+    <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+      {tiles.map((t) => (
+        <div key={t.label} className="rounded-lg border border-border-token-default bg-background-card p-5 shadow-1">
+          <p className="text-label-caps uppercase tracking-wider text-foreground-tertiary">{t.label}</p>
+          <p className="font-mono text-display-large font-bold tabular-nums text-foreground-primary">{t.value}</p>
+          <p className="text-body-sm text-foreground-tertiary">{t.scale}</p>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ── Findings ──────────────────────────────────────────────────────────────────
+const FINDING_META: Record<FindingSeverity, { tone: string; icon: React.ReactNode; label: string }> = {
+  critical: { tone: "text-status-danger", icon: <AlertTriangle size={16} />, label: "Critical" },
+  warning: { tone: "text-status-warning", icon: <AlertCircle size={16} />, label: "Warning" },
+  info: { tone: "text-status-success", icon: <Info size={16} />, label: "Info" },
+};
+
+export function FindingsList({ findings }: { findings: Finding[] }) {
+  if (findings.length === 0) {
+    return <p className="text-body-md text-foreground-secondary">No notable findings — your profile looks clean.</p>;
+  }
+  return (
+    <div className="flex flex-col gap-3">
+      {findings.map((f) => {
+        const meta = FINDING_META[f.severity];
+        return (
+          <div key={f.id} className="flex items-start gap-3 rounded-lg border border-border-token-default bg-background-card p-4 shadow-1">
+            <span className={`mt-0.5 flex-shrink-0 ${meta.tone}`}>{meta.icon}</span>
+            <div className="flex-1">
+              <span className="flex items-center justify-between gap-2">
+                <span className="text-body-md font-semibold text-foreground-primary">{f.title}</span>
+                <span className={`text-label-caps uppercase tracking-wider ${meta.tone}`}>{meta.label}</span>
+              </span>
+              <p className="text-body-sm text-foreground-secondary">{f.detail}</p>
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 }
