@@ -1,8 +1,7 @@
+import { redirect } from "next/navigation";
+
 export default function Page() {
-  return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-white">
-      <h1 className="text-4xl font-bold text-slate-900">Borrower Portal</h1>
-      <p className="mt-4 text-gray-600">Manage your loan applications</p>
-    </main>
-  );
+  // Entry point. Middleware + the (auth) layout enforce the session; an
+  // authenticated user lands on the dashboard, otherwise on /login.
+  redirect("/dashboard");
 }

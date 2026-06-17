@@ -1,12 +1,12 @@
-import { createClient } from "@supabase/supabase-js";
+import { createBrowserClient } from "@supabase/ssr";
+import type { Database } from "./types";
+import { getSupabasePublicEnv } from "./env";
 
-const supabaseUrl = process.env["NEXT_PUBLIC_SUPABASE_URL"] ?? "";
-const supabaseAnonKey = process.env["NEXT_PUBLIC_SUPABASE_ANON_KEY"] ?? "";
+// ── Browser client ───────────────────────────────────────────────────────────
+// For use in Client Components. Server-side clients are created per-app with the
+// framework's cookie adapter (see apps/*/src/lib/supabase/server.ts).
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
-
-export function createServerClient(url: string, key: string) {
-  return createClient(url, key, {
-    auth: { persistSession: false },
-  });
+export function createSupabaseBrowserClient() {
+  const { url, anonKey } = getSupabasePublicEnv();
+  return createBrowserClient<Database>(url, anonKey);
 }
