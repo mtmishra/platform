@@ -22,7 +22,8 @@ supabase/
     ├── 0012_income_snapshot.sql  # Sprint 13: income_snapshot (verified income + cashflow score + FOIR) + RLS
     ├── 0013_financial_snapshot.sql # Sprint 13.5: financial_snapshot + recommendation_snapshot + RLS
     ├── 0014_financial_snapshot_findings.sql # Sprint 13.5: financial_snapshot findings/opportunities jsonb
-    └── 0015_application_snapshot.sql # Sprint 14: application_snapshot (status/probability/timeline) + RLS
+    ├── 0015_application_snapshot.sql # Sprint 14: application_snapshot (status/probability/timeline) + RLS
+    └── 0016_dsa_snapshot.sql     # Sprint 15: dsa_snapshot + commission_snapshot + RLS
 ```
 
 ## Applying migrations

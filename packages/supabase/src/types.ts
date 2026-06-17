@@ -306,6 +306,26 @@ export interface FinancialSnapshotRow {
   created_at: string;
 }
 
+export interface DsaSnapshotRow {
+  id: string;
+  user_id: string;
+  metrics: Record<string, unknown>;
+  earnings: number;
+  performance: Record<string, unknown>;
+  generated_at: string;
+  created_at: string;
+}
+
+export interface CommissionSnapshotRow {
+  id: string;
+  user_id: string;
+  pending: number;
+  approved: number;
+  paid: number;
+  generated_at: string;
+  created_at: string;
+}
+
 export interface ApplicationSnapshotRow {
   id: string;
   user_id: string;
@@ -522,6 +542,16 @@ export interface Database {
           ApplicationSnapshotRow,
           "id" | "created_at" | "lender" | "probability" | "timeline"
         >;
+        Update: never;
+      };
+      dsa_snapshot: {
+        Row: DsaSnapshotRow;
+        Insert: Insertable<DsaSnapshotRow, "id" | "created_at" | "generated_at" | "metrics" | "earnings" | "performance">;
+        Update: never;
+      };
+      commission_snapshot: {
+        Row: CommissionSnapshotRow;
+        Insert: Insertable<CommissionSnapshotRow, "id" | "created_at" | "generated_at" | "pending" | "approved" | "paid">;
         Update: never;
       };
     };

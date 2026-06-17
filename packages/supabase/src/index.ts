@@ -48,4 +48,6 @@ export type {
   FinancialSnapshotRow,
   RecommendationSnapshotRow,
   ApplicationSnapshotRow,
+  DsaSnapshotRow,
+  CommissionSnapshotRow,
 } from "./types";
