@@ -333,6 +333,19 @@ importers:
         specifier: ^5.6.3
         version: 5.9.3
 
+  packages/credit:
+    dependencies:
+      '@leapmoney/supabase':
+        specifier: workspace:*
+        version: link:../supabase
+    devDependencies:
+      '@leapmoney/config':
+        specifier: workspace:*
+        version: link:../config
+      typescript:
+        specifier: ^5.6.3
+        version: 5.9.3
+
   packages/supabase:
     dependencies:
       '@supabase/ssr':

@@ -1,38 +1,56 @@
-# Current Sprint: Sprint 6 — Borrower Platform Foundation
+# Current Sprint: Sprint 7 — Credit Intelligence Foundation
 
-**Sprint:** 6
+**Sprint:** 7
 **Status:** Complete
 **Date:** 2026-06-17
-**Goal:** Supabase + auth + RBAC + protected borrower dashboard (foundation only)
+**Goal:** Bureau abstraction layer + credit data schema + LeapScore v2 engine (no live bureau integration; mock data only)
 
 ## Source of Truth
-Phase 7 (architecture, RLS, folder structure §3, route map, auth §16), Phase 8 (DPDP consent, audit), Phase 11/12 (scope). See [[architecture-decisions]].
+**R3 Credit Intelligence Report** (§1 Bureau Intelligence, §9 LeapScore Data Dictionary)
+is the engineering source of truth for this sprint. Phase 7 (architecture, RLS,
+data lifecycle §15, consent §16) and Phase 8 (consent governance §4) for compliance.
+Note: R3's LeapScore weights (Bureau 55 / Cash Flow 25 / Behavior 15 / Health 5)
+supersede the older 6-component model on the marketing `/leapscore` page — the page
+will be reconciled to the engine in a later sprint.
 
-## Sprint 6 Scope — Completed
-- [x] Supabase foundation: @supabase/ssr; browser/server/middleware clients; env with safe fallback
-- [x] Database schema (supabase/migrations): users_profile, user_settings, user_consent (append-only),
-      audit_log (append-only); set_updated_at trigger; handle_new_auth_user provisioning
-- [x] RLS on every table; "own rows" policies; append-only enforced (no UPDATE/DELETE policies)
-- [x] Email OTP auth (request code -> verify), session via cookies, sign-out
-- [x] Role system: app_role enum (borrower/dsa/lender/admin); ROLES/hasRole/isRole helpers
-- [x] Route protection: middleware.ts (edge) + (auth) route group + requireUser/requireRole
-- [x] User profiles: profile schema, settings, profile_completed + onboarding_step tracking
-- [x] Borrower app shell: sidebar (desktop + mobile drawer), topbar, empty states, onboarding checklist
-- [x] Pages: /login, /onboard, /dashboard, /profile, /forbidden
-- [x] Security: RBAC, middleware protection, server-side session validation, audit-ready append-only tables
+## Sprint 7 Scope — Completed
+- [x] Bureau abstraction layer: `BureauAdapter` interface + `BureauRegistry` (concurrent multi-bureau pull)
+- [x] CIBIL / Experian / CRIF / Equifax adapters (mock; live adapters drop in with no engine change)
+- [x] Equifax 1–999 → 300–900 normalization
+- [x] Credit schema (0004): bureau_report, tradeline, inquiry, score_factor, leapscore_snapshot
+- [x] Consent extensions: bureau, pull_type, expires_at, revoked_at, supersedes (append-only; withdrawal = new row)
+- [x] RLS (0005): own-rows on all credit tables; child tables scoped via parent report; append-only bureau/score history
+- [x] LeapScore Engine v2: Layer A Bureau 55% / B Cash Flow 25% / C Behavior 15% / D Health 5%
+- [x] confidence_level, data_sources_used, thin-file path (alt-data-only + Score Unavailable)
+- [x] Outputs: score, band, what's helping/hurting, next milestone, ranked improvement actions, credit cost indicator
 
-## Architecture (Phase 7)
-- Folder structure: app/(public)/, app/(auth)/, lib/supabase/, components/, middleware.ts
-- UUID PKs, set_updated_at trigger, no direct FK to auth.users (FK -> users_profile)
-- No PII in logs; consent + audit immutable
+## New package: `@leapmoney/credit`
+```
+packages/credit/src/
+  types.ts                 # domain types (R3 §1, §9)
+  normalize.ts             # Equifax normalization
+  bands.ts                 # score bands + percentile (R3 Appendix E)
+  mock.ts                  # demo AA/behavior/health inputs
+  bureau/adapter.ts        # BureauAdapter interface + pull req/resp
+  bureau/adapters.ts       # CIBIL/Experian/CRIF/Equifax (mock)
+  bureau/mock-data.ts      # deterministic fixtures (PAN ending 0 = thin file)
+  bureau/registry.ts       # multi-bureau abstraction layer
+  leapscore/engine.ts      # computeLeapScore (R3 §9.1.2)
+  leapscore/outputs.ts     # explainability outputs (R3 §9.1.3)
+  index.ts
+```
 
 ## Validation
-- pnpm turbo type-check: 11/11 PASS (0 errors)
-- pnpm turbo build: SUCCESS — all 6 apps; borrower emits /login /onboard /dashboard /profile /forbidden + Middleware
+- pnpm turbo type-check: 12/12 PASS (0 errors)
+- pnpm turbo build: SUCCESS — all 6 apps
 
 ## NOT built (out of scope, per instructions)
-Credit bureau, LeapScore engine, LeapMatch engine, loan applications, CRM.
+Live bureau integration (mock only), LeapMatch, lender matching, Approval Odds engine.
+These are Sprint 8 (LeapMatch) and Sprint 9 (Approval Engine) per R3.
 
-## To enable auth
-Set NEXT_PUBLIC_SUPABASE_URL + NEXT_PUBLIC_SUPABASE_ANON_KEY and run migrations
-(see supabase/README.md). Until then the app runs in demo mode (auth no-op).
+## Compliance notes (Phase 8)
+- Every `bureau_report` references a `user_consent` row (purpose-specific, recorded).
+- Consent withdrawal is a NEW append-only row (granted=false, revoked_at set,
+  supersedes the grant) — never an UPDATE.
+- Hard-pull consent cannot be revoked after the pull (footprint exists) — disclose at gate.
+- Equifax stored on native scale; no PII (PAN) persisted in credit tables.
