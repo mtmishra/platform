@@ -144,6 +144,62 @@ export interface AuditLogRow {
   created_at: string;
 }
 
+// ── Lender Intelligence Database (Sprint 8; mirrors 0006_lender_schema.sql) ───
+export type LenderTypeName = "psb" | "private_bank" | "sfb" | "nbfc" | "digital_nbfc" | "cooperative";
+export type MatchLoanTypeName =
+  | "personal"
+  | "home"
+  | "business"
+  | "auto"
+  | "education"
+  | "gold"
+  | "lap"
+  | "credit_card";
+export type FeeTypeName = "percentage" | "fixed" | "nil";
+export type ApiIntegrationStatusName = "full_api" | "partial" | "manual" | "not_integrated";
+
+export interface LenderRow {
+  id: string;
+  name: string;
+  lender_type: LenderTypeName;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface LenderProductRow {
+  id: string;
+  lender_id: string;
+  loan_type: MatchLoanTypeName;
+  primary_bureau: BureauName;
+  secondary_bureau: BureauName | null;
+  min_score: Record<string, number>;
+  min_income_salaried: number;
+  min_income_self_employed: number;
+  max_foir: number;
+  min_employment_months: number;
+  min_business_vintage_months: number;
+  loan_amount_min: number;
+  loan_amount_max: number;
+  tenure_min_months: number;
+  tenure_max_months: number;
+  interest_rate_min: number;
+  interest_rate_max: number;
+  processing_fee_type: FeeTypeName;
+  processing_fee_value: number;
+  avg_disbursal_days: number;
+  approval_rate_by_band: Record<string, number>;
+  accepts_new_to_credit: boolean;
+  accepts_self_employed_no_itr: boolean;
+  pin_code_blacklist: string[];
+  employer_blacklist: string[];
+  user_review_score: number;
+  review_count: number;
+  api_integration_status: ApiIntegrationStatusName;
+  active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
 type Insertable<T, Auto extends keyof T> = Omit<T, Auto> & Partial<Pick<T, Auto>>;
 
 export interface Database {
@@ -212,6 +268,33 @@ export interface Database {
           "id" | "created_at" | "leapscore" | "data_sources_used" | "score_percentile" | "model_version"
         >;
         Update: never;
+      };
+      lender: {
+        Row: LenderRow;
+        Insert: Insertable<LenderRow, "created_at" | "updated_at">;
+        Update: Partial<LenderRow>;
+      };
+      lender_product: {
+        Row: LenderProductRow;
+        Insert: Insertable<
+          LenderProductRow,
+          | "created_at"
+          | "updated_at"
+          | "secondary_bureau"
+          | "min_score"
+          | "min_employment_months"
+          | "min_business_vintage_months"
+          | "processing_fee_value"
+          | "accepts_new_to_credit"
+          | "accepts_self_employed_no_itr"
+          | "pin_code_blacklist"
+          | "employer_blacklist"
+          | "user_review_score"
+          | "review_count"
+          | "api_integration_status"
+          | "active"
+        >;
+        Update: Partial<LenderProductRow>;
       };
     };
   };

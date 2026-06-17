@@ -30,4 +30,10 @@ export type {
   InquiryRow,
   ScoreFactorRow,
   LeapscoreSnapshotRow,
+  LenderTypeName,
+  MatchLoanTypeName,
+  FeeTypeName,
+  ApiIntegrationStatusName,
+  LenderRow,
+  LenderProductRow,
 } from "./types";

@@ -1,56 +1,52 @@
-# Current Sprint: Sprint 7 — Credit Intelligence Foundation
+# Current Sprint: Sprint 8 — LeapMatch Engine Foundation
 
-**Sprint:** 7
+**Sprint:** 8
 **Status:** Complete
 **Date:** 2026-06-17
-**Goal:** Bureau abstraction layer + credit data schema + LeapScore v2 engine (no live bureau integration; mock data only)
+**Goal:** Rule-based LeapMatch — lender DB, eligibility filter, approval odds, ranking, LeapCheck (no ML, no live lender APIs, mock data)
 
 ## Source of Truth
-**R3 Credit Intelligence Report** (§1 Bureau Intelligence, §9 LeapScore Data Dictionary)
-is the engineering source of truth for this sprint. Phase 7 (architecture, RLS,
-data lifecycle §15, consent §16) and Phase 8 (consent governance §4) for compliance.
-Note: R3's LeapScore weights (Bureau 55 / Cash Flow 25 / Behavior 15 / Health 5)
-supersede the older 6-component model on the marketing `/leapscore` page — the page
-will be reconciled to the engine in a later sprint.
+**R3 Credit Intelligence Report §10** (LeapMatch Data Dictionary). Phase 7 (engine
+flow §5, RLS, config §12) and Phase 8 (RBI 2025 transparent ranking, all-lenders
+disclosure) for compliance.
 
-## Sprint 7 Scope — Completed
-- [x] Bureau abstraction layer: `BureauAdapter` interface + `BureauRegistry` (concurrent multi-bureau pull)
-- [x] CIBIL / Experian / CRIF / Equifax adapters (mock; live adapters drop in with no engine change)
-- [x] Equifax 1–999 → 300–900 normalization
-- [x] Credit schema (0004): bureau_report, tradeline, inquiry, score_factor, leapscore_snapshot
-- [x] Consent extensions: bureau, pull_type, expires_at, revoked_at, supersedes (append-only; withdrawal = new row)
-- [x] RLS (0005): own-rows on all credit tables; child tables scoped via parent report; append-only bureau/score history
-- [x] LeapScore Engine v2: Layer A Bureau 55% / B Cash Flow 25% / C Behavior 15% / D Health 5%
-- [x] confidence_level, data_sources_used, thin-file path (alt-data-only + Score Unavailable)
-- [x] Outputs: score, band, what's helping/hurting, next milestone, ranked improvement actions, credit cost indicator
+## Sprint 8 Scope — Completed
+- [x] Lender Intelligence Database: `lender`, `lender_product` (0006) — primary/secondary bureau,
+      min_score per bureau, income/FOIR rules, approval_rate_by_band, avg_disbursal_days
+- [x] Eligibility engine: hard pass/fail filter (R3 §10.1.3 Step 1) — score/income/FOIR/amount/age/geo/NTC/no-ITR
+- [x] Approval Odds engine: base band rate + signed modifiers, reason_codes, confidence; clamped **5–95 (never 0/100)**
+- [x] Ranking engine: BALANCED / LOWEST_RATE / HIGHEST_APPROVAL / FASTEST (weight vectors per R3 §10.1.3 Step 3)
+- [x] Match Result model: matched_lenders[], not_matched_lenders[] (+ what-you-need), ranking_methodology (RBI 2025)
+- [x] LeapCheck: soft-pull prequalification — no hard inquiries (hard_inquiry_warning=false)
+- [x] EMI + APR (fee-inclusive) computation (R3 §10.2)
+- [x] Seed mock lender catalog (8 personal-loan products incl. Bajaj=Experian-primary per R3 §2.4)
 
-## New package: `@leapmoney/credit`
+## New package: `@leapmoney/match`
 ```
-packages/credit/src/
-  types.ts                 # domain types (R3 §1, §9)
-  normalize.ts             # Equifax normalization
-  bands.ts                 # score bands + percentile (R3 Appendix E)
-  mock.ts                  # demo AA/behavior/health inputs
-  bureau/adapter.ts        # BureauAdapter interface + pull req/resp
-  bureau/adapters.ts       # CIBIL/Experian/CRIF/Equifax (mock)
-  bureau/mock-data.ts      # deterministic fixtures (PAN ending 0 = thin file)
-  bureau/registry.ts       # multi-bureau abstraction layer
-  leapscore/engine.ts      # computeLeapScore (R3 §9.1.2)
-  leapscore/outputs.ts     # explainability outputs (R3 §9.1.3)
+packages/match/src/
+  types.ts        # lender, lender_product, user profile, loan request, match result (R3 §10)
+  util.ts         # EMI/APR, score-band mapping, evaluated-score (lender's bureau)
+  eligibility.ts  # hard filter (Step 1)
+  approval.ts     # approval odds engine (Step 2) — 5–95 clamp, reason codes
+  ranking.ts      # 4 preference modes + ranking_methodology (Step 3)
+  engine.ts       # runMatch orchestration + badges + match reason (Step 4)
+  leapcheck.ts    # soft-pull prequalification wrapper
+  seed.ts         # mock lender catalog (bureau mapping from R3 §2)
+  profile.ts      # build MatchUserProfile from a LeapScoreResult
+  mock.ts         # demo user + loan request
   index.ts
 ```
 
 ## Validation
-- pnpm turbo type-check: 12/12 PASS (0 errors)
+- pnpm turbo type-check: 13/13 PASS (0 errors)
 - pnpm turbo build: SUCCESS — all 6 apps
 
 ## NOT built (out of scope, per instructions)
-Live bureau integration (mock only), LeapMatch, lender matching, Approval Odds engine.
-These are Sprint 8 (LeapMatch) and Sprint 9 (Approval Engine) per R3.
+ML matching model (Sprint 9 cold-start → outcomes → XGBoost), live lender APIs,
+application/lead submission, CRM integration.
 
-## Compliance notes (Phase 8)
-- Every `bureau_report` references a `user_consent` row (purpose-specific, recorded).
-- Consent withdrawal is a NEW append-only row (granted=false, revoked_at set,
-  supersedes the grant) — never an UPDATE.
-- Hard-pull consent cannot be revoked after the pull (footprint exists) — disclose at gate.
-- Equifax stored on native scale; no PII (PAN) persisted in credit tables.
+## Compliance notes (RBI 2025 / Phase 8)
+- All eligible AND ineligible lenders returned (no hiding to push preferred ones).
+- Ranking is transparent (published weights) and never commission-influenced; methodology surfaced to user.
+- APR (fee-inclusive) computed per offer, not just flat rate.
+- LeapCheck soft pull creates no hard inquiry; hard pull only at application time behind explicit consent.

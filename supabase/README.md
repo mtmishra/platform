@@ -12,7 +12,8 @@ supabase/
     ├── 0003_auth_triggers.sql    # auto-provision profile + settings on signup
     ├── 0004_credit_schema.sql    # Sprint 7: bureau_report, tradeline, inquiry, score_factor,
     │                             #           leapscore_snapshot; user_consent extensions
-    └── 0005_credit_rls.sql       # RLS for credit tables; append-only bureau/score history
+    ├── 0005_credit_rls.sql       # RLS for credit tables; append-only bureau/score history
+    └── 0006_lender_schema.sql    # Sprint 8: lender, lender_product (catalog); RLS read-all/admin-write
 ```
 
 ## Applying migrations
@@ -50,6 +51,17 @@ Or paste each file into the Supabase Dashboard → SQL Editor in order.
 Bureau pulls and score snapshots are append-only: a re-pull/re-compute writes a
 new row, never mutates history. Equifax scores are stored on their native 1–999
 scale and normalized to 300–900 by the engine (`@leapmoney/credit`), not at rest.
+
+## Schema overview (Sprint 8 — Lender Intelligence Database)
+
+| Table | Purpose | Notes |
+|-------|---------|-------|
+| `lender` | Lender directory | Read by all authenticated users; admin-only writes |
+| `lender_product` | Per-product eligibility, rates, bureau strategy, approval bands | `min_score`/`approval_rate_by_band` jsonb; consumed by `@leapmoney/match` |
+
+The LeapMatch engine (`@leapmoney/match`) is rule-based and stateless — it reads
+the lender catalog and a borrower profile (from LeapScore) and returns matched +
+not-matched lenders with approval odds. No application/lead rows are written yet.
 
 ## Conventions (Phase 7)
 
