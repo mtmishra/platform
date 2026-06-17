@@ -36,4 +36,8 @@ export type {
   ApiIntegrationStatusName,
   LenderRow,
   LenderProductRow,
+  ApplicationStatusName,
+  OutcomeResultName,
+  ApplicationRow,
+  ApplicationEventRow,
 } from "./types";

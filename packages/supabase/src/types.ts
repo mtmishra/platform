@@ -200,6 +200,50 @@ export interface LenderProductRow {
   updated_at: string;
 }
 
+// ── Application & Outcome tracking (Sprint 10; mirrors 0007_application_schema) ─
+export type ApplicationStatusName =
+  | "draft"
+  | "submitted"
+  | "under_review"
+  | "approved"
+  | "rejected"
+  | "disbursed"
+  | "withdrawn";
+export type OutcomeResultName = "pending" | "approved" | "rejected";
+
+export interface ApplicationRow {
+  id: string;
+  user_id: string;
+  loan_type: MatchLoanTypeName;
+  loan_amount_requested: number;
+  tenure_months: number;
+  preference: string;
+  status: ApplicationStatusName;
+  match_session_id: string | null;
+  recommended_lender_id: string | null;
+  selected_lender_id: string | null;
+  applied_lender_id: string | null;
+  approved_lender_id: string | null;
+  predicted_probability: number | null;
+  approval_result: OutcomeResultName;
+  rejection_reason: string | null;
+  disbursal_amount: number | null;
+  final_rate: number | null;
+  processing_fee: number | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ApplicationEventRow {
+  id: string;
+  application_id: string;
+  event_type: string;
+  from_status: ApplicationStatusName | null;
+  to_status: ApplicationStatusName | null;
+  metadata: Record<string, unknown> | null;
+  created_at: string;
+}
+
 type Insertable<T, Auto extends keyof T> = Omit<T, Auto> & Partial<Pick<T, Auto>>;
 
 export interface Database {
@@ -295,6 +339,37 @@ export interface Database {
           | "active"
         >;
         Update: Partial<LenderProductRow>;
+      };
+      application: {
+        Row: ApplicationRow;
+        Insert: Insertable<
+          ApplicationRow,
+          | "id"
+          | "created_at"
+          | "updated_at"
+          | "preference"
+          | "status"
+          | "match_session_id"
+          | "recommended_lender_id"
+          | "selected_lender_id"
+          | "applied_lender_id"
+          | "approved_lender_id"
+          | "predicted_probability"
+          | "approval_result"
+          | "rejection_reason"
+          | "disbursal_amount"
+          | "final_rate"
+          | "processing_fee"
+        >;
+        Update: Partial<ApplicationRow>;
+      };
+      application_event: {
+        Row: ApplicationEventRow;
+        Insert: Insertable<
+          ApplicationEventRow,
+          "id" | "created_at" | "from_status" | "to_status" | "metadata"
+        >;
+        Update: never;
       };
     };
   };

@@ -362,6 +362,19 @@ importers:
         specifier: ^5.6.3
         version: 5.9.3
 
+  packages/outcomes:
+    dependencies:
+      '@leapmoney/match':
+        specifier: workspace:*
+        version: link:../match
+    devDependencies:
+      '@leapmoney/config':
+        specifier: workspace:*
+        version: link:../config
+      typescript:
+        specifier: ^5.6.3
+        version: 5.9.3
+
   packages/supabase:
     dependencies:
       '@supabase/ssr':

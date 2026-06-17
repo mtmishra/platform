@@ -13,7 +13,9 @@ supabase/
     ├── 0004_credit_schema.sql    # Sprint 7: bureau_report, tradeline, inquiry, score_factor,
     │                             #           leapscore_snapshot; user_consent extensions
     ├── 0005_credit_rls.sql       # RLS for credit tables; append-only bureau/score history
-    └── 0006_lender_schema.sql    # Sprint 8: lender, lender_product (catalog); RLS read-all/admin-write
+    ├── 0006_lender_schema.sql    # Sprint 8: lender, lender_product (catalog); RLS read-all/admin-write
+    ├── 0007_application_schema.sql # Sprint 10: application, application_event; outcome + match tracking
+    └── 0008_application_rls.sql  # RLS for applications; append-only application_event
 ```
 
 ## Applying migrations
@@ -61,7 +63,18 @@ scale and normalized to 300–900 by the engine (`@leapmoney/credit`), not at re
 
 The LeapMatch engine (`@leapmoney/match`) is rule-based and stateless — it reads
 the lender catalog and a borrower profile (from LeapScore) and returns matched +
-not-matched lenders with approval odds. No application/lead rows are written yet.
+not-matched lenders with approval odds.
+
+## Schema overview (Sprint 10 — Application & Outcome tracking)
+
+| Table | Purpose | Notes |
+|-------|---------|-------|
+| `application` | One row per loan application; match-time prediction + realised outcome | Captures recommended/selected/applied/approved lender, `predicted_probability`, `approval_result`, disbursal amount, final rate, fee |
+| `application_event` | Status / decision timeline | **Append-only** (immutable) |
+
+These feed `@leapmoney/outcomes` — the feedback loop (predicted vs actual →
+calibration) and analytics (approval rate, match accuracy, conversion rate),
+which is the data foundation for the R3 §10.3 ML-calibration phase.
 
 ## Conventions (Phase 7)
 

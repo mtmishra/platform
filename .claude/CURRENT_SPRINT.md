@@ -1,45 +1,41 @@
-# Current Sprint: Sprint 9 — Credit Health Intelligence Dashboard
+# Current Sprint: Sprint 10 — Outcome Intelligence Foundation
 
-**Sprint:** 9
+**Sprint:** 10
 **Status:** Complete
 **Date:** 2026-06-17
-**Goal:** Credit Health engine (health score, DPD translator, credit cost, improvement plan, simulator) + borrower dashboard. Mock data only; no live bureau integration.
+**Goal:** Capture application outcomes (predicted vs actual) + analytics — the data
+flywheel that will later calibrate/train the matching model. Mock data only; no CRM, no lender APIs.
 
 ## Source of Truth
-**R3 Credit Intelligence Report** (§3 approval, §4 rejection/DPD, §9 LeapScore, Appendix D/E).
-Phase 7 (Credit Health Dashboard is an authenticated borrower module). Phase 8 (no PII, consent).
-Reuses the Sprint 7 `LeapScoreInput` model and LeapScore outputs — no engine rewrites.
+**R3 §10.3** (cold-start → outcome accumulation → ML calibration). Phase 7 (application
+flow §5/§9, append-only timelines §15). Phase 8 (no PII, immutable audit).
+Reuses Sprint 7 credit schema + Sprint 8 lender catalog and match outputs.
 
-## Sprint 9 Scope — Completed
-- [x] Credit Health engine (`computeCreditHealth`): health_score (0–100), health_band, risk_indicators, impact_scores
-- [x] DPD translator (`translateDpd`): bureau DPD + account status → plain-English insights with severity
-- [x] Credit Cost Indicator: surfaced from LeapScore output (current rate, rate at 750, monthly + 5yr savings)
-- [x] Improvement Plan engine (`buildImprovementPlan`): 30 / 60 / 90-day buckets (reuses LeapScore action builder)
-- [x] Score Simulator (`simulateAll` / `simulateScenario`): estimated delta + lending options unlocked
-- [x] Dashboard components: HealthGauge (animated 0–100), RiskCard, ImprovementTimeline, ProgressTracker
-- [x] Borrower route `/health` (authenticated, in (auth) group); sidebar item enabled
+## Sprint 10 Scope — Completed
+- [x] Application tracking schema (0007): `application`, `application_event` (append-only), `application_status` enum
+- [x] Outcome tracking: approval_result, rejection_reason, disbursal_amount, final_rate, processing_fee
+- [x] Match outcome tracking: recommended / selected / applied / approved lender (FK to lender catalog)
+- [x] Feedback loop: predicted_probability vs actual_outcome → calibration buckets, mean-abs-error, Brier score
+- [x] Analytics foundation: approval_rate, match_accuracy, conversion_rate (+ summarize)
+- [x] RLS (0008): own-rows on application; append-only application_event
+- [x] New package `@leapmoney/outcomes` with mock outcome dataset
 
-## New code
+## New package: `@leapmoney/outcomes`
 ```
-packages/credit/src/health/
-  types.ts        # CreditHealthResult, RiskIndicator, ImpactScore, DpdInsight, ImprovementPlan, SimulationResult
-  dpd.ts          # translateDpd + worstDpd / hasDerogatory helpers
-  engine.ts       # computeCreditHealth (0–100; payment 35 / util 25 / enquiries 15 / age 15 / standing 10)
-  improvement.ts  # buildImprovementPlan (30/60/90 bucketing)
-  simulator.ts    # simulateScenario / simulateAll
-apps/borrower/src/
-  lib/health-demo.ts                 # assembles bundle from Sprint 7 engine + mock inputs
-  components/health/HealthGauge.tsx  # animated client gauge
-  components/health/RiskCard.tsx
-  components/health/ProgressTracker.tsx
-  components/health/ImprovementTimeline.tsx
-  app/(auth)/health/page.tsx         # dashboard
+packages/outcomes/src/
+  types.ts       # ApplicationOutcome, FeedbackPoint, CalibrationBucket/Data, AnalyticsSummary
+  analytics.ts   # approvalRate, matchAccuracy, conversionRate, summarize
+  calibration.ts # toFeedbackPoints, buildCalibration (deciles + MAE + Brier)
+  mock.ts        # MOCK_OUTCOMES (12 records across approved/rejected/disbursed/pending)
+  index.ts
 ```
+Depends on `@leapmoney/match` (reuses MatchLoanType, Preference, IneligibilityReason).
 
 ## Validation
-- pnpm turbo type-check: 13/13 PASS (0 errors)
-- pnpm turbo build: SUCCESS — all 6 apps; borrower emits /health (+ existing routes)
+- pnpm turbo type-check: 14/14 PASS (0 errors)
+- pnpm turbo build: SUCCESS — all 6 apps
 
 ## NOT built (out of scope)
-Live bureau integration (mock only), persistence of health snapshots, real-time alerts,
-the post-disbursal monitoring agent. Engine functions are pure and stateless.
+CRM, lender integrations, the ML model itself (this is the dataset/feedback foundation
+for it — R3 §10.3 phase 3 trains XGBoost behind an AUC-ROC > 0.75 gate once ~10k real
+outcomes accrue), no UI surface for analytics yet.
