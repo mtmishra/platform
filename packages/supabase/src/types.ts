@@ -326,6 +326,17 @@ export interface CommissionSnapshotRow {
   created_at: string;
 }
 
+export interface LenderSnapshotRow {
+  id: string;
+  user_id: string;
+  lender: string;
+  policies: Record<string, unknown>;
+  payouts: unknown[];
+  metrics: Record<string, unknown>;
+  generated_at: string;
+  created_at: string;
+}
+
 export interface ApplicationSnapshotRow {
   id: string;
   user_id: string;
@@ -552,6 +563,11 @@ export interface Database {
       commission_snapshot: {
         Row: CommissionSnapshotRow;
         Insert: Insertable<CommissionSnapshotRow, "id" | "created_at" | "generated_at" | "pending" | "approved" | "paid">;
+        Update: never;
+      };
+      lender_snapshot: {
+        Row: LenderSnapshotRow;
+        Insert: Insertable<LenderSnapshotRow, "id" | "created_at" | "generated_at" | "policies" | "payouts" | "metrics">;
         Update: never;
       };
     };

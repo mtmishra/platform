@@ -136,6 +136,9 @@ importers:
       '@leapmoney/analytics':
         specifier: workspace:*
         version: link:../../packages/analytics
+      '@leapmoney/lenders':
+        specifier: workspace:*
+        version: link:../../packages/lenders
       '@leapmoney/types':
         specifier: workspace:*
         version: link:../../packages/types
@@ -350,6 +353,19 @@ importers:
       '@leapmoney/supabase':
         specifier: workspace:*
         version: link:../supabase
+    devDependencies:
+      '@leapmoney/config':
+        specifier: workspace:*
+        version: link:../config
+      typescript:
+        specifier: ^5.6.3
+        version: 5.9.3
+
+  packages/lenders:
+    dependencies:
+      '@leapmoney/credit':
+        specifier: workspace:*
+        version: link:../credit
     devDependencies:
       '@leapmoney/config':
         specifier: workspace:*

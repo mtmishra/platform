@@ -50,4 +50,5 @@ export type {
   ApplicationSnapshotRow,
   DsaSnapshotRow,
   CommissionSnapshotRow,
+  LenderSnapshotRow,
 } from "./types";

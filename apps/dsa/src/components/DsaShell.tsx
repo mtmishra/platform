@@ -3,7 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Users, Share2, Wallet, TrendingUp, Menu, X } from "lucide-react";
+import { LayoutDashboard, Users, Building2, Share2, Wallet, TrendingUp, Menu, X } from "lucide-react";
 
 interface NavItem {
   label: string;
@@ -14,6 +14,7 @@ interface NavItem {
 const NAV: NavItem[] = [
   { label: "Dashboard", href: "/", icon: <LayoutDashboard size={18} /> },
   { label: "Leads", href: "/leads", icon: <Users size={18} /> },
+  { label: "Lenders", href: "/lenders", icon: <Building2 size={18} /> },
   { label: "Referrals", href: "/referrals", icon: <Share2 size={18} /> },
   { label: "Commissions", href: "/commissions", icon: <Wallet size={18} /> },
   { label: "Performance", href: "/performance", icon: <TrendingUp size={18} /> },
