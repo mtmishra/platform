@@ -43,4 +43,5 @@ export type {
   ScoreSnapshotRow,
   HealthSnapshotRow,
   MatchSnapshotRow,
+  ReportSnapshotRow,
 } from "./types";

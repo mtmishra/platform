@@ -271,6 +271,16 @@ export interface MatchSnapshotRow {
   captured_at: string;
 }
 
+export interface ReportSnapshotRow {
+  id: string;
+  user_id: string;
+  report_id: string;
+  pull_timestamp: string;
+  consent_reference: string | null;
+  pull_type: PullType;
+  created_at: string;
+}
+
 type Insertable<T, Auto extends keyof T> = Omit<T, Auto> & Partial<Pick<T, Auto>>;
 
 export interface Database {
@@ -413,6 +423,14 @@ export interface Database {
         Insert: Insertable<
           MatchSnapshotRow,
           "id" | "captured_at" | "top_lender_id" | "top_approval_probability" | "match_count"
+        >;
+        Update: never;
+      };
+      report_snapshot: {
+        Row: ReportSnapshotRow;
+        Insert: Insertable<
+          ReportSnapshotRow,
+          "id" | "created_at" | "pull_timestamp" | "consent_reference" | "pull_type"
         >;
         Update: never;
       };

@@ -86,9 +86,19 @@ export function LoginForm() {
       </Paragraph>
 
       {!configured && (
-        <div className="mb-6 rounded-md border border-status-warning/30 bg-background-page p-3 text-body-sm text-status-warning">
-          Demo mode: Supabase isn&apos;t configured, so sign-in is disabled. Set
-          NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY to enable it.
+        <div className="mb-6 flex flex-col gap-3 rounded-md border border-interactive-primary/30 bg-background-page p-4">
+          <p className="text-body-sm text-foreground-secondary">
+            <span className="font-semibold text-foreground-primary">Demo mode.</span> Live sign-in
+            activates once Supabase is configured. Explore the full borrower experience now:
+          </p>
+          <Button
+            type="button"
+            variant="primary"
+            size="lg"
+            onClick={() => router.push("/credit-report/start")}
+          >
+            Explore the demo →
+          </Button>
         </div>
       )}
 

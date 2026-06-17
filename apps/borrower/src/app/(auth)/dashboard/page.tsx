@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Sparkles } from "lucide-react";
+import { Sparkles, FileSearch, ArrowRight } from "lucide-react";
 import { Button, Card, Heading, Paragraph } from "@leapmoney/ui";
 import { getProfile } from "@/lib/auth";
 import { getDashboardData } from "@/lib/dashboard-demo";
@@ -29,6 +29,23 @@ export default async function DashboardPage() {
           once your profile and consent are complete.
         </Paragraph>
       </div>
+
+      {/* Primary entry point — start the credit-report flow */}
+      <Link
+        href="/credit-report/start"
+        className="group flex items-center gap-4 rounded-lg border border-interactive-primary/30 bg-interactive-primary/5 p-5 transition-colors duration-fast hover:bg-interactive-primary/10"
+      >
+        <span className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full bg-interactive-primary text-foreground-on-dark">
+          <FileSearch size={20} />
+        </span>
+        <div className="flex-1">
+          <p className="text-body-md font-semibold text-foreground-primary">Get your free credit report</p>
+          <p className="text-body-sm text-foreground-secondary">
+            Soft check across all four bureaus — no impact on your score. Takes about 2 minutes.
+          </p>
+        </div>
+        <ArrowRight size={18} className="text-interactive-primary transition-transform duration-fast group-hover:translate-x-0.5" />
+      </Link>
 
       {/* Credit journey */}
       <section className="rounded-lg border border-border-token-default bg-background-card p-5 shadow-1">

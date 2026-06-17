@@ -1,44 +1,48 @@
-# Current Sprint: Sprint 11 — Borrower Dashboard V1
+# Current Sprint: Sprint 12 — Complete Borrower Demo Experience
 
-**Sprint:** 11
+**Sprint:** 12
 **Status:** Complete
 **Date:** 2026-06-17
-**Goal:** Wire the Sprint 7–10 engines into the borrower dashboard home: snapshots,
-credit journey, improvement tracker, notification center, snapshot persistence.
-Mobile-first, Phase 6 tokens. Mock data only.
+**Goal:** Investor-ready end-to-end borrower demo: Login → Credit Pull → Consent → Processing
+→ Report Ready → Dashboard. DEMO MODE ONLY — uses the Sprint 7 mock bureau framework.
+No Decentro / CIBIL / Experian / CRIF / Equifax / lender APIs.
 
-## Source of Truth
-Sprint 7 LeapScore, Sprint 8 LeapMatch, Sprint 9 Credit Health, Sprint 10 Outcomes.
-Phase 6 (design tokens, mobile UX). Phase 7 (CHD is an authenticated borrower module).
+## Demo-mode access (key enabler)
+When Supabase is NOT configured, the borrower app now runs as a demo: middleware allows
+the protected routes through and `lib/auth` returns a demo guest, so the full flow has no
+dead ends. Production auth (configured Supabase) is unchanged.
 
-## Sprint 11 Scope — Completed
-- [x] Dashboard home displays LeapScore, Credit Health, LeapMatch, Improvement Tracker
-- [x] Snapshot widgets: CreditSnapshot, HealthSnapshot, MatchSnapshot, OutcomeSnapshot (SnapshotWidgets.tsx)
-- [x] Credit Journey timeline: Credit Report → LeapScore → Health → Match → Apply
-- [x] Notification center: mock utilization / match / score-improvement alerts
-- [x] Improvement tracker: progress to next milestone + month trend
-- [x] Snapshot persistence (0009/0010): score_snapshot, health_snapshot, match_snapshot (append-only, RLS)
-- [x] Unified `getDashboardData()` composing all engines on mock inputs
+## Sprint 12 Scope — Completed
+- [x] Credit-pull flow: /credit-report/start → consent → fetching → report → dashboard
+- [x] PAN capture (/credit-report/start): PAN format + required-field validation, error states
+- [x] Consent (/credit-report/consent): purpose, data usage, retention, withdrawal; mock consent record (sessionStorage)
+- [x] Fetching simulation (/credit-report/fetching): 5 animated steps (~4s), then redirect to report
+- [x] Report Ready (/credit-report/report): bureau scores (4, Equifax on /999), active accounts, utilization, enquiries, credit age, DPD summary — from Sprint 7 mock data
+- [x] Dashboard auto-population: LeapScore / Credit Health / LeapMatch via existing engines
+- [x] report_snapshot (0011): report_id, pull_timestamp, consent_reference (append-only, RLS) + row type
+- [x] Journey experience: Credit Report → LeapScore → Health → Match → Apply (report + dashboard)
+- [x] Empty-state removal: login "Explore the demo" + dashboard "Get your free credit report" entry CTA
+- [x] Visual QA passed (login, PAN+validation, consent, fetching, report, dashboard population, mobile, 0 console errors)
 
 ## Files
 ```
 apps/borrower/src/
-  lib/dashboard-demo.ts                       # composes LeapScore + Health + Match + Outcomes
-  components/dashboard/SnapshotWidgets.tsx     # 4 snapshot widgets + shared SnapshotCard
-  components/dashboard/CreditJourneyTimeline.tsx
-  components/dashboard/ImprovementTracker.tsx
-  components/dashboard/NotificationCenter.tsx
-  app/(auth)/dashboard/page.tsx                # rewritten dashboard home
-supabase/migrations/0009_snapshot_schema.sql, 0010_snapshot_rls.sql
-packages/supabase/src/types.ts                 # Score/Health/MatchSnapshotRow
+  lib/credit-report-demo.ts                     # buildCreditReport(pan) from Sprint 7 mock framework
+  components/credit-report/FlowSteps.tsx
+  app/(auth)/credit-report/start|consent|fetching|report/page.tsx
+  app/(auth)/dashboard/page.tsx                 # + entry CTA
+  components/auth/LoginForm.tsx                 # + "Explore the demo"
+  lib/auth.ts, lib/supabase/middleware.ts       # demo-mode guest / allow-through
+supabase/migrations/0011_report_snapshot.sql
+packages/supabase/src/types.ts                  # ReportSnapshotRow
 ```
-Borrower app now depends on @leapmoney/credit, @leapmoney/match, @leapmoney/outcomes.
 
 ## Validation
 - pnpm turbo type-check: 14/14 PASS (0 errors)
-- pnpm turbo build: SUCCESS — all 6 apps; /dashboard + /health prerender
+- pnpm turbo build: SUCCESS — all 6 apps; borrower emits /credit-report/{start,consent,fetching,report}
+- Visual QA: full flow verified on desktop + mobile; 0 console errors
 
 ## NOT built (out of scope)
-Live bureau/lender integration, snapshot write-back (schema only), real notifications.
-Dashboard is read-only over mock engine output. The old OnboardingChecklist/EmptyState
-components remain but are no longer on the dashboard home.
+Live bureau APIs (Decentro/CIBIL/Experian/CRIF/Equifax), lender APIs, CRM, server-side
+persistence of the demo flow (consent + report snapshots are mocked client-side; the
+report_snapshot table is the wired-later target).

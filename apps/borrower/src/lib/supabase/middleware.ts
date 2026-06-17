@@ -20,13 +20,10 @@ function isPublic(pathname: string): boolean {
 export async function updateSession(request: NextRequest): Promise<NextResponse> {
   let response = NextResponse.next({ request });
 
-  // Without configured credentials, treat everyone as a guest but never crash.
+  // Demo mode (no live credentials): allow the full borrower experience through
+  // so the end-to-end demo has no dead ends. A demo guest is provided by
+  // lib/auth. Real route protection applies only once Supabase is configured.
   if (!isSupabaseConfigured()) {
-    if (!isPublic(request.nextUrl.pathname)) {
-      const url = request.nextUrl.clone();
-      url.pathname = "/login";
-      return NextResponse.redirect(url);
-    }
     return response;
   }
 
