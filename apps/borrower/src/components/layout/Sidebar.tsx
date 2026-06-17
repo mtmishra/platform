@@ -25,7 +25,7 @@ const NAV: NavItem[] = [
   { label: "Profile", href: "/profile", icon: <User size={18} /> },
   { label: "Applications", href: "/applications", icon: <FileText size={18} />, disabled: true },
   { label: "LeapScore", href: "/score", icon: <Gauge size={18} />, disabled: true },
-  { label: "Credit Health", href: "/health", icon: <HeartPulse size={18} />, disabled: true },
+  { label: "Credit Health", href: "/health", icon: <HeartPulse size={18} /> },
   { label: "Settings", href: "/settings", icon: <Settings size={18} />, disabled: true },
 ];
 

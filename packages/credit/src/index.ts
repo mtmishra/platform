@@ -61,3 +61,21 @@ export {
 
 // ── Demo inputs ───────────────────────────────────────────────────────────────
 export { MOCK_CASH_FLOW, MOCK_BEHAVIOR, MOCK_HEALTH } from "./mock";
+
+// ── Credit Health (Sprint 9) ──────────────────────────────────────────────────
+export type {
+  Severity,
+  HealthBandLabel,
+  HealthCategory,
+  RiskIndicator,
+  ImpactScore,
+  CreditHealthResult,
+  DpdInsight,
+  ImprovementPlan,
+  SimulationId,
+  SimulationResult,
+} from "./health/types";
+export { computeCreditHealth } from "./health/engine";
+export { translateDpd, worstDpd, worstDpdAcrossReports, hasDerogatory } from "./health/dpd";
+export { buildImprovementPlan } from "./health/improvement";
+export { simulateScenario, simulateAll } from "./health/simulator";
