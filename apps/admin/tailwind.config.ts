@@ -1,4 +1,6 @@
 import type { Config } from "tailwindcss";
+import { sharedConfig } from "@leapmoney/config/tailwind";
+
 const config: Config = {
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
@@ -6,7 +8,12 @@ const config: Config = {
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
     "../../packages/ui/src/**/*.{js,ts,jsx,tsx,mdx}",
   ],
-  theme: { extend: { colors: { brand: { blue: "#1A56DB", dark: "#1E293B" } } } },
+  theme: {
+    ...(sharedConfig.theme ?? {}),
+    extend: {
+      ...(sharedConfig.theme?.extend ?? {}),
+    },
+  },
   plugins: [],
 };
 export default config;

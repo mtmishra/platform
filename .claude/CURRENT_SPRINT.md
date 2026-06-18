@@ -1,46 +1,46 @@
-# Current Sprint: Sprint 16 — Lender Portal Demo
+# Current Sprint: Sprint 17 — Admin Control Tower
 
-**Sprint:** 16
+**Sprint:** 17
 **Status:** Complete
 **Date:** 2026-06-18
-**Goal:** Investor-ready lender underwriting & portfolio platform (apps/lender): review applications
-+ borrower intelligence, make credit decisions, track underwriting/portfolio. Demo mode, mock data
-— no LOS/LMS/CRM/bureau/bank APIs.
+**Goal:** Investor-ready Admin Control Tower completing the ecosystem (apps/admin) — platform-wide
+ops, users, applications, commissions, risk, revenue, compliance. Demo mode, mock data — no APIs/CRM/integrations.
 
-## Sprint 16 Scope — Completed (all 12 items)
-- [x] Lender app wired to shared design system + LenderShell (sidebar + mobile drawer + topbar)
-- [x] Dashboard: KPI cards (New/Under Review/Approved/Rejected/Disbursed) + portfolio strip + review queue + notifications
-- [x] Application inbox (/applications): applicant/product/amount/LeapScore/odds/source/status + filters (product, status, score band)
-- [x] Application review (/applications/[id]): borrower profile, LeapScore, credit health, cash flow, FOIR, employer intelligence, recommendations, approval probability, timeline, documents
-- [x] Credit decision workspace: Approve / Reject / Conditional + reason codes (Low Score / High FOIR / Income Risk / Employer Risk / Policy Mismatch) — demo only
-- [x] Underwriting (/underwriting): risk distribution, score bands, approval-probability distribution, approval/rejection trends
-- [x] Portfolio (/portfolio): total exposure, avg ticket, avg LeapScore, disbursed loans, portfolio quality, portfolio health
-- [x] Lead source analytics (/analytics): Borrower Direct / DSA / Referral / Organic — applications, approvals, conversion
-- [x] Product analytics: top products, top amounts, top cities, top score bands
-- [x] Notifications: new application / approval required / conditional approval / disbursal completed / high risk alert
-- [x] Snapshots: underwriting_snapshot + portfolio_snapshot (0018; append-only, RLS) + row types (lender_snapshot from 0017)
-- [x] Demo data: 54 applications, multiple products/score bands/sources/statuses
-- [x] Mobile UX: responsive desktop/tablet/mobile
+## Sprint 17 Scope — Completed
+- [x] Admin app wired to shared design system + AdminShell (sidebar + mobile drawer + topbar)
+- [x] Dashboard: Total Borrowers / DSAs / Lenders / Applications / Disbursals / Revenue / Commission / Disbursal Volume + Notifications center
+- [x] User management (/users): Borrowers / DSAs / Lenders with role filter + status
+- [x] Application management (/applications): all applications + status & source filters
+- [x] Commission management (/commissions): Pending / Approved / Paid + top earning DSAs
+- [x] Risk dashboard (/risk): score bands, approval rate by band, rejection reasons (from lender repository)
+- [x] Revenue dashboard (/revenue): revenue, disbursal volume, conversion + monthly trend
+- [x] Compliance dashboard (/compliance): consents (granted/active/withdrawn), audit log, bureau pull logs
+- [x] Notifications center (dashboard)
+- [x] Snapshots: admin_snapshot + revenue_snapshot + compliance_snapshot (0019; append-only, RLS) + row types
+- [x] Mobile-first; Visual QA passed (filters interactive; 0 console errors)
 
-## Files (apps/lender/src)
+## Files (apps/admin/src)
 ```
-lib/lender-demo.ts              # 54 applications + KPIs, underwriting, portfolio, source/product analytics, notifications
-components/LenderShell.tsx       # sidebar + mobile drawer + topbar
-components/LenderWidgets.tsx     # StatusBadge, ScoreBandBadge, KpiCard, ApplicationRow, BarList, ColumnChart
-components/ApplicationInbox.tsx  # client filters (product/status/score band)
-components/DecisionWorkspace.tsx # client approve/reject/conditional + reason codes (demo)
-app/{page, applications, applications/[id], underwriting, portfolio, analytics}.tsx
+lib/admin-demo.ts               # cross-portal aggregates (KPIs, users, applications, commissions, risk, revenue, compliance, notifications)
+components/AdminShell.tsx         # sidebar + mobile drawer + topbar
+components/AdminWidgets.tsx       # KpiCard, Panel, BarList, ColumnChart, StatusBadge
+components/UsersTable.tsx         # client role filter
+components/ApplicationsTable.tsx  # client status/source filters
+app/{page, users, applications, commissions, risk, revenue, compliance}.tsx
 app/{layout.tsx, globals.css}, tailwind.config.ts   # shared design system wiring
-supabase/migrations/0018_underwriting_portfolio_snapshot.sql
-packages/supabase/src/types.ts  # UnderwritingSnapshotRow, PortfolioSnapshotRow
+supabase/migrations/0019_admin_snapshot.sql
+packages/supabase/src/types.ts  # AdminSnapshotRow, RevenueSnapshotRow, ComplianceSnapshotRow
 ```
+Reuses @leapmoney/lenders (lender count + rejection reasons) as a cross-portal data source.
 
 ## Validation
 - pnpm turbo type-check: 15/15 PASS (0 errors)
-- pnpm turbo build: SUCCESS — all 6 apps; lender emits /, /applications, /applications/[id], /underwriting, /portfolio, /analytics
-- Visual QA: desktop + mobile; filters + decision workspace interactive
-- Console: a dev-only React hydration warning ("Extra attributes from the server: style" on <html>) was observed during scripted QA navigation — induced by the QA harness setting an inline style on <html>; not in app code, absent in the production build.
+- pnpm turbo build: SUCCESS — all 6 apps; admin emits /, /users, /applications, /commissions, /risk, /revenue, /compliance
+- Visual QA: desktop + mobile; role/status filters interactive; 0 console errors
+
+## Ecosystem complete
+Borrower (6–14) → DSA (15) → Lender (16) → Admin (17). All five portals + marketing site are live in demo mode.
 
 ## NOT built
-Live LOS/LMS/CRM/bureau/bank APIs; lender auth; server-side persistence (lender/underwriting/portfolio
-snapshots are the wired-later targets; decisions are demo-only, not persisted).
+Live APIs/CRM/integrations; admin auth/RBAC enforcement; server-side persistence (admin/revenue/compliance
+snapshots are the wired-later targets); cross-app live data (each portal uses its own mock layer).

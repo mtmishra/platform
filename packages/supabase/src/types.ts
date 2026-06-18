@@ -361,6 +361,35 @@ export interface PortfolioSnapshotRow {
   created_at: string;
 }
 
+export interface AdminSnapshotRow {
+  id: string;
+  user_id: string;
+  metrics: Record<string, unknown>;
+  generated_at: string;
+  created_at: string;
+}
+
+export interface RevenueSnapshotRow {
+  id: string;
+  user_id: string;
+  revenue: number;
+  disbursal_volume: number;
+  conversion_rate: number;
+  monthly: unknown[];
+  generated_at: string;
+  created_at: string;
+}
+
+export interface ComplianceSnapshotRow {
+  id: string;
+  user_id: string;
+  consents: Record<string, unknown>;
+  bureau_pulls: Record<string, unknown>;
+  audit_summary: Record<string, unknown>;
+  generated_at: string;
+  created_at: string;
+}
+
 export interface ApplicationSnapshotRow {
   id: string;
   user_id: string;
@@ -602,6 +631,21 @@ export interface Database {
       portfolio_snapshot: {
         Row: PortfolioSnapshotRow;
         Insert: Insertable<PortfolioSnapshotRow, "id" | "created_at" | "generated_at" | "total_exposure" | "avg_ticket" | "avg_leapscore" | "disbursed_loans" | "portfolio_quality" | "portfolio_health">;
+        Update: never;
+      };
+      admin_snapshot: {
+        Row: AdminSnapshotRow;
+        Insert: Insertable<AdminSnapshotRow, "id" | "created_at" | "generated_at" | "metrics">;
+        Update: never;
+      };
+      revenue_snapshot: {
+        Row: RevenueSnapshotRow;
+        Insert: Insertable<RevenueSnapshotRow, "id" | "created_at" | "generated_at" | "revenue" | "disbursal_volume" | "conversion_rate" | "monthly">;
+        Update: never;
+      };
+      compliance_snapshot: {
+        Row: ComplianceSnapshotRow;
+        Insert: Insertable<ComplianceSnapshotRow, "id" | "created_at" | "generated_at" | "consents" | "bureau_pulls" | "audit_summary">;
         Update: never;
       };
     };

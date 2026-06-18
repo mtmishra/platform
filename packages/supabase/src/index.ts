@@ -53,4 +53,7 @@ export type {
   LenderSnapshotRow,
   UnderwritingSnapshotRow,
   PortfolioSnapshotRow,
+  AdminSnapshotRow,
+  RevenueSnapshotRow,
+  ComplianceSnapshotRow,
 } from "./types";
