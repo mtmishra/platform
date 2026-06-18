@@ -1,6 +1,7 @@
 "use client";
 
-import React from "react";
+import { useState } from "react";
+import { StaggerContainer } from "@leapmoney/ui";
 import { StatusBadge, inr } from "@/components/AdminWidgets";
 import type { AdminApplication, AppStatus, LeadSource } from "@/lib/admin-demo";
 
@@ -9,8 +10,8 @@ const STATUS_LABEL: Record<string, string> = { all: "All", new: "New", under_rev
 const SOURCES: Array<LeadSource | "All"> = ["All", "Borrower Direct", "DSA", "Referral", "Organic"];
 
 export function ApplicationsTable({ applications }: { applications: AdminApplication[] }) {
-  const [status, setStatus] = React.useState<AppStatus | "all">("all");
-  const [source, setSource] = React.useState<LeadSource | "All">("All");
+  const [status, setStatus] = useState<AppStatus | "all">("all");
+  const [source, setSource] = useState<LeadSource | "All">("All");
   const filtered = applications.filter((a) => (status === "all" || a.status === status) && (source === "All" || a.source === source));
 
   return (
@@ -32,7 +33,7 @@ export function ApplicationsTable({ applications }: { applications: AdminApplica
 
       <p className="text-body-sm text-foreground-tertiary">{filtered.length} application{filtered.length === 1 ? "" : "s"}</p>
 
-      <div className="flex flex-col gap-2">
+      <StaggerContainer className="flex flex-col gap-2">
         {filtered.map((a) => (
           <div key={a.id} className="grid grid-cols-[1fr_auto] items-center gap-3 rounded-lg border border-border-token-default bg-background-card p-4 shadow-1 sm:grid-cols-[1.4fr_1fr_0.9fr_auto]">
             <div className="min-w-0"><p className="truncate text-body-md font-semibold text-foreground-primary">{a.applicant}</p><p className="truncate text-body-sm text-foreground-tertiary">{a.id} · {a.product} · {a.updated}</p></div>
@@ -42,7 +43,7 @@ export function ApplicationsTable({ applications }: { applications: AdminApplica
           </div>
         ))}
         {filtered.length === 0 ? <p className="rounded-lg border border-border-token-default bg-background-card p-6 text-center text-body-md text-foreground-tertiary">No applications match these filters.</p> : null}
-      </div>
+      </StaggerContainer>
     </div>
   );
 }
