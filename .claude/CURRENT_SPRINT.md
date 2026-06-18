@@ -1,68 +1,80 @@
-# Current Sprint: Sprint 23 — Lender Portal V3 Redesign
+# Current Sprint: Sprint 24 — Admin Portal V3 Redesign
 
-**Sprint:** 23
+**Sprint:** 24
 **Status:** Complete
-**Date:** 2026-06-18
+**Date:** 2026-06-19
 **Input:** docs/research/V3_Design_Blueprint.md · **Uses:** @leapmoney/ui V3 components
-**Goal:** Apply V3 design components across the lender portal. UI only — no backend/engine/API
-changes. GPU-only animation rule enforced. Functionality, accessibility, SEO preserved.
+**Goal:** Apply V3 design components across the admin portal. UI only — no backend/RBAC/engine
+changes. GPU-only animation rule enforced. Functionality and accessibility preserved.
 
 ## Screens redesigned (6)
 
 ### Dashboard (app/page.tsx)
-- `StaggerContainer` on KPI grid (5 MetricCardV2 cards).
-- `StatusBadge` on notification items; TONE map replaced with NOTIF_STATUS map.
+- `StaggerContainer` on KPI grid (8 MetricCardV2 cards).
+- `StatusBadge` (from @leapmoney/ui) on notifications; TONE map replaced with NOTIF_STATUS map.
 
-### Applications Inbox (components/ApplicationInbox.tsx)
-- `import React from "react"` → `import { useState } from "react"`; `React.useState` × 3 → `useState`.
-- `StaggerContainer` wrapping filtered application list.
+### Users (app/users/page.tsx)
+- `AnimatedCard` + `CountUp` on role totals (Borrowers/DSAs/Lenders).
+- `DistributionChart` × 2: platform role distribution + user status breakdown.
+- `StaggerContainer` on filtered user list (via UsersTable).
 
-### Application Review (app/applications/[id]/page.tsx)
-- `TrustBar variant="security"` at page top.
-- Visual intel section (4-col grid): `LeapScoreGauge` (300-900), `FOIRMeter` (single `foir` prop),
-  `ApprovalOddsNumber` + `ConfidenceBadge`, `RiskBadge` for employer stability.
-- Intel array reduced to Credit Health, Cash Flow, Verified Income (LeapScore/FOIR/Odds shown visually).
-- Employer intelligence section: `RiskBadge` replaces plain text stability indicator.
+### Applications (app/applications/page.tsx)
+- `DistributionChart` × 2: pipeline-by-status + applications-by-source.
+- Approval rate metric card (computed from 40-app sample).
+- `StaggerContainer` on app list (via ApplicationsTable).
 
-### Underwriting (app/underwriting/page.tsx)
-- `BarList` × 3 → `DistributionChart` (risk distribution, score bands, approval probability).
-- `ColumnChart` (GPU violation — inline `height` style) → `TrendChart` for approval trend.
-- `StaggerContainer` on 2×2 grid.
-- `Panel` function: `React.ReactNode` → `ReactNode` (import from react).
+### Commissions (app/commissions/page.tsx)
+- `MetricCardV2` × 3 (Pending/Approved/Paid) replacing `KpiCard`.
+- `TrendChart` for monthly platform revenue trend.
+- `CountUp` on per-DSA pending/paid amounts.
+- `StaggerContainer` on DSA payout list.
 
-### Portfolio (app/portfolio/page.tsx)
-- `KpiCard` × 4 → `MetricCardV2` with sparklineData + statusBorder.
-- `CountUp` on portfolio quality %.
-- `TrendChart` for portfolio quality trend sparkline.
-- `StaggerContainer` on disbursed loan list.
+### Risk (app/risk/page.tsx)
+- `DistributionChart` × 3 replaces `BarList` ×3 (score bands, approval
+  rate by band, rejection reasons).
+- `RiskBadge` in score-band risk profile grid.
+- `StaggerContainer` on grid.
 
-### Analytics (app/analytics/page.tsx)
-- `RankList` local function removed.
-- `DistributionChart` × 6 replaces RankList (×4 product analytics) + table (source analytics ×2).
-- `StaggerContainer` on product analytics grid.
+### Compliance (app/compliance/page.tsx)
+- `TrustBar variant="regulatory"` at page top.
+- `MetricCardV2` × 3 for consent metrics (Granted/Active/Withdrawn).
+- `AnimatedCard` + `CountUp` on bureau pull stats.
+- `StaggerContainer` on both consent and bureau sections.
 
-## LenderWidgets.tsx fixes
-- `import React from "react"` → `import { type ReactNode } from "react"`.
-- `KpiCard` icon prop: `React.ReactNode` → `ReactNode`.
-- `KpiCard` value: plain `<p>` → `<KpiValue value={value} className={...} />`.
-- `ApplicationRow` odds column: plain `{app.approval_probability}%` → `<ConfidenceBadge level={app.confidence} />`.
-- `ConfidenceBadge`, `KpiValue` imported from @leapmoney/ui.
+### Revenue (app/revenue/page.tsx)
+- `MetricCardV2` × 3 replacing `KpiCard` ×3.
+- `TrendChart` replaces `ColumnChart` (GPU fix — ColumnChart used inline
+  `height` style).
+- `CountUp` on commission pool and revenue totals.
+- `StaggerContainer` on top KPI grid.
 
-## Files modified (7)
-- apps/lender/src/app/page.tsx
-- apps/lender/src/components/ApplicationInbox.tsx
-- apps/lender/src/components/LenderWidgets.tsx
-- apps/lender/src/app/applications/[id]/page.tsx
-- apps/lender/src/app/underwriting/page.tsx
-- apps/lender/src/app/portfolio/page.tsx
-- apps/lender/src/app/analytics/page.tsx
+## Component file fixes
+- `AdminWidgets.tsx`: removed `ColumnChart` (GPU violation — inline `height`),
+  removed `KpiCard` and `BarList` (replaced by V3 ui components in pages),
+  fixed `React.ReactNode` → `ReactNode` import in Panel.
+- `UsersTable.tsx`: `import React from "react"` → `import { useState } from "react"`;
+  `React.useState` → `useState`; `StaggerContainer` on filtered list.
+- `ApplicationsTable.tsx`: same React import fix; `React.useState` ×2 → `useState`;
+  `StaggerContainer` on filtered list.
+
+## Files modified (10)
+- apps/admin/src/components/AdminWidgets.tsx
+- apps/admin/src/components/UsersTable.tsx
+- apps/admin/src/components/ApplicationsTable.tsx
+- apps/admin/src/app/page.tsx
+- apps/admin/src/app/users/page.tsx
+- apps/admin/src/app/applications/page.tsx
+- apps/admin/src/app/commissions/page.tsx
+- apps/admin/src/app/risk/page.tsx
+- apps/admin/src/app/compliance/page.tsx
+- apps/admin/src/app/revenue/page.tsx
 
 ## Validation
 - pnpm turbo type-check --force: 15/15 PASS (0 errors)
 - pnpm turbo build: SUCCESS — 6/6
-- Lender routes: / analytics applications applications/[id] portfolio underwriting all ○ Static or ƒ Dynamic
+- Admin routes: / applications commissions compliance revenue risk users — all ○ Static
 
 ## Commit
-- SHA: a9ba090
+- SHA: 617d935
 - Branch: develop
 - Pushed: Yes (origin/develop)
