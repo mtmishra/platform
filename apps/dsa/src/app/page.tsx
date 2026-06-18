@@ -1,8 +1,8 @@
 import Link from "next/link";
-import { Heading, Paragraph } from "@leapmoney/ui";
+import { Heading, Paragraph, MetricCardV2, FunnelChart, TrustBar } from "@leapmoney/ui";
 import { Users, FileText, CheckCircle2, Wallet, Bell, ArrowRight } from "lucide-react";
 import { getKpis, getLeads, getPipeline, getNotifications } from "@/lib/dsa-demo";
-import { StatCard, LeadRow, Pipeline, inr } from "@/components/DsaWidgets";
+import { LeadRow, inr } from "@/components/DsaWidgets";
 
 export const metadata = { title: "DSA Dashboard — LeapMoney" };
 
@@ -12,25 +12,57 @@ export default function DsaDashboardPage() {
   const recent = [...getLeads()].sort((a, b) => new Date(b.last_updated).getTime() - new Date(a.last_updated).getTime()).slice(0, 5);
   const notifications = getNotifications();
 
+  const funnelStages = pipeline.map((p) => ({
+    label: p.stage,
+    value: p.count,
+    color: p.stage === "Disbursed" ? "#16A34A" : p.stage === "Approved" ? "#14B8A6" : "#2563EB"
+  }));
+
   return (
     <div className="mx-auto flex max-w-content flex-col gap-8">
-      <div>
-        <Heading level={1} size="display-large" className="mb-1">Welcome, Ramesh</Heading>
-        <Paragraph color="secondary">Your lead pipeline, applications, and earnings at a glance.</Paragraph>
+      <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 pb-4 border-b border-border-token-default/50">
+        <div>
+          <Heading level={1} size="display-large" className="mb-1">Welcome, Ramesh</Heading>
+          <Paragraph color="secondary">Your lead pipeline, applications, and earnings at a glance.</Paragraph>
+        </div>
+        <TrustBar variant="regulatory" />
       </div>
 
       {/* KPIs */}
       <section className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-        <StatCard icon={<Users size={15} />} label="Total Leads" value={String(kpis.total_leads)} />
-        <StatCard icon={<FileText size={15} />} label="Active Applications" value={String(kpis.active_applications)} />
-        <StatCard icon={<CheckCircle2 size={15} />} label="Approved Loans" value={String(kpis.approved_loans)} tone="text-status-success" />
-        <StatCard icon={<Wallet size={15} />} label="Total Earnings" value={inr(kpis.total_earnings)} tone="text-premium" />
+        <MetricCardV2
+          label="Total Leads"
+          value={String(kpis.total_leads)}
+          icon={<Users size={16} />}
+          sparklineData={[12, 18, 22, 28, 35, kpis.total_leads]}
+        />
+        <MetricCardV2
+          label="Active Applications"
+          value={String(kpis.active_applications)}
+          icon={<FileText size={16} />}
+          sparklineData={[5, 10, 12, 11, 14, kpis.active_applications]}
+          statusBorder="info"
+        />
+        <MetricCardV2
+          label="Approved Loans"
+          value={String(kpis.approved_loans)}
+          icon={<CheckCircle2 size={16} />}
+          sparklineData={[2, 6, 8, 9, 11, kpis.approved_loans]}
+          statusBorder="success"
+        />
+        <MetricCardV2
+          label="Total Earnings"
+          value={inr(kpis.total_earnings)}
+          icon={<Wallet size={16} />}
+          sparklineData={[45000, 75000, 95000, 120000, 145000, kpis.total_earnings]}
+          statusBorder="success"
+        />
       </section>
 
       {/* Pipeline */}
-      <section>
-        <Heading level={2} size="h1" className="mb-4">Customer pipeline</Heading>
-        <Pipeline stages={pipeline} />
+      <section className="rounded-lg border border-border-token-default bg-background-card p-6 shadow-1">
+        <Heading level={2} size="h1" className="mb-4">Customer Pipeline</Heading>
+        <FunnelChart stages={funnelStages} />
       </section>
 
       {/* Recent leads + notifications */}

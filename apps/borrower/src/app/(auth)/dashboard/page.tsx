@@ -1,11 +1,15 @@
 import Link from "next/link";
 import { Sparkles, FileSearch, Landmark, ArrowRight } from "lucide-react";
-import { Button, Card, Heading, Paragraph } from "@leapmoney/ui";
+import {
+  Button,
+  Heading,
+  Paragraph,
+  Card
+} from "@leapmoney/ui";
 import { getProfile } from "@/lib/auth";
 import { getDashboardData } from "@/lib/dashboard-demo";
 import { getCashFlowIntelligence } from "@/lib/cashflow-demo";
 import { getFinancialIntelligence } from "@/lib/financial-demo";
-import { SavingsWidget, RecommendationCard, FindingsList } from "@/components/financial/FinancialWidgets";
 import { getApplications, getStatusSummary } from "@/lib/applications-demo";
 import { ApplicationCard } from "@/components/applications/ApplicationWidgets";
 import {
@@ -14,15 +18,20 @@ import {
   MatchSnapshot,
   OutcomeSnapshot,
 } from "@/components/dashboard/SnapshotWidgets";
+import { CreditJourneyTimeline } from "@/components/dashboard/CreditJourneyTimeline";
+import { ImprovementTracker } from "@/components/dashboard/ImprovementTracker";
+import { NotificationCenter } from "@/components/dashboard/NotificationCenter";
 import {
   VerifiedIncomeBadge,
   IncomeIntelligenceWidget,
   CashFlowScoreWidget,
-  FoirWidget,
+  FoirWidget
 } from "@/components/cashflow/CashFlowWidgets";
-import { CreditJourneyTimeline } from "@/components/dashboard/CreditJourneyTimeline";
-import { ImprovementTracker } from "@/components/dashboard/ImprovementTracker";
-import { NotificationCenter } from "@/components/dashboard/NotificationCenter";
+import {
+  SavingsWidget,
+  FindingsList,
+  RecommendationCard
+} from "@/components/financial/FinancialWidgets";
 
 export const metadata = { title: "Dashboard — LeapMoney" };
 

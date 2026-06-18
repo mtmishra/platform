@@ -1,8 +1,8 @@
 import Link from "next/link";
-import { Heading, Paragraph } from "@leapmoney/ui";
+import { Heading, Paragraph, MetricCardV2, PortfolioChart, TrustBar } from "@leapmoney/ui";
 import { Inbox, Clock, CheckCircle2, XCircle, Banknote, Bell, ArrowRight } from "lucide-react";
 import { getApplications, getStatusCounts, getNotifications, getPortfolio } from "@/lib/lender-demo";
-import { KpiCard, ApplicationRow, inr } from "@/components/LenderWidgets";
+import { ApplicationRow, inr } from "@/components/LenderWidgets";
 
 export const metadata = { title: "Lender Dashboard — LeapMoney" };
 
@@ -14,28 +14,45 @@ export default function LenderDashboardPage() {
   const queue = getApplications().filter((a) => a.status === "new" || a.status === "under_review").slice(0, 5);
   const notifications = getNotifications();
 
+  const portfolioSegments = [
+    { label: "Personal Loans", value: portfolio.total_exposure * 0.45, count: counts.approved + counts.disbursed, color: "#2563EB" },
+    { label: "Home Loans", value: portfolio.total_exposure * 0.35, count: 12, color: "#14B8A6" },
+    { label: "Business Loans", value: portfolio.total_exposure * 0.20, count: 5, color: "#EA580C" }
+  ];
+
   return (
     <div className="mx-auto flex max-w-content flex-col gap-8">
-      <div>
-        <Heading level={1} size="display-large" className="mb-1">Underwriting dashboard</Heading>
-        <Paragraph color="secondary">Incoming applications, decisions, and portfolio at a glance.</Paragraph>
+      <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 pb-4 border-b border-border-token-default/50">
+        <div>
+          <Heading level={1} size="display-large" className="mb-1">Underwriting Dashboard</Heading>
+          <Paragraph color="secondary">Incoming applications, decisions, and portfolio at a glance.</Paragraph>
+        </div>
+        <TrustBar variant="security" />
       </div>
 
       {/* KPIs */}
       <section className="grid grid-cols-2 gap-4 lg:grid-cols-5">
-        <KpiCard icon={<Inbox size={15} />} label="New" value={String(counts.new)} />
-        <KpiCard icon={<Clock size={15} />} label="Under Review" value={String(counts.under_review)} tone="text-status-warning" />
-        <KpiCard icon={<CheckCircle2 size={15} />} label="Approved" value={String(counts.approved)} tone="text-status-success" />
-        <KpiCard icon={<XCircle size={15} />} label="Rejected" value={String(counts.rejected)} tone="text-status-danger" />
-        <KpiCard icon={<Banknote size={15} />} label="Disbursed" value={String(counts.disbursed)} tone="text-status-success" />
+        <MetricCardV2 label="New" value={String(counts.new)} icon={<Inbox size={15} />} sparklineData={[4, 6, 8, 5, 10, counts.new]} />
+        <MetricCardV2 label="Under Review" value={String(counts.under_review)} icon={<Clock size={15} />} statusBorder="warning" sparklineData={[2, 3, 5, 4, 6, counts.under_review]} />
+        <MetricCardV2 label="Approved" value={String(counts.approved)} icon={<CheckCircle2 size={15} />} statusBorder="success" sparklineData={[8, 12, 15, 14, 18, counts.approved]} />
+        <MetricCardV2 label="Rejected" value={String(counts.rejected)} icon={<XCircle size={15} />} statusBorder="danger" sparklineData={[1, 2, 0, 1, 3, counts.rejected]} />
+        <MetricCardV2 label="Disbursed" value={String(counts.disbursed)} icon={<Banknote size={15} />} statusBorder="success" sparklineData={[6, 9, 11, 10, 15, counts.disbursed]} />
       </section>
 
-      {/* Portfolio summary strip */}
-      <section className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-        <KpiCard label="Total Exposure" value={inr(portfolio.total_exposure)} tone="text-interactive-primary" />
-        <KpiCard label="Avg Ticket" value={inr(portfolio.avg_ticket)} />
-        <KpiCard label="Avg LeapScore" value={String(portfolio.avg_leapscore)} />
-        <KpiCard label="Portfolio Health" value={portfolio.portfolio_health} tone={portfolio.portfolio_health === "Healthy" ? "text-status-success" : "text-status-warning"} />
+      {/* Portfolio Asset Split */}
+      <section className="rounded-lg border border-border-token-default bg-background-card p-6 shadow-1">
+        <Heading level={2} size="h2" className="mb-4 text-foreground-primary">Portfolio Asset Allocation</Heading>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-center">
+          <div className="lg:col-span-2">
+            <PortfolioChart segments={portfolioSegments} />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <MetricCardV2 label="Avg Ticket" value={inr(portfolio.avg_ticket)} />
+            <MetricCardV2 label="Avg LeapScore" value={String(portfolio.avg_leapscore)} statusBorder="success" />
+            <MetricCardV2 label="Portfolio Health" value={portfolio.portfolio_health} statusBorder={portfolio.portfolio_health === "Healthy" ? "success" : "warning"} />
+            <MetricCardV2 label="Total Exposure" value={inr(portfolio.total_exposure)} statusBorder="info" />
+          </div>
+        </div>
       </section>
 
       {/* Review queue + notifications */}
