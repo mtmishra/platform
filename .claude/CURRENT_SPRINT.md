@@ -1,54 +1,68 @@
-# Current Sprint: Sprint 22 — DSA Portal V3 Redesign
+# Current Sprint: Sprint 23 — Lender Portal V3 Redesign
 
-**Sprint:** 22
+**Sprint:** 23
 **Status:** Complete
 **Date:** 2026-06-18
 **Input:** docs/research/V3_Design_Blueprint.md · **Uses:** @leapmoney/ui V3 components
-**Goal:** Apply V3 design components across the DSA portal. UI only — no backend/engine/API
-changes. Functionality, accessibility, SEO preserved.
+**Goal:** Apply V3 design components across the lender portal. UI only — no backend/engine/API
+changes. GPU-only animation rule enforced. Functionality, accessibility, SEO preserved.
 
-## Screens redesigned (4)
+## Screens redesigned (6)
 
 ### Dashboard (app/page.tsx)
-- `StaggerContainer` staggered entrance on KPI grid.
-- `StatusBadge` on notification items replacing manual tone-class span.
+- `StaggerContainer` on KPI grid (5 MetricCardV2 cards).
+- `StatusBadge` on notification items; TONE map replaced with NOTIF_STATUS map.
 
-### Leads (app/leads/page.tsx + app/leads/[id]/page.tsx)
-- `StaggerContainer` + `CountUp` on status-count chips (leads list).
-- `StaggerContainer` on the full lead list.
-- Lead detail: `TrustBar` (regulatory), `LeapScoreGauge` (300–900), `ApprovalOddsNumber`,
-  dual `ConfidenceBadge` (header + odds panel).
+### Applications Inbox (components/ApplicationInbox.tsx)
+- `import React from "react"` → `import { useState } from "react"`; `React.useState` × 3 → `useState`.
+- `StaggerContainer` wrapping filtered application list.
 
-### Commissions (app/commissions/page.tsx)
-- Three `StatCard`s replaced with `MetricCardV2` (sparklines + statusBorder colours).
-- `CountUp` animated monthly / yearly / projected earnings.
-- New `TrendChart` earnings-trend sparkline (Jan–Jun) with month labels.
-- Commission-by-lead list wrapped in `StaggerContainer`.
+### Application Review (app/applications/[id]/page.tsx)
+- `TrustBar variant="security"` at page top.
+- Visual intel section (4-col grid): `LeapScoreGauge` (300-900), `FOIRMeter` (single `foir` prop),
+  `ApprovalOddsNumber` + `ConfidenceBadge`, `RiskBadge` for employer stability.
+- Intel array reduced to Credit Health, Cash Flow, Verified Income (LeapScore/FOIR/Odds shown visually).
+- Employer intelligence section: `RiskBadge` replaces plain text stability indicator.
 
-### Performance (app/performance/page.tsx)
-- `MiniBarChart` (custom, height-based) replaced with V3 `TrendChart` + month labels.
-- `AnalyticsList` (plain text rows) replaced with `DistributionChart` bars for top
-  products, top lenders, and best sources.
-- Metrics grid upgraded to `KpiValue` + `StaggerContainer`.
-- Leaderboard `#7` now displayed via `KpiValue`.
+### Underwriting (app/underwriting/page.tsx)
+- `BarList` × 3 → `DistributionChart` (risk distribution, score bands, approval probability).
+- `ColumnChart` (GPU violation — inline `height` style) → `TrendChart` for approval trend.
+- `StaggerContainer` on 2×2 grid.
+- `Panel` function: `React.ReactNode` → `ReactNode` (import from react).
 
-## DsaWidgets.tsx fixes
-- `import React from "react"` → `import { Fragment, type ReactNode } from "react"`;
-  `<React.Fragment key={…}>` → `<Fragment key={…}>`.
-- `confidence()` helper added; `ConfidenceBadge` shown in `LeadRow` (next to lender name).
-- `StatCard` upgraded to use `KpiValue` for the primary value.
-- Imported `ConfidenceBadge`, `KpiValue`, `type Confidence` from @leapmoney/ui.
+### Portfolio (app/portfolio/page.tsx)
+- `KpiCard` × 4 → `MetricCardV2` with sparklineData + statusBorder.
+- `CountUp` on portfolio quality %.
+- `TrendChart` for portfolio quality trend sparkline.
+- `StaggerContainer` on disbursed loan list.
 
-## Files modified (6)
-- apps/dsa/src/components/DsaWidgets.tsx
-- apps/dsa/src/app/page.tsx
-- apps/dsa/src/app/leads/page.tsx
-- apps/dsa/src/app/leads/[id]/page.tsx
-- apps/dsa/src/app/commissions/page.tsx
-- apps/dsa/src/app/performance/page.tsx
-- .claude/CURRENT_SPRINT.md
+### Analytics (app/analytics/page.tsx)
+- `RankList` local function removed.
+- `DistributionChart` × 6 replaces RankList (×4 product analytics) + table (source analytics ×2).
+- `StaggerContainer` on product analytics grid.
+
+## LenderWidgets.tsx fixes
+- `import React from "react"` → `import { type ReactNode } from "react"`.
+- `KpiCard` icon prop: `React.ReactNode` → `ReactNode`.
+- `KpiCard` value: plain `<p>` → `<KpiValue value={value} className={...} />`.
+- `ApplicationRow` odds column: plain `{app.approval_probability}%` → `<ConfidenceBadge level={app.confidence} />`.
+- `ConfidenceBadge`, `KpiValue` imported from @leapmoney/ui.
+
+## Files modified (7)
+- apps/lender/src/app/page.tsx
+- apps/lender/src/components/ApplicationInbox.tsx
+- apps/lender/src/components/LenderWidgets.tsx
+- apps/lender/src/app/applications/[id]/page.tsx
+- apps/lender/src/app/underwriting/page.tsx
+- apps/lender/src/app/portfolio/page.tsx
+- apps/lender/src/app/analytics/page.tsx
 
 ## Validation
 - pnpm turbo type-check --force: 15/15 PASS (0 errors)
 - pnpm turbo build: SUCCESS — 6/6
-- DSA routes: / commissions leads leads/[id] performance all ○ Static or ƒ Dynamic
+- Lender routes: / analytics applications applications/[id] portfolio underwriting all ○ Static or ƒ Dynamic
+
+## Commit
+- SHA: a9ba090
+- Branch: develop
+- Pushed: Yes (origin/develop)
