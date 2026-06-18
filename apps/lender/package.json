@@ -16,7 +16,9 @@
     "react-dom": "^18.3.1",
     "@leapmoney/ui": "workspace:*",
     "@leapmoney/types": "workspace:*",
-    "@leapmoney/analytics": "workspace:*"
+    "@leapmoney/analytics": "workspace:*",
+    "@leapmoney/lenders": "workspace:*",
+    "lucide-react": "^1.20.0"
   },
   "devDependencies": {
     "@leapmoney/config": "workspace:*",

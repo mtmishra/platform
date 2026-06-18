@@ -337,6 +337,30 @@ export interface LenderSnapshotRow {
   created_at: string;
 }
 
+export interface UnderwritingSnapshotRow {
+  id: string;
+  user_id: string;
+  risk_distribution: Record<string, unknown>;
+  score_bands: Record<string, unknown>;
+  approval_distribution: Record<string, unknown>;
+  approval_trend: unknown[];
+  generated_at: string;
+  created_at: string;
+}
+
+export interface PortfolioSnapshotRow {
+  id: string;
+  user_id: string;
+  total_exposure: number;
+  avg_ticket: number;
+  avg_leapscore: number;
+  disbursed_loans: number;
+  portfolio_quality: number;
+  portfolio_health: string | null;
+  generated_at: string;
+  created_at: string;
+}
+
 export interface ApplicationSnapshotRow {
   id: string;
   user_id: string;
@@ -568,6 +592,16 @@ export interface Database {
       lender_snapshot: {
         Row: LenderSnapshotRow;
         Insert: Insertable<LenderSnapshotRow, "id" | "created_at" | "generated_at" | "policies" | "payouts" | "metrics">;
+        Update: never;
+      };
+      underwriting_snapshot: {
+        Row: UnderwritingSnapshotRow;
+        Insert: Insertable<UnderwritingSnapshotRow, "id" | "created_at" | "generated_at" | "risk_distribution" | "score_bands" | "approval_distribution" | "approval_trend">;
+        Update: never;
+      };
+      portfolio_snapshot: {
+        Row: PortfolioSnapshotRow;
+        Insert: Insertable<PortfolioSnapshotRow, "id" | "created_at" | "generated_at" | "total_exposure" | "avg_ticket" | "avg_leapscore" | "disbursed_loans" | "portfolio_quality" | "portfolio_health">;
         Update: never;
       };
     };

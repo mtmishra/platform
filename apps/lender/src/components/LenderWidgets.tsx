@@ -1,0 +1,92 @@
+import React from "react";
+import Link from "next/link";
+import type { AppStatus, LenderApplication, ScoreBand } from "@/lib/lender-demo";
+
+export const inr = (n: number): string => `₹${Math.round(n).toLocaleString("en-IN")}`;
+
+const STATUS_META: Record<AppStatus, { label: string; cls: string }> = {
+  new: { label: "New", cls: "bg-interactive-primary/10 text-interactive-primary" },
+  under_review: { label: "Under Review", cls: "bg-status-warning/10 text-status-warning" },
+  approved: { label: "Approved", cls: "bg-status-success/10 text-status-success" },
+  rejected: { label: "Rejected", cls: "bg-status-danger/10 text-status-danger" },
+  disbursed: { label: "Disbursed", cls: "bg-status-success text-foreground-on-dark" },
+};
+
+const BAND_TONE: Record<ScoreBand, string> = {
+  Excellent: "text-status-success",
+  Good: "text-status-success",
+  Fair: "text-status-warning",
+  Poor: "text-status-danger",
+};
+
+export function StatusBadge({ status }: { status: AppStatus }) {
+  const m = STATUS_META[status];
+  return <span className={`inline-flex whitespace-nowrap rounded-full px-2.5 py-0.5 text-label-caps font-semibold uppercase tracking-wider ${m.cls}`}>{m.label}</span>;
+}
+
+export function ScoreBandBadge({ band }: { band: ScoreBand }) {
+  return <span className={`text-body-sm font-semibold ${BAND_TONE[band]}`}>{band}</span>;
+}
+
+export function KpiCard({ icon, label, value, sub, tone = "text-foreground-primary" }: { icon?: React.ReactNode; label: string; value: string; sub?: string; tone?: string }) {
+  return (
+    <div className="flex flex-col gap-2 rounded-lg border border-border-token-default bg-background-card p-5 shadow-1">
+      <span className="inline-flex items-center gap-2 text-label-caps uppercase tracking-wider text-foreground-tertiary">{icon} {label}</span>
+      <p className={`break-words font-mono text-h1 font-bold tabular-nums sm:text-display-large ${tone}`}>{value}</p>
+      {sub ? <p className="text-body-sm text-foreground-tertiary">{sub}</p> : null}
+    </div>
+  );
+}
+
+export function ApplicationRow({ app }: { app: LenderApplication }) {
+  const updated = new Date(app.last_updated).toLocaleDateString("en-IN", { day: "numeric", month: "short" });
+  return (
+    <Link href={`/applications/${app.id}`} className="group grid grid-cols-[1fr_auto] items-center gap-3 rounded-lg border border-border-token-default bg-background-card p-4 shadow-1 transition-shadow duration-normal ease-standard hover:shadow-2 sm:grid-cols-[1.6fr_1fr_0.8fr_0.8fr_auto]">
+      <div className="min-w-0">
+        <p className="truncate text-body-md font-semibold text-foreground-primary">{app.applicant}</p>
+        <p className="truncate text-body-sm text-foreground-tertiary">{app.id} · {app.product} · {app.city} · {updated}</p>
+      </div>
+      <div className="hidden sm:block text-right"><p className="font-mono text-body-md font-medium text-foreground-primary">{inr(app.amount)}</p><p className="text-body-sm text-foreground-tertiary">{app.source}</p></div>
+      <div className="hidden text-right sm:block"><p className="font-mono text-body-md font-medium text-foreground-primary">{app.leapscore}</p><p className="text-body-sm"><span className={BAND_TONE[app.score_band]}>{app.score_band}</span></p></div>
+      <div className="hidden text-right sm:block"><p className="font-mono text-body-md font-medium text-foreground-primary">{app.approval_probability}%</p><p className="text-body-sm text-foreground-tertiary">odds</p></div>
+      <StatusBadge status={app.status} />
+    </Link>
+  );
+}
+
+/** Horizontal labelled bar chart (counts). */
+export function BarList({ rows, max, colorClass }: { rows: Array<{ label: string; count: number; tone?: string }>; max?: number; colorClass?: string }) {
+  const m = max ?? Math.max(...rows.map((r) => r.count), 1);
+  return (
+    <div className="flex flex-col gap-3">
+      {rows.map((r) => (
+        <div key={r.label} className="flex items-center gap-3">
+          <span className="w-28 flex-shrink-0 text-body-sm text-foreground-secondary">{r.label}</span>
+          <div className="h-3 flex-1 overflow-hidden rounded-full bg-background-page">
+            <div className={`h-full origin-left rounded-full ${r.tone ?? colorClass ?? "bg-interactive-primary"}`} style={{ transform: `scaleX(${r.count / m})` }} />
+          </div>
+          <span className="w-8 flex-shrink-0 text-right font-mono text-body-sm tabular-nums text-foreground-primary">{r.count}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/** Vertical bar chart for trends. */
+export function ColumnChart({ data }: { data: Array<{ label: string; values: Array<{ value: number; tone: string }> }> }) {
+  const max = Math.max(...data.flatMap((d) => d.values.map((v) => v.value)), 1);
+  return (
+    <div className="flex items-end gap-4 rounded-lg border border-border-token-default bg-background-card p-5 shadow-1">
+      {data.map((d) => (
+        <div key={d.label} className="flex flex-1 flex-col items-center gap-2">
+          <div className="flex h-32 w-full items-end justify-center gap-1">
+            {d.values.map((v, i) => (
+              <div key={i} className={`w-3 rounded-t-sm ${v.tone}`} style={{ height: `${10 + (v.value / max) * 90}%` }} title={String(v.value)} />
+            ))}
+          </div>
+          <span className="text-label-caps uppercase text-foreground-tertiary">{d.label}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
