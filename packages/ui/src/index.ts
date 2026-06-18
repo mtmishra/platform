@@ -18,3 +18,29 @@ export type { SectionProps } from "./components/section";
 
 export { Heading, Paragraph, Label } from "./components/typography";
 export type { HeadingProps, ParagraphProps, LabelProps } from "./components/typography";
+
+// ── V3.0 Design Foundations (Sprint 19) ───────────────────────────────────────
+
+// Trust Layer
+export { TrustBar, SecurityBadge, BureauBadge, ComplianceBadge, RatingBadge } from "./components/trust";
+export type { TrustBarProps, SecurityBadgeProps, BureauBadgeProps, ComplianceBadgeProps, RatingBadgeProps } from "./components/trust";
+
+// Badge System
+export { StatusBadge, ScoreBandBadge, RiskBadge, ConfidenceBadge, BestMatchBadge } from "./components/badges";
+export type { StatusBadgeProps, ScoreBandBadgeProps, RiskBadgeProps, ConfidenceBadgeProps, BestMatchBadgeProps, StatusKind, ScoreBand, RiskLevel, Confidence } from "./components/badges";
+
+// Motion System
+export { CountUp, NumberTicker, RevealOnScroll, StaggerContainer, AnimatedCard } from "./components/motion";
+export type { CountUpProps, RevealOnScrollProps, StaggerContainerProps, AnimatedCardProps } from "./components/motion";
+
+// Chart System
+export { ScoreGauge, TrendChart, DistributionChart, FOIRMeter, MatchStrengthChart } from "./components/charts";
+export type { ScoreGaugeProps, TrendChartProps, DistributionChartProps, DistributionRow, FOIRMeterProps, MatchStrengthChartProps } from "./components/charts";
+
+// Empty / Loading / Skeleton States
+export { EmptyState, LoadingState, SkeletonState, SkeletonBlock } from "./components/states";
+export type { EmptyStateProps, LoadingStateProps, SkeletonStateProps, SkeletonBlockProps } from "./components/states";
+
+// Hero Number System
+export { HeroNumber, LeapScoreNumber, ApprovalOddsNumber, PreApprovedAmount, KpiValue } from "./components/hero-number";
+export type { HeroNumberProps, LeapScoreNumberProps, ApprovalOddsNumberProps, PreApprovedAmountProps, KpiValueProps } from "./components/hero-number";
