@@ -6,6 +6,11 @@ import {
   Label,
   Paragraph,
   Section,
+  TrustBar,
+  ConfidenceBadge,
+  BestMatchBadge,
+  ApprovalOddsNumber,
+  MatchStrengthChart,
 } from "@leapmoney/ui";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
@@ -81,6 +86,7 @@ export default function Page() {
                 against 30+ lenders and ranks the ones most likely to say yes — each
                 with an approval probability. Free, with no credit score impact.
               </Paragraph>
+              <TrustBar variant="regulatory" />
             </div>
           </Container>
         </Section>
@@ -123,6 +129,27 @@ export default function Page() {
               Every offer shows its APR, fees and approval odds before you apply — all eligible
               lenders are shown (RBI Digital Lending Directions 2025).
             </p>
+
+            {/* Comparison view */}
+            <div className="mt-10">
+              <Label caps className="mb-4 block">Side-by-side comparison</Label>
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                {[
+                  { lender: "HDFC Bank", odds: 87, strength: 88, conf: "high" as const, best: true },
+                  { lender: "Bajaj Finance", odds: 72, strength: 76, conf: "medium" as const, best: false },
+                  { lender: "Tata Capital", odds: 34, strength: 41, conf: "low" as const, best: false },
+                ].map((m) => (
+                  <Card key={m.lender} className="flex flex-col gap-3">
+                    <div className="flex items-center justify-between gap-2">
+                      <Heading level={3} size="h3">{m.lender}</Heading>
+                      {m.best ? <BestMatchBadge /> : <ConfidenceBadge level={m.conf} />}
+                    </div>
+                    <ApprovalOddsNumber odds={m.odds} size="md" />
+                    <MatchStrengthChart value={m.strength} />
+                  </Card>
+                ))}
+              </div>
+            </div>
           </Container>
         </Section>
 
@@ -139,12 +166,12 @@ export default function Page() {
             </div>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
               {[
-                { band: "HIGH", body: "You comfortably exceed the lender's thresholds — strong chance of approval.", tone: "text-status-success" },
-                { band: "MEDIUM", body: "You meet the criteria but with less headroom — approval is possible.", tone: "text-status-warning" },
-                { band: "LOW", body: "You're close to the limits — consider improving your profile first.", tone: "text-status-danger" },
+                { level: "high" as const, body: "You comfortably exceed the lender's thresholds — strong chance of approval." },
+                { level: "medium" as const, body: "You meet the criteria but with less headroom — approval is possible." },
+                { level: "low" as const, body: "You're close to the limits — consider improving your profile first." },
               ].map((c) => (
-                <Card key={c.band} className="flex flex-col gap-2">
-                  <span className={`font-mono text-h2 font-bold ${c.tone}`}>{c.band}</span>
+                <Card key={c.level} className="flex flex-col items-start gap-3">
+                  <ConfidenceBadge level={c.level} />
                   <Paragraph color="secondary">{c.body}</Paragraph>
                 </Card>
               ))}

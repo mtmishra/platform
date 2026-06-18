@@ -6,6 +6,11 @@ import {
   Label,
   Paragraph,
   Section,
+  ScoreGauge,
+  ScoreBandBadge,
+  DistributionChart,
+  TrendChart,
+  TrustBar,
 } from "@leapmoney/ui";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
@@ -14,7 +19,6 @@ import { FeatureBreadcrumb } from "@/components/feature/FeatureBreadcrumb";
 import { JourneyStrip } from "@/components/feature/JourneyStrip";
 import { FaqAccordion } from "@/components/feature/FaqAccordion";
 import { FeatureCta } from "@/components/feature/FeatureCta";
-import { AnimatedScoreRing } from "@/components/feature/AnimatedScoreRing";
 import { StickyMobileCta } from "@/components/feature/StickyMobileCta";
 import {
   buildMetadata,
@@ -93,6 +97,7 @@ export default function Page() {
                 to be approved, and what to improve. Free to check, with no impact on your
                 credit score.
               </Paragraph>
+              <TrustBar variant="security" />
             </div>
           </Container>
         </Section>
@@ -103,16 +108,30 @@ export default function Page() {
               <Label caps className="mb-3 block">What goes into it</Label>
               <Heading level={2} size="h1">Four layers, one clear score</Heading>
             </div>
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              {COMPONENTS.map((c) => (
-                <Card key={c.name} className="flex flex-col gap-2">
-                  <div className="flex items-center justify-between">
-                    <Heading level={3} size="h3">{c.name}</Heading>
-                    <span className="font-mono text-body-sm text-interactive-primary">{c.weight}</span>
-                  </div>
-                  <Paragraph color="secondary">{c.body}</Paragraph>
-                </Card>
-              ))}
+            <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1fr_320px] lg:items-start">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                {COMPONENTS.map((c) => (
+                  <Card key={c.name} className="flex flex-col gap-2">
+                    <div className="flex items-center justify-between">
+                      <Heading level={3} size="h3">{c.name}</Heading>
+                      <span className="font-mono text-body-sm text-interactive-primary">{c.weight}</span>
+                    </div>
+                    <Paragraph color="secondary">{c.body}</Paragraph>
+                  </Card>
+                ))}
+              </div>
+              <Card className="flex flex-col gap-4">
+                <Label caps>Layer weighting</Label>
+                <DistributionChart
+                  rows={[
+                    { label: "Bureau", value: 55, tone: "var(--color-interactive-primary)" },
+                    { label: "Cash Flow", value: 25, tone: "var(--color-status-success)" },
+                    { label: "Payment", value: 15, tone: "var(--color-status-warning)" },
+                    { label: "Account Health", value: 5, tone: "var(--color-text-tertiary)" },
+                  ]}
+                  max={55}
+                />
+              </Card>
             </div>
           </Container>
         </Section>
@@ -160,7 +179,11 @@ export default function Page() {
                 </Paragraph>
               </div>
               <div className="flex justify-center">
-                <AnimatedScoreRing score={742} band="Very Good" label="All banks · competitive rates" tone="text-status-success" />
+                <div className="flex flex-col items-center gap-3 rounded-2xl border border-border-token-default bg-background-page p-8">
+                  <ScoreGauge value={742} min={300} max={900} bandLabel="Good" label="LeapScore" size={208} />
+                  <ScoreBandBadge band="Good" />
+                  <p className="text-body-sm text-foreground-tertiary">All banks · competitive rates</p>
+                </div>
               </div>
             </div>
           </Container>
@@ -174,16 +197,29 @@ export default function Page() {
               <Heading level={2} size="h1">A living view of your score</Heading>
             </div>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-              {[
-                { title: "Score over time", body: "Track how your LeapScore™ changes month to month." },
-                { title: "Factor breakdown", body: "See exactly which factors lift or hold back your score." },
-                { title: "Improvement plan", body: "Get 3–5 prioritised actions to reach the next band." },
-              ].map((c) => (
-                <Card key={c.title} className="flex flex-col gap-2">
-                  <Heading level={3} size="h3">{c.title}</Heading>
-                  <Paragraph color="secondary">{c.body}</Paragraph>
-                </Card>
-              ))}
+              <Card className="flex flex-col gap-3">
+                <Heading level={3} size="h3">Score over time</Heading>
+                <Paragraph color="secondary">Track how your LeapScore™ changes month to month.</Paragraph>
+                <TrendChart data={[688, 702, 710, 725, 731, 742]} className="mt-auto w-full" />
+                <span className="font-mono text-body-sm text-status-success">+54 over 6 months</span>
+              </Card>
+              <Card className="flex flex-col gap-3">
+                <Heading level={3} size="h3">Factor breakdown</Heading>
+                <Paragraph color="secondary">See exactly which factors lift or hold back your score.</Paragraph>
+                <DistributionChart
+                  className="mt-auto"
+                  rows={[
+                    { label: "On-time pay", value: 92, tone: "var(--color-status-success)" },
+                    { label: "Utilisation", value: 64, tone: "var(--color-status-warning)" },
+                    { label: "Enquiries", value: 38, tone: "var(--color-status-danger)" },
+                  ]}
+                  max={100}
+                />
+              </Card>
+              <Card className="flex flex-col gap-2">
+                <Heading level={3} size="h3">Improvement plan</Heading>
+                <Paragraph color="secondary">Get 3–5 prioritised actions to reach the next band.</Paragraph>
+              </Card>
             </div>
             <p className="mt-4 text-body-sm text-foreground-tertiary">
               Dashboard preview — available after you create your free account.
