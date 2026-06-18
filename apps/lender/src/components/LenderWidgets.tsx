@@ -1,5 +1,6 @@
-import React from "react";
+import { type ReactNode } from "react";
 import Link from "next/link";
+import { ConfidenceBadge, KpiValue } from "@leapmoney/ui";
 import type { AppStatus, LenderApplication, ScoreBand } from "@/lib/lender-demo";
 
 export const inr = (n: number): string => `₹${Math.round(n).toLocaleString("en-IN")}`;
@@ -28,11 +29,11 @@ export function ScoreBandBadge({ band }: { band: ScoreBand }) {
   return <span className={`text-body-sm font-semibold ${BAND_TONE[band]}`}>{band}</span>;
 }
 
-export function KpiCard({ icon, label, value, sub, tone = "text-foreground-primary" }: { icon?: React.ReactNode; label: string; value: string; sub?: string; tone?: string }) {
+export function KpiCard({ icon, label, value, sub, tone = "text-foreground-primary" }: { icon?: ReactNode; label: string; value: string; sub?: string; tone?: string }) {
   return (
     <div className="flex flex-col gap-2 rounded-lg border border-border-token-default bg-background-card p-5 shadow-1">
       <span className="inline-flex items-center gap-2 text-label-caps uppercase tracking-wider text-foreground-tertiary">{icon} {label}</span>
-      <p className={`break-words font-mono text-h1 font-bold tabular-nums sm:text-display-large ${tone}`}>{value}</p>
+      <KpiValue value={value} className={`block ${tone}`} />
       {sub ? <p className="text-body-sm text-foreground-tertiary">{sub}</p> : null}
     </div>
   );
@@ -48,7 +49,7 @@ export function ApplicationRow({ app }: { app: LenderApplication }) {
       </div>
       <div className="hidden sm:block text-right"><p className="font-mono text-body-md font-medium text-foreground-primary">{inr(app.amount)}</p><p className="text-body-sm text-foreground-tertiary">{app.source}</p></div>
       <div className="hidden text-right sm:block"><p className="font-mono text-body-md font-medium text-foreground-primary">{app.leapscore}</p><p className="text-body-sm"><span className={BAND_TONE[app.score_band]}>{app.score_band}</span></p></div>
-      <div className="hidden text-right sm:block"><p className="font-mono text-body-md font-medium text-foreground-primary">{app.approval_probability}%</p><p className="text-body-sm text-foreground-tertiary">odds</p></div>
+      <div className="hidden text-right sm:block"><p className="font-mono text-body-md font-medium text-foreground-primary">{app.approval_probability}%</p><ConfidenceBadge level={app.confidence} /></div>
       <StatusBadge status={app.status} />
     </Link>
   );

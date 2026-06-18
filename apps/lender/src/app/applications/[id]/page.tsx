@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Button, Heading, Paragraph } from "@leapmoney/ui";
+import { Button, Heading, Paragraph, LeapScoreGauge, ApprovalOddsNumber, ConfidenceBadge, FOIRMeter, RiskBadge, TrustBar } from "@leapmoney/ui";
 import { CheckCircle2, Circle, Lightbulb } from "lucide-react";
 import { getApplication } from "@/lib/lender-demo";
 import { StatusBadge, ScoreBandBadge, inr } from "@/components/LenderWidgets";
@@ -26,7 +26,6 @@ export default function ApplicationReviewPage({ params }: PageProps) {
   }
 
   const done = STATUS_PROGRESS[app.status] ?? 0;
-  const foirTone = app.foir_pct > 50 ? "text-status-danger" : app.foir_pct > 40 ? "text-status-warning" : "text-status-success";
 
   const profile: Array<[string, string]> = [
     ["Product", app.product],
@@ -36,17 +35,16 @@ export default function ApplicationReviewPage({ params }: PageProps) {
     ["City", app.city],
     ["Source", app.source],
   ];
-  const intel: Array<{ label: string; value: string; tone?: string }> = [
-    { label: "LeapScore", value: `${app.leapscore} / 900`, tone: "text-foreground-primary" },
+  const intel: Array<{ label: string; value: string }> = [
     { label: "Credit Health", value: `${app.credit_health} / 100` },
     { label: "Cash Flow", value: `${app.cash_flow_score} / 100` },
-    { label: "FOIR", value: `${app.foir_pct}%`, tone: foirTone },
     { label: "Verified income", value: `${inr(app.verified_income)}/mo` },
-    { label: "Approval probability", value: `${app.approval_probability}%`, tone: "text-interactive-primary" },
   ];
 
   return (
     <div className="mx-auto flex max-w-content flex-col gap-8">
+      <TrustBar variant="security" />
+
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <Heading level={1} size="display-large" className="mb-1">{app.applicant}</Heading>
@@ -54,6 +52,28 @@ export default function ApplicationReviewPage({ params }: PageProps) {
         </div>
         <StatusBadge status={app.status} />
       </div>
+
+      {/* Visual intelligence */}
+      <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="flex flex-col items-center gap-2 rounded-lg border border-border-token-default bg-background-card p-5 shadow-1">
+          <p className="text-label-caps uppercase tracking-wider text-foreground-tertiary">LeapScore</p>
+          <LeapScoreGauge value={app.leapscore} min={300} max={900} bandLabel="" label="LeapScore" size={140} />
+        </div>
+        <div className="flex flex-col items-center gap-2 rounded-lg border border-border-token-default bg-background-card p-5 shadow-1">
+          <p className="text-label-caps uppercase tracking-wider text-foreground-tertiary">FOIR</p>
+          <FOIRMeter foir={app.foir_pct} />
+        </div>
+        <div className="flex flex-col items-center justify-center gap-2 rounded-lg border border-border-token-default bg-background-card p-5 shadow-1">
+          <p className="text-label-caps uppercase tracking-wider text-foreground-tertiary">Approval odds</p>
+          <ApprovalOddsNumber odds={app.approval_probability} size="lg" />
+          <ConfidenceBadge level={app.confidence} />
+        </div>
+        <div className="flex flex-col items-center justify-center gap-3 rounded-lg border border-border-token-default bg-background-card p-5 shadow-1">
+          <p className="text-label-caps uppercase tracking-wider text-foreground-tertiary">Employer stability</p>
+          <RiskBadge level={app.employer_stability} />
+          <p className="text-body-sm text-foreground-secondary">{app.employer_category}</p>
+        </div>
+      </section>
 
       {/* Borrower profile */}
       <section className="rounded-lg border border-border-token-default bg-background-card p-5 shadow-1">
@@ -65,12 +85,12 @@ export default function ApplicationReviewPage({ params }: PageProps) {
         </div>
       </section>
 
-      {/* Intelligence grid */}
+      {/* Credit intel grid */}
       <section className="grid grid-cols-2 gap-4 lg:grid-cols-3">
         {intel.map((m) => (
           <div key={m.label} className="rounded-lg border border-border-token-default bg-background-card p-4 shadow-1">
             <p className="text-label-caps uppercase tracking-wider text-foreground-tertiary">{m.label}</p>
-            <p className={`font-mono text-h1 font-bold tabular-nums ${m.tone ?? "text-foreground-primary"}`}>{m.value}</p>
+            <p className="font-mono text-h1 font-bold tabular-nums text-foreground-primary">{m.value}</p>
           </div>
         ))}
       </section>
@@ -80,7 +100,7 @@ export default function ApplicationReviewPage({ params }: PageProps) {
         <h2 className="mb-3 text-label-caps uppercase tracking-wider text-foreground-tertiary">Employer intelligence</h2>
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
           <div><p className="text-body-sm text-foreground-tertiary">Category</p><p className="text-body-md font-semibold text-foreground-primary">{app.employer_category}</p></div>
-          <div><p className="text-body-sm text-foreground-tertiary">Stability</p><p className={`text-body-md font-semibold ${app.employer_stability === "High" ? "text-status-success" : app.employer_stability === "Low" ? "text-status-danger" : "text-status-warning"}`}>{app.employer_stability}</p></div>
+          <div><p className="text-body-sm text-foreground-tertiary">Stability</p><RiskBadge level={app.employer_stability} /></div>
           <div><p className="text-body-sm text-foreground-tertiary">Job tenure</p><p className="text-body-md font-semibold text-foreground-primary">{(app.job_tenure_months / 12).toFixed(1)} yrs</p></div>
         </div>
       </section>

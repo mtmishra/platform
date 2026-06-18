@@ -1,6 +1,7 @@
 "use client";
 
-import React from "react";
+import { useState } from "react";
+import { StaggerContainer } from "@leapmoney/ui";
 import { ApplicationRow } from "@/components/LenderWidgets";
 import type { LenderApplication, AppStatus, LoanProduct, ScoreBand } from "@/lib/lender-demo";
 
@@ -25,9 +26,9 @@ function Select<T extends string>({ label, value, options, render, onChange }: {
 }
 
 export function ApplicationInbox({ applications }: { applications: LenderApplication[] }) {
-  const [product, setProduct] = React.useState<LoanProduct | "All">("All");
-  const [status, setStatus] = React.useState<AppStatus | "all">("all");
-  const [band, setBand] = React.useState<ScoreBand | "All">("All");
+  const [product, setProduct] = useState<LoanProduct | "All">("All");
+  const [status, setStatus] = useState<AppStatus | "all">("all");
+  const [band, setBand] = useState<ScoreBand | "All">("All");
 
   const filtered = applications.filter(
     (a) => (product === "All" || a.product === product) && (status === "all" || a.status === status) && (band === "All" || a.score_band === band),
@@ -43,10 +44,10 @@ export function ApplicationInbox({ applications }: { applications: LenderApplica
 
       <p className="text-body-sm text-foreground-tertiary">{filtered.length} application{filtered.length === 1 ? "" : "s"}</p>
 
-      <div className="flex flex-col gap-3">
+      <StaggerContainer className="flex flex-col gap-3">
         {filtered.map((a) => <ApplicationRow key={a.id} app={a} />)}
         {filtered.length === 0 ? <p className="rounded-lg border border-border-token-default bg-background-card p-6 text-center text-body-md text-foreground-tertiary">No applications match these filters.</p> : null}
-      </div>
+      </StaggerContainer>
     </div>
   );
 }

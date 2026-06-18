@@ -1,12 +1,12 @@
 import Link from "next/link";
-import { Heading, Paragraph, MetricCardV2, PortfolioChart, TrustBar } from "@leapmoney/ui";
+import { Heading, Paragraph, MetricCardV2, PortfolioChart, TrustBar, StaggerContainer, StatusBadge } from "@leapmoney/ui";
 import { Inbox, Clock, CheckCircle2, XCircle, Banknote, Bell, ArrowRight } from "lucide-react";
 import { getApplications, getStatusCounts, getNotifications, getPortfolio } from "@/lib/lender-demo";
 import { ApplicationRow, inr } from "@/components/LenderWidgets";
 
 export const metadata = { title: "Lender Dashboard — LeapMoney" };
 
-const TONE: Record<string, string> = { info: "text-interactive-primary", success: "text-status-success", warning: "text-status-warning", danger: "text-status-danger" };
+const NOTIF_STATUS: Record<string, string> = { info: "submitted", success: "active", warning: "under_review", danger: "rejected" };
 
 export default function LenderDashboardPage() {
   const counts = getStatusCounts();
@@ -31,13 +31,13 @@ export default function LenderDashboardPage() {
       </div>
 
       {/* KPIs */}
-      <section className="grid grid-cols-2 gap-4 lg:grid-cols-5">
+      <StaggerContainer className="grid grid-cols-2 gap-4 lg:grid-cols-5">
         <MetricCardV2 label="New" value={String(counts.new)} icon={<Inbox size={15} />} sparklineData={[4, 6, 8, 5, 10, counts.new]} />
         <MetricCardV2 label="Under Review" value={String(counts.under_review)} icon={<Clock size={15} />} statusBorder="warning" sparklineData={[2, 3, 5, 4, 6, counts.under_review]} />
         <MetricCardV2 label="Approved" value={String(counts.approved)} icon={<CheckCircle2 size={15} />} statusBorder="success" sparklineData={[8, 12, 15, 14, 18, counts.approved]} />
         <MetricCardV2 label="Rejected" value={String(counts.rejected)} icon={<XCircle size={15} />} statusBorder="danger" sparklineData={[1, 2, 0, 1, 3, counts.rejected]} />
         <MetricCardV2 label="Disbursed" value={String(counts.disbursed)} icon={<Banknote size={15} />} statusBorder="success" sparklineData={[6, 9, 11, 10, 15, counts.disbursed]} />
-      </section>
+      </StaggerContainer>
 
       {/* Portfolio Asset Split */}
       <section className="rounded-lg border border-border-token-default bg-background-card p-6 shadow-1">
@@ -73,7 +73,10 @@ export default function LenderDashboardPage() {
             {notifications.map((n) => (
               <li key={n.id} className="flex flex-col gap-0.5 py-3 first:pt-0 last:pb-0">
                 <span className="flex items-center justify-between gap-2">
-                  <span className={`text-body-md font-medium ${TONE[n.tone]}`}>{n.title}</span>
+                  <span className="flex items-center gap-1.5">
+                    <StatusBadge status={NOTIF_STATUS[n.tone] ?? "submitted"} />
+                    <span className="text-body-md font-medium text-foreground-primary">{n.title}</span>
+                  </span>
                   <span className="text-body-sm text-foreground-tertiary">{n.when}</span>
                 </span>
                 <span className="text-body-sm text-foreground-secondary">{n.detail}</span>
