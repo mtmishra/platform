@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Heading, Paragraph } from "@leapmoney/ui";
+import { Heading, Paragraph, TrustBar, BestMatchBadge, ApprovalOddsNumber, ConfidenceBadge, MatchStrengthChart } from "@leapmoney/ui";
 import { Sparkles, Info } from "lucide-react";
 import { getDashboardData } from "@/lib/dashboard-demo";
 import { CreditJourneyTimeline } from "@/components/dashboard/CreditJourneyTimeline";
@@ -8,10 +8,10 @@ export const metadata = { title: "Your matches — LeapMoney" };
 
 const inr = (n: number): string => `₹${Math.round(n).toLocaleString("en-IN")}`;
 
-function tone(pct: number): string {
-  if (pct >= 70) return "text-status-success";
-  if (pct >= 40) return "text-status-warning";
-  return "text-status-danger";
+function confidence(pct: number): "high" | "medium" | "low" {
+  if (pct >= 70) return "high";
+  if (pct >= 40) return "medium";
+  return "low";
 }
 
 export default function MatchesPage() {
@@ -25,6 +25,7 @@ export default function MatchesPage() {
           Ranked by how likely each lender is to approve you — and what it really costs. All eligible
           and ineligible lenders are shown, with no commission influence (RBI Digital Lending Directions 2025).
         </Paragraph>
+        <TrustBar variant="regulatory" className="mt-4" />
       </div>
 
       {/* Matched */}
@@ -32,20 +33,17 @@ export default function MatchesPage() {
         {match.matched_lenders.map((m) => (
           <div key={m.product_id} className="relative flex flex-col gap-3 rounded-lg border border-border-token-default bg-background-card p-5 shadow-1">
             {m.match_badge === "best_match" ? (
-              <span className="absolute -top-2.5 left-5 inline-flex items-center rounded-full bg-premium px-2.5 py-0.5 text-label-caps font-semibold uppercase tracking-wider text-navy-deep">
-                Best match
-              </span>
+              <span className="absolute -top-2.5 left-5"><BestMatchBadge /></span>
             ) : null}
             <div className="flex items-start justify-between gap-3">
               <div>
                 <p className="text-h3 font-semibold text-foreground-primary">{m.lender_name}</p>
                 <p className="text-body-sm text-foreground-tertiary">{m.match_reason}</p>
+                <span className="mt-2 inline-block"><ConfidenceBadge level={confidence(m.approval_probability)} /></span>
               </div>
-              <div className="text-right">
-                <p className={`font-mono text-h1 font-bold tabular-nums ${tone(m.approval_probability)}`}>{m.approval_probability}%</p>
-                <p className="text-body-sm text-foreground-tertiary">{m.approval_probability_label}</p>
-              </div>
+              <ApprovalOddsNumber odds={m.approval_probability} size="md" className="items-end text-right" />
             </div>
+            <MatchStrengthChart value={m.approval_probability} label="Match strength" />
             <div className="grid grid-cols-2 gap-3 text-body-sm sm:grid-cols-4">
               <div><p className="text-foreground-tertiary">Rate</p><p className="font-medium text-foreground-primary">{m.interest_rate_min}%–{m.interest_rate_max}%</p></div>
               <div><p className="text-foreground-tertiary">EMI</p><p className="font-medium text-foreground-primary">{inr(m.emi_estimate)}/mo</p></div>

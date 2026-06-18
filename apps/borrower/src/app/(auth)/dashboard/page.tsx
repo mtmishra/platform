@@ -4,7 +4,8 @@ import {
   Button,
   Heading,
   Paragraph,
-  Card
+  Card,
+  TrustBar
 } from "@leapmoney/ui";
 import { getProfile } from "@/lib/auth";
 import { getDashboardData } from "@/lib/dashboard-demo";
@@ -56,6 +57,7 @@ export default async function DashboardPage() {
           Your credit intelligence at a glance. Sample data shown — your live view appears
           once your profile and consent are complete.
         </Paragraph>
+        <TrustBar variant="security" className="mt-4" />
       </div>
 
       {/* Primary entry point — start the credit-report flow */}

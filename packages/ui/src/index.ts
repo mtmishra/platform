@@ -96,6 +96,10 @@ export type {
 export { ScoreGauge, getBandInfo } from "./components/ScoreGauge";
 export type { ScoreGaugeProps } from "./components/ScoreGauge";
 
+// LeapScoreGauge — 300–900 radial gauge (distinct from the 0–100 readiness ScoreGauge above).
+export { ScoreGauge as LeapScoreGauge } from "./components/charts";
+export type { ScoreGaugeProps as LeapScoreGaugeProps } from "./components/charts";
+
 export { ApprovalGauge } from "./components/ApprovalGauge";
 export type { ApprovalGaugeProps } from "./components/ApprovalGauge";
 

@@ -1,5 +1,6 @@
 import React from "react";
 import { Briefcase, ShieldCheck, Gauge, ArrowLeftRight, Layers, PiggyBank, AlertTriangle, AlertCircle, Info } from "lucide-react";
+import { CountUp, FOIRMeter, KpiValue } from "@leapmoney/ui";
 import type {
   AdvancedFoirResult,
   BalanceTransferResult,
@@ -69,7 +70,7 @@ export function CurrentPositionWidget({ position }: { position: CurrentPosition 
       {tiles.map((t) => (
         <div key={t.label} className="rounded-lg border border-border-token-default bg-background-card p-5 shadow-1">
           <p className="text-label-caps uppercase tracking-wider text-foreground-tertiary">{t.label}</p>
-          <p className="font-mono text-display-large font-bold tabular-nums text-foreground-primary">{t.value}</p>
+          <KpiValue value={t.value} className="block" />
           <p className="text-body-sm text-foreground-tertiary">{t.scale}</p>
         </div>
       ))}
@@ -123,7 +124,7 @@ export function SavingsWidget({ savings }: { savings: SavingsOpportunity }) {
           { label: "Lifetime", value: savings.lifetime_savings },
         ].map((s) => (
           <div key={s.label} className="flex items-baseline justify-between sm:flex-col sm:items-start sm:gap-1">
-            <p className="font-mono text-h1 font-bold tabular-nums text-foreground-primary">{inr(s.value)}</p>
+            <CountUp value={s.value} prefix="₹" className="font-mono text-h1 font-bold text-foreground-primary" />
             <p className="text-body-sm text-foreground-tertiary">{s.label}</p>
           </div>
         ))}
@@ -169,18 +170,11 @@ export function IncomeStabilityWidget({ stability }: { stability: IncomeStabilit
 // ── Advanced FOIR ─────────────────────────────────────────────────────────────
 export function AdvancedFoirWidget({ foir }: { foir: AdvancedFoirResult }) {
   const tone = FOIR_TONE[foir.risk_band];
-  const fill = Math.min(1, foir.future_foir / 0.6);
   return (
     <Shell icon={<Gauge size={15} />} label="FOIR optimization">
-      <div className="flex items-baseline gap-3">
-        <span className={`font-mono text-display-large font-bold tabular-nums ${tone}`}>{Math.round(foir.future_foir * 100)}%</span>
-        <span className="text-body-sm text-foreground-tertiary">with the new EMI</span>
-      </div>
-      <div className="h-2 w-full overflow-hidden rounded-full bg-background-page">
-        <div className={`h-full origin-left rounded-full ${foir.risk_band === "critical" ? "bg-status-danger" : foir.risk_band === "warning" ? "bg-status-warning" : "bg-status-success"}`} style={{ transform: `scaleX(${fill})` }} />
-      </div>
+      <FOIRMeter foir={Math.round(foir.future_foir * 100)} />
       <div className="flex items-center justify-between text-body-sm">
-        <span className="text-foreground-secondary">Now {Math.round(foir.current_foir * 100)}% · Safe ≤ {Math.round(foir.safe_foir_limit * 100)}%</span>
+        <span className="text-foreground-secondary">Now {Math.round(foir.current_foir * 100)}% with the new EMI</span>
         <span className={`font-medium capitalize ${tone}`}>{foir.risk_band}</span>
       </div>
       <p className="text-body-sm text-foreground-secondary">{foir.explanation}</p>

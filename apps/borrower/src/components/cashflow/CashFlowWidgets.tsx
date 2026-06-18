@@ -1,5 +1,6 @@
 import React from "react";
 import { BadgeCheck, Wallet, TrendingUp, Gauge } from "lucide-react";
+import { FOIRMeter, TrendChart, KpiValue, MatchStrengthChart } from "@leapmoney/ui";
 import type {
   CashFlowBand,
   CashFlowScoreResult,
@@ -33,7 +34,7 @@ export function VerifiedIncomeBadge({ verified }: { verified: VerifiedIncome }) 
       </span>
       <div className="flex-1">
         <p className="text-label-caps uppercase tracking-wider text-foreground-tertiary">Verified income</p>
-        <p className="font-mono text-h1 font-bold tabular-nums text-foreground-primary">{inr(verified.monthly_income)}/mo</p>
+        <KpiValue value={`${inr(verified.monthly_income)}/mo`} className="block" />
         <p className="text-body-sm text-foreground-secondary">
           {isVerified ? "Bank-verified" : "Verification pending"} · Updated {updated}
         </p>
@@ -44,12 +45,18 @@ export function VerifiedIncomeBadge({ verified }: { verified: VerifiedIncome }) 
 
 // ── Income Intelligence ───────────────────────────────────────────────────────
 export function IncomeIntelligenceWidget({ income }: { income: IncomeIntelligence }) {
+  // Illustrative 6-month salary-credit series, scaled by detected volatility.
+  const base = income.monthly_income;
+  const swing = base * (income.income_volatility / 100) * 0.4;
+  const series = [-0.6, 0.3, -0.2, 0.5, -0.1, 0.4].map((k, i) => Math.round(base + swing * k + i * (base * 0.01)));
   return (
     <div className="flex flex-col gap-3 rounded-lg border border-border-token-default bg-background-card p-5 shadow-1">
       <span className="inline-flex items-center gap-2 text-label-caps uppercase tracking-wider text-foreground-tertiary">
         <Wallet size={15} /> Income intelligence
       </span>
-      <p className="font-mono text-display-large font-bold tabular-nums text-foreground-primary">{inr(income.monthly_income)}</p>
+      <KpiValue value={inr(income.monthly_income)} className="block" />
+      <TrendChart data={series} className="w-full" />
+      <p className="text-body-sm text-foreground-tertiary">Salary credits · last 6 months</p>
       <div className="grid grid-cols-2 gap-3 text-body-sm">
         <div>
           <p className="text-foreground-tertiary">Salary detected</p>
@@ -85,6 +92,7 @@ export function CashFlowScoreWidget({ score }: { score: CashFlowScoreResult }) {
         <span className="text-body-sm text-foreground-tertiary">/ 100</span>
       </div>
       <p className={`text-body-md font-semibold capitalize ${tone}`}>{score.band}</p>
+      <MatchStrengthChart value={score.score} label="Cash flow strength" />
       <ul className="flex flex-col gap-1.5">
         {score.insights.map((ins) => (
           <li key={ins} className="text-body-sm text-foreground-secondary">• {ins}</li>
@@ -97,24 +105,16 @@ export function CashFlowScoreWidget({ score }: { score: CashFlowScoreResult }) {
 // ── FOIR ──────────────────────────────────────────────────────────────────────
 export function FoirWidget({ foir }: { foir: FoirAnalysis }) {
   const currentPct = Math.round(foir.current_foir * 100);
-  const recPct = Math.round(foir.recommended_foir * 100);
   const tone = RISK_TONE[foir.risk_level];
-  const fill = Math.min(1, foir.current_foir / Math.max(foir.recommended_foir, foir.current_foir, 0.6));
 
   return (
     <div className="flex flex-col gap-3 rounded-lg border border-border-token-default bg-background-card p-5 shadow-1">
       <span className="inline-flex items-center gap-2 text-label-caps uppercase tracking-wider text-foreground-tertiary">
         <Gauge size={15} /> FOIR analysis
       </span>
-      <div className="flex items-baseline gap-2">
-        <span className={`font-mono text-display-large font-bold tabular-nums ${tone}`}>{currentPct}%</span>
-        <span className="text-body-sm text-foreground-tertiary">of income committed</span>
-      </div>
-      <div className="h-2 w-full overflow-hidden rounded-full bg-background-page">
-        <div className={`h-full origin-left rounded-full ${foir.risk_level === "low" ? "bg-status-success" : foir.risk_level === "medium" ? "bg-status-warning" : "bg-status-danger"}`} style={{ transform: `scaleX(${fill})` }} />
-      </div>
+      <FOIRMeter foir={currentPct} />
       <div className="flex items-center justify-between text-body-sm text-foreground-secondary">
-        <span>Recommended ≤ {recPct}%</span>
+        <span>of income committed</span>
         <span className={`font-medium capitalize ${tone}`}>{foir.risk_level} risk</span>
       </div>
       <p className="text-body-sm text-foreground-secondary">

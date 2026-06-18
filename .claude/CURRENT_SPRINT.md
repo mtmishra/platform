@@ -1,55 +1,55 @@
-# Current Sprint: Sprint 20 — V3.1 Website Redesign (P0)
+# Current Sprint: Sprint 21 — Borrower Portal V3 Redesign
 
-**Sprint:** 20
+**Sprint:** 21
 **Status:** Complete
 **Date:** 2026-06-18
-**Input:** docs/research/V3_Design_Blueprint.md · **Uses:** @leapmoney/ui (Sprint 19 V3 foundations)
-**Goal:** Redesign the three P0 website screens (Homepage, LeapScore, LeapMatch) with the V3
-components. No other pages touched. SEO, structured data, and functionality preserved.
+**Input:** docs/research/V3_Design_Blueprint.md · **Uses:** @leapmoney/ui V3 components
+**Goal:** Apply V3 design components across the borrower portal. UI only — no backend/engine/API
+changes. Functionality, accessibility, SEO preserved.
 
-## Merge note
-A parallel "Investor Demo Polish" commit (`fd59b55`) landed on origin/develop concurrently and
-**already redesigned the Homepage** (plus DSA/Lender/Admin dashboards) using its own V3 components
-(MetricCardV2, FunnelChart, PortfolioChart, RevenueChart, a new `ScoreGauge` with a `score` prop).
-On rebase the Homepage conflict was resolved in favour of that committed redesign (not reverted),
-and this sprint's unique, non-conflicting **LeapScore + LeapMatch** redesigns were retained.
-Reconciliation: adapted LeapScore to the merged `ScoreGauge(score=…)` API and fixed unused-`React`
-imports in `fd59b55`'s new UI components so the workspace type-checks/builds green again.
+## Screens redesigned (5)
+### Dashboard
+- Snapshots already on `MetricCardV2` (from parallel V3 merge); added `TrustBar` (security) trust indicator.
 
-## Screens redesigned (this sprint)
-### Homepage — superseded by parallel commit fd59b55 (kept theirs)
+### Credit Report (credit-report/report)
+- `LeapScoreGauge` (300–900) for the LeapScore; `DistributionChart` bureau comparison; `RiskBadge` on payment history.
 
-### LeapScore (apps/web/src/app/leapscore/page.tsx)
-- Hero: `TrustBar` (security: soft check, no score impact)
-- Four-layer section: `DistributionChart` visualizing the 55/25/15/5 weighting
-- Sample score: `ScoreGauge` (742) + `ScoreBandBadge`
-- Dashboard preview: `TrendChart` (score over time, +54/6mo) + `DistributionChart` (factor breakdown)
+### Cash Flow (CashFlowWidgets)
+- `KpiValue` for verified income; `TrendChart` salary-credit sparkline; `MatchStrengthChart` for cash-flow strength; V3 `FOIRMeter`.
 
-### LeapMatch (apps/web/src/app/leapmatch/page.tsx)
-- Hero: `TrustBar` (regulatory — lender trust signals)
-- New side-by-side comparison view: `BestMatchBadge` + `ApprovalOddsNumber` + `MatchStrengthChart` per lender
-- Match-confidence section: plain text → `ConfidenceBadge` (high/medium/low)
+### Financial Analysis (FinancialWidgets)
+- `CountUp` animated savings counters; `KpiValue` current-position tiles; V3 `FOIRMeter` for FOIR optimization.
+
+### LeapMatch Results (matches)
+- `TrustBar` (regulatory); per-lender `BestMatchBadge`, `ApprovalOddsNumber`, `ConfidenceBadge`, `MatchStrengthChart`.
+
+## Important fix (scale bug)
+The merged `ScoreGauge` (from the parallel commit) is a **0–100 readiness** gauge (`getBandInfo` >=80
+"Loan Ready"); feeding it a 300–900 LeapScore clamped to "100", contradicting the "802 / 900" headline.
+Resolved by re-exporting the Sprint 19 300–900 gauge as **`LeapScoreGauge`** (`packages/ui/src/index.ts`)
+and using it on the Credit Report page AND the Sprint 20 website /leapscore page (which had the same
+latent clamp bug). The 0–100 `ScoreGauge` is untouched for readiness use.
 
 ## Files modified
-- apps/web/src/app/page.tsx
-- apps/web/src/app/leapscore/page.tsx
-- apps/web/src/app/leapmatch/page.tsx
+- apps/borrower/src/components/cashflow/CashFlowWidgets.tsx
+- apps/borrower/src/components/financial/FinancialWidgets.tsx
+- apps/borrower/src/app/(auth)/matches/page.tsx
+- apps/borrower/src/app/(auth)/credit-report/report/page.tsx
+- apps/borrower/src/app/(auth)/dashboard/page.tsx
+- apps/web/src/app/leapscore/page.tsx (LeapScoreGauge fix)
+- packages/ui/src/index.ts (export LeapScoreGauge)
 - .claude/CURRENT_SPRINT.md
-(No new files — reused @leapmoney/ui V3 components.)
 
-## Before vs After (summary)
+## Before vs After
 | Screen | Before | After |
 |--------|--------|-------|
-| Homepage | Static stat strings, ring component, static cards | Animated CountUp metrics, V3 ScoreGauge, staggered reveals, regulatory TrustBar |
-| LeapScore | Weights as text %, ring, text-only dashboard preview | DistributionChart weighting, ScoreGauge + band badge, TrendChart + factor chart |
-| LeapMatch | Preview cards + text confidence bands | Comparison view (odds + match-strength viz + best-match), ConfidenceBadge bands, TrustBar |
+| Credit Report | Plain score headline + metric grid | LeapScoreGauge (802 ✓) + bureau DistributionChart + payment RiskBadge |
+| Cash Flow | Plain numbers + hand-rolled FOIR bar | KpiValue, salary TrendChart, MatchStrengthChart, V3 FOIRMeter |
+| Financial | Static savings figures | Animated CountUp savings + KpiValue + V3 FOIRMeter |
+| Matches | Plain % + text bands | ApprovalOddsNumber + ConfidenceBadge + MatchStrengthChart + BestMatchBadge + TrustBar |
+| Dashboard | MetricCardV2 KPIs (already) | + TrustBar trust indicator |
 
 ## Validation
 - pnpm turbo type-check: 15/15 PASS (0 errors)
-- pnpm turbo build: SUCCESS — 6/6; /, /leapscore, /leapmatch remain statically prerendered (○) — SEO + structured data intact
-- Visual QA: desktop + mobile (375px); 0 console errors; gauges/charts/count-ups render; mobile reflow clean
-
-## Notes
-- GPU-only motion + prefers-reduced-motion inherited from the V3 components.
-- Minor: DistributionChart looks tighter inside the narrow 1/3 "factor breakdown" card than in wide panels — cosmetic, non-blocking.
-- NOT done (next, V3.2): Borrower Dashboard, Financial Analysis, Applications (P1).
+- pnpm turbo build: SUCCESS — 6/6
+- Visual QA: desktop + mobile (375px); 0 console errors; gauges/charts/count-ups/FOIR meters render; LeapScore gauge shows 802 correctly post-fix.

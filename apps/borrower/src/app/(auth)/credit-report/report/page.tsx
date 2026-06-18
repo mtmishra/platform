@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Button, Card, Heading, Paragraph } from "@leapmoney/ui";
+import { Button, Card, Heading, Paragraph, LeapScoreGauge, DistributionChart, RiskBadge } from "@leapmoney/ui";
 import { CheckCircle2, ArrowRight } from "lucide-react";
 import { buildCreditReport } from "@/lib/credit-report-demo";
 import { FlowSteps } from "@/components/credit-report/FlowSteps";
@@ -63,6 +63,16 @@ export default function CreditReportReadyPage({ searchParams }: PageProps) {
         ) : null}
       </Card>
 
+      {/* LeapScore gauge */}
+      {leapScore.leapscore !== null ? (
+        <section className="flex justify-center">
+          <div className="flex flex-col items-center gap-2 rounded-2xl border border-border-token-default bg-background-card p-8 shadow-1">
+            <LeapScoreGauge value={leapScore.leapscore} min={300} max={900} bandLabel={leapScore.score_band} label="LeapScore" size={200} />
+            <p className="text-body-sm text-foreground-tertiary">across all four bureaus</p>
+          </div>
+        </section>
+      ) : null}
+
       {/* Bureau scores */}
       <section>
         <Heading level={2} size="h1" className="mb-4">Bureau scores</Heading>
@@ -70,6 +80,15 @@ export default function CreditReportReadyPage({ searchParams }: PageProps) {
           {bureauRows.map((b) => (
             <Metric key={b.name} label={b.name} value={b.score === null ? "No hit" : String(b.score)} sub={b.score === null ? "No file on record" : b.scale} />
           ))}
+        </div>
+        <div className="mt-4 rounded-lg border border-border-token-default bg-background-card p-5 shadow-1">
+          <p className="mb-3 text-label-caps uppercase tracking-wider text-foreground-tertiary">Bureau comparison (300–900)</p>
+          <DistributionChart
+            rows={bureauRows
+              .filter((b) => b.score !== null && b.scale === "/ 900")
+              .map((b) => ({ label: b.name, value: b.score as number, tone: "var(--color-interactive-primary)" }))}
+            max={900}
+          />
         </div>
       </section>
 
@@ -86,7 +105,10 @@ export default function CreditReportReadyPage({ searchParams }: PageProps) {
 
       {/* DPD summary */}
       <section>
-        <Heading level={2} size="h1" className="mb-1">Payment history (DPD)</Heading>
+        <div className="mb-1 flex items-center gap-3">
+          <Heading level={2} size="h1">Payment history (DPD)</Heading>
+          <RiskBadge level={report.accountsWithDpd === 0 ? "Low" : report.worstDpd <= 30 ? "Medium" : "High"} />
+        </div>
         <Paragraph color="secondary" className="mb-4">
           {report.accountsWithDpd === 0
             ? "All accounts paid on time — no days past due on record."
