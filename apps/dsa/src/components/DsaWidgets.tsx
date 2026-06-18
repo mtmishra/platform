@@ -1,5 +1,6 @@
-import React from "react";
+import { Fragment, type ReactNode } from "react";
 import Link from "next/link";
+import { ConfidenceBadge, KpiValue, type Confidence } from "@leapmoney/ui";
 import type { Lead, LeadStatus } from "@/lib/dsa-demo";
 
 export const inr = (n: number): string => `₹${Math.round(n).toLocaleString("en-IN")}`;
@@ -18,11 +19,14 @@ export function LeadStatusBadge({ status }: { status: LeadStatus }) {
   return <span className={`inline-flex rounded-full px-2.5 py-0.5 text-label-caps font-semibold uppercase tracking-wider ${STATUS_CLS[status]}`}>{status}</span>;
 }
 
-export function StatCard({ icon, label, value, sub, tone = "text-foreground-primary" }: { icon: React.ReactNode; label: string; value: string; sub?: string; tone?: string }) {
+const confidence = (odds: number): Confidence =>
+  odds >= 75 ? "high" : odds >= 55 ? "medium" : "low";
+
+export function StatCard({ icon, label, value, sub, tone = "text-foreground-primary" }: { icon: ReactNode; label: string; value: string; sub?: string; tone?: string }) {
   return (
     <div className="flex flex-col gap-2 rounded-lg border border-border-token-default bg-background-card p-5 shadow-1">
       <span className="inline-flex items-center gap-2 text-label-caps uppercase tracking-wider text-foreground-tertiary">{icon} {label}</span>
-      <p className={`font-mono text-display-large font-bold tabular-nums ${tone}`}>{value}</p>
+      <KpiValue value={value} className={`block ${tone}`} />
       {sub ? <p className="text-body-sm text-foreground-tertiary">{sub}</p> : null}
     </div>
   );
@@ -36,8 +40,9 @@ export function LeadRow({ lead }: { lead: Lead }) {
         <p className="truncate text-body-md font-semibold text-foreground-primary">{lead.borrower_name}</p>
         <p className="truncate text-body-sm text-foreground-tertiary">{lead.id} · {lead.product} · {inr(lead.amount)} · {updated}</p>
       </div>
-      <div className="hidden sm:block text-right">
+      <div className="hidden sm:flex items-center gap-2">
         {lead.lender ? <p className="text-body-sm text-foreground-secondary">{lead.lender}</p> : <p className="text-body-sm text-foreground-tertiary">—</p>}
+        <ConfidenceBadge level={confidence(lead.approval_odds)} />
       </div>
       <LeadStatusBadge status={lead.status} />
     </Link>
@@ -49,7 +54,7 @@ export function Pipeline({ stages }: { stages: Array<{ stage: string; count: num
   return (
     <div className="flex flex-col gap-3 rounded-lg border border-border-token-default bg-background-card p-5 shadow-1 sm:flex-row sm:items-end sm:gap-2">
       {stages.map((s, i) => (
-        <React.Fragment key={s.stage}>
+        <Fragment key={s.stage}>
           <div className="flex flex-1 flex-col items-center gap-2">
             <span className="font-mono text-h1 font-bold tabular-nums text-foreground-primary">{s.count}</span>
             <div className="flex h-20 w-full items-end">
@@ -58,7 +63,7 @@ export function Pipeline({ stages }: { stages: Array<{ stage: string; count: num
             <span className="text-body-sm font-medium text-foreground-secondary">{s.stage}</span>
           </div>
           {i < stages.length - 1 ? <span className="hidden self-center text-foreground-tertiary sm:block">→</span> : null}
-        </React.Fragment>
+        </Fragment>
       ))}
     </div>
   );

@@ -1,4 +1,4 @@
-import { Heading, Paragraph } from "@leapmoney/ui";
+import { Heading, Paragraph, StaggerContainer, CountUp } from "@leapmoney/ui";
 import { getLeads, LEAD_STATUSES } from "@/lib/dsa-demo";
 import { LeadRow } from "@/components/DsaWidgets";
 
@@ -15,18 +15,18 @@ export default function LeadsPage() {
         <Paragraph color="secondary">{leads.length} leads across your pipeline.</Paragraph>
       </div>
 
-      <div className="grid grid-cols-3 gap-3 sm:grid-cols-7">
+      <StaggerContainer className="grid grid-cols-3 gap-3 sm:grid-cols-7">
         {counts.map((c) => (
           <div key={c.status} className="rounded-lg border border-border-token-default bg-background-card p-3 text-center shadow-1">
-            <p className="font-mono text-h1 font-bold tabular-nums text-foreground-primary">{c.count}</p>
+            <CountUp value={c.count} className="block font-mono text-h1 font-bold tabular-nums text-foreground-primary" />
             <p className="text-body-sm text-foreground-tertiary">{c.status}</p>
           </div>
         ))}
-      </div>
+      </StaggerContainer>
 
-      <div className="flex flex-col gap-3">
+      <StaggerContainer className="flex flex-col gap-3">
         {leads.map((l) => <LeadRow key={l.id} lead={l} />)}
-      </div>
+      </StaggerContainer>
     </div>
   );
 }

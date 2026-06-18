@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Heading, Paragraph, MetricCardV2, FunnelChart, TrustBar } from "@leapmoney/ui";
+import { Heading, Paragraph, MetricCardV2, FunnelChart, TrustBar, StaggerContainer, StatusBadge } from "@leapmoney/ui";
 import { Users, FileText, CheckCircle2, Wallet, Bell, ArrowRight } from "lucide-react";
 import { getKpis, getLeads, getPipeline, getNotifications } from "@/lib/dsa-demo";
 import { LeadRow, inr } from "@/components/DsaWidgets";
@@ -29,7 +29,7 @@ export default function DsaDashboardPage() {
       </div>
 
       {/* KPIs */}
-      <section className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+      <StaggerContainer className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         <MetricCardV2
           label="Total Leads"
           value={String(kpis.total_leads)}
@@ -57,7 +57,7 @@ export default function DsaDashboardPage() {
           sparklineData={[45000, 75000, 95000, 120000, 145000, kpis.total_earnings]}
           statusBorder="success"
         />
-      </section>
+      </StaggerContainer>
 
       {/* Pipeline */}
       <section className="rounded-lg border border-border-token-default bg-background-card p-6 shadow-1">
@@ -86,8 +86,11 @@ export default function DsaDashboardPage() {
             {notifications.map((n) => (
               <li key={n.id} className="flex flex-col gap-0.5 py-3 first:pt-0 last:pb-0">
                 <span className="flex items-center justify-between gap-2">
-                  <span className={`text-body-md font-medium ${n.tone === "success" ? "text-status-success" : "text-foreground-primary"}`}>{n.title}</span>
-                  <span className="text-body-sm text-foreground-tertiary">{n.when}</span>
+                  <span className="text-body-md font-medium text-foreground-primary">{n.title}</span>
+                  <span className="flex items-center gap-2">
+                    <StatusBadge status={n.tone === "success" ? "active" : "new"} />
+                    <span className="text-body-sm text-foreground-tertiary">{n.when}</span>
+                  </span>
                 </span>
                 <span className="text-body-sm text-foreground-secondary">{n.detail}</span>
               </li>

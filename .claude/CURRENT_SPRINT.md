@@ -1,55 +1,54 @@
-# Current Sprint: Sprint 21 — Borrower Portal V3 Redesign
+# Current Sprint: Sprint 22 — DSA Portal V3 Redesign
 
-**Sprint:** 21
+**Sprint:** 22
 **Status:** Complete
 **Date:** 2026-06-18
 **Input:** docs/research/V3_Design_Blueprint.md · **Uses:** @leapmoney/ui V3 components
-**Goal:** Apply V3 design components across the borrower portal. UI only — no backend/engine/API
+**Goal:** Apply V3 design components across the DSA portal. UI only — no backend/engine/API
 changes. Functionality, accessibility, SEO preserved.
 
-## Screens redesigned (5)
-### Dashboard
-- Snapshots already on `MetricCardV2` (from parallel V3 merge); added `TrustBar` (security) trust indicator.
+## Screens redesigned (4)
 
-### Credit Report (credit-report/report)
-- `LeapScoreGauge` (300–900) for the LeapScore; `DistributionChart` bureau comparison; `RiskBadge` on payment history.
+### Dashboard (app/page.tsx)
+- `StaggerContainer` staggered entrance on KPI grid.
+- `StatusBadge` on notification items replacing manual tone-class span.
 
-### Cash Flow (CashFlowWidgets)
-- `KpiValue` for verified income; `TrendChart` salary-credit sparkline; `MatchStrengthChart` for cash-flow strength; V3 `FOIRMeter`.
+### Leads (app/leads/page.tsx + app/leads/[id]/page.tsx)
+- `StaggerContainer` + `CountUp` on status-count chips (leads list).
+- `StaggerContainer` on the full lead list.
+- Lead detail: `TrustBar` (regulatory), `LeapScoreGauge` (300–900), `ApprovalOddsNumber`,
+  dual `ConfidenceBadge` (header + odds panel).
 
-### Financial Analysis (FinancialWidgets)
-- `CountUp` animated savings counters; `KpiValue` current-position tiles; V3 `FOIRMeter` for FOIR optimization.
+### Commissions (app/commissions/page.tsx)
+- Three `StatCard`s replaced with `MetricCardV2` (sparklines + statusBorder colours).
+- `CountUp` animated monthly / yearly / projected earnings.
+- New `TrendChart` earnings-trend sparkline (Jan–Jun) with month labels.
+- Commission-by-lead list wrapped in `StaggerContainer`.
 
-### LeapMatch Results (matches)
-- `TrustBar` (regulatory); per-lender `BestMatchBadge`, `ApprovalOddsNumber`, `ConfidenceBadge`, `MatchStrengthChart`.
+### Performance (app/performance/page.tsx)
+- `MiniBarChart` (custom, height-based) replaced with V3 `TrendChart` + month labels.
+- `AnalyticsList` (plain text rows) replaced with `DistributionChart` bars for top
+  products, top lenders, and best sources.
+- Metrics grid upgraded to `KpiValue` + `StaggerContainer`.
+- Leaderboard `#7` now displayed via `KpiValue`.
 
-## Important fix (scale bug)
-The merged `ScoreGauge` (from the parallel commit) is a **0–100 readiness** gauge (`getBandInfo` >=80
-"Loan Ready"); feeding it a 300–900 LeapScore clamped to "100", contradicting the "802 / 900" headline.
-Resolved by re-exporting the Sprint 19 300–900 gauge as **`LeapScoreGauge`** (`packages/ui/src/index.ts`)
-and using it on the Credit Report page AND the Sprint 20 website /leapscore page (which had the same
-latent clamp bug). The 0–100 `ScoreGauge` is untouched for readiness use.
+## DsaWidgets.tsx fixes
+- `import React from "react"` → `import { Fragment, type ReactNode } from "react"`;
+  `<React.Fragment key={…}>` → `<Fragment key={…}>`.
+- `confidence()` helper added; `ConfidenceBadge` shown in `LeadRow` (next to lender name).
+- `StatCard` upgraded to use `KpiValue` for the primary value.
+- Imported `ConfidenceBadge`, `KpiValue`, `type Confidence` from @leapmoney/ui.
 
-## Files modified
-- apps/borrower/src/components/cashflow/CashFlowWidgets.tsx
-- apps/borrower/src/components/financial/FinancialWidgets.tsx
-- apps/borrower/src/app/(auth)/matches/page.tsx
-- apps/borrower/src/app/(auth)/credit-report/report/page.tsx
-- apps/borrower/src/app/(auth)/dashboard/page.tsx
-- apps/web/src/app/leapscore/page.tsx (LeapScoreGauge fix)
-- packages/ui/src/index.ts (export LeapScoreGauge)
+## Files modified (6)
+- apps/dsa/src/components/DsaWidgets.tsx
+- apps/dsa/src/app/page.tsx
+- apps/dsa/src/app/leads/page.tsx
+- apps/dsa/src/app/leads/[id]/page.tsx
+- apps/dsa/src/app/commissions/page.tsx
+- apps/dsa/src/app/performance/page.tsx
 - .claude/CURRENT_SPRINT.md
 
-## Before vs After
-| Screen | Before | After |
-|--------|--------|-------|
-| Credit Report | Plain score headline + metric grid | LeapScoreGauge (802 ✓) + bureau DistributionChart + payment RiskBadge |
-| Cash Flow | Plain numbers + hand-rolled FOIR bar | KpiValue, salary TrendChart, MatchStrengthChart, V3 FOIRMeter |
-| Financial | Static savings figures | Animated CountUp savings + KpiValue + V3 FOIRMeter |
-| Matches | Plain % + text bands | ApprovalOddsNumber + ConfidenceBadge + MatchStrengthChart + BestMatchBadge + TrustBar |
-| Dashboard | MetricCardV2 KPIs (already) | + TrustBar trust indicator |
-
 ## Validation
-- pnpm turbo type-check: 15/15 PASS (0 errors)
+- pnpm turbo type-check --force: 15/15 PASS (0 errors)
 - pnpm turbo build: SUCCESS — 6/6
-- Visual QA: desktop + mobile (375px); 0 console errors; gauges/charts/count-ups/FOIR meters render; LeapScore gauge shows 802 correctly post-fix.
+- DSA routes: / commissions leads leads/[id] performance all ○ Static or ƒ Dynamic

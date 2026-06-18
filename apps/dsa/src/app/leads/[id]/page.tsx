@@ -1,8 +1,11 @@
 import Link from "next/link";
-import { Button, Heading, Paragraph } from "@leapmoney/ui";
+import { Button, Heading, Paragraph, LeapScoreGauge, ApprovalOddsNumber, ConfidenceBadge, TrustBar, type Confidence } from "@leapmoney/ui";
 import { CheckCircle2, Circle } from "lucide-react";
 import { getLead } from "@/lib/dsa-demo";
 import { LeadStatusBadge, inr } from "@/components/DsaWidgets";
+
+const confidence = (odds: number): Confidence =>
+  odds >= 75 ? "high" : odds >= 55 ? "medium" : "low";
 
 interface PageProps {
   params: { id: string };
@@ -31,21 +34,37 @@ export default function LeadDetailPage({ params }: PageProps) {
   const profile: Array<[string, string]> = [
     ["Product", lead.product],
     ["Amount", inr(lead.amount)],
-    ["LeapScore", `${lead.leapscore} / 900`],
     ["Health Score", `${lead.health_score} / 100`],
-    ["Approval Odds", `${lead.approval_odds}%`],
     ["Source", lead.source],
   ];
 
   return (
     <div className="mx-auto flex max-w-content flex-col gap-8">
+      <TrustBar variant="regulatory" />
+
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <Heading level={1} size="display-large" className="mb-1">{lead.borrower_name}</Heading>
           <Paragraph color="secondary">{lead.id} · {lead.product}</Paragraph>
         </div>
-        <LeadStatusBadge status={lead.status} />
+        <div className="flex items-center gap-2">
+          <ConfidenceBadge level={confidence(lead.approval_odds)} />
+          <LeadStatusBadge status={lead.status} />
+        </div>
       </div>
+
+      {/* Score + approval odds */}
+      <section className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div className="flex flex-col items-center gap-2 rounded-lg border border-border-token-default bg-background-card p-5 shadow-1">
+          <p className="text-label-caps uppercase tracking-wider text-foreground-tertiary">LeapScore</p>
+          <LeapScoreGauge value={lead.leapscore} min={300} max={900} bandLabel="" label="LeapScore" size={160} />
+        </div>
+        <div className="flex flex-col items-center justify-center gap-2 rounded-lg border border-border-token-default bg-background-card p-5 shadow-1">
+          <p className="text-label-caps uppercase tracking-wider text-foreground-tertiary">Approval odds</p>
+          <ApprovalOddsNumber odds={lead.approval_odds} size="lg" />
+          <ConfidenceBadge level={confidence(lead.approval_odds)} />
+        </div>
+      </section>
 
       {/* Borrower profile */}
       <section className="rounded-lg border border-border-token-default bg-background-card p-5 shadow-1">
