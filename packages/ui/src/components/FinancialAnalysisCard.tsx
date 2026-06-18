@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { Sparkles, BadgePercent, ArrowRight } from "lucide-react";
 import { Button } from "./button";
 

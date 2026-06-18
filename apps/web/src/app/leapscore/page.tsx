@@ -180,7 +180,7 @@ export default function Page() {
               </div>
               <div className="flex justify-center">
                 <div className="flex flex-col items-center gap-3 rounded-2xl border border-border-token-default bg-background-page p-8">
-                  <ScoreGauge value={742} min={300} max={900} bandLabel="Good" label="LeapScore" size={208} />
+                  <ScoreGauge score={742} size={208} />
                   <ScoreBandBadge band="Good" />
                   <p className="text-body-sm text-foreground-tertiary">All banks · competitive rates</p>
                 </div>

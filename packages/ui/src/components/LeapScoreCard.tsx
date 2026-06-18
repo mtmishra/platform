@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { Gauge, Calendar } from "lucide-react";
 import { ScoreGauge } from "./ScoreGauge";
 import { ScoreBandBadge } from "./badges";

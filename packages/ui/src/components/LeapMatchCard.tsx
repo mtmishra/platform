@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { Check, AlertCircle, Info } from "lucide-react";
 import { ApprovalGauge } from "./ApprovalGauge";
 import { MatchStrengthMeter } from "./MatchStrengthMeter";

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { ScoreGauge } from "./ScoreGauge";
 import { ApprovalGauge } from "./ApprovalGauge";
 import { FOIRMeter } from "./FOIRMeter";

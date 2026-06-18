@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { HeartPulse, CheckCircle2, AlertTriangle, AlertOctagon } from "lucide-react";
 
 export interface HealthMetric {

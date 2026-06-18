@@ -7,12 +7,17 @@
 **Goal:** Redesign the three P0 website screens (Homepage, LeapScore, LeapMatch) with the V3
 components. No other pages touched. SEO, structured data, and functionality preserved.
 
-## Screens redesigned (3)
-### Homepage (apps/web/src/app/page.tsx)
-- Hero: added V3 `TrustBar` (regulatory: RBI / DPDP / Fair Practices) below the existing trust strip
-- Stats bar: animated with `CountUp` + `StaggerContainer` (₹500 Cr+, 50,000+, 30+, 4.8★)
-- Product Preview (dark section): swapped `AnimatedScoreRing` → V3 `ScoreGauge` (742) in a light premium card
-- Reveal animations: `StaggerContainer` on loan-category + why-LeapMoney cards; `RevealOnScroll` on CTA
+## Merge note
+A parallel "Investor Demo Polish" commit (`fd59b55`) landed on origin/develop concurrently and
+**already redesigned the Homepage** (plus DSA/Lender/Admin dashboards) using its own V3 components
+(MetricCardV2, FunnelChart, PortfolioChart, RevenueChart, a new `ScoreGauge` with a `score` prop).
+On rebase the Homepage conflict was resolved in favour of that committed redesign (not reverted),
+and this sprint's unique, non-conflicting **LeapScore + LeapMatch** redesigns were retained.
+Reconciliation: adapted LeapScore to the merged `ScoreGauge(score=…)` API and fixed unused-`React`
+imports in `fd59b55`'s new UI components so the workspace type-checks/builds green again.
+
+## Screens redesigned (this sprint)
+### Homepage — superseded by parallel commit fd59b55 (kept theirs)
 
 ### LeapScore (apps/web/src/app/leapscore/page.tsx)
 - Hero: `TrustBar` (security: soft check, no score impact)

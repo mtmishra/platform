@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { Landmark, ShieldCheck, ArrowUpRight, ArrowDownRight } from "lucide-react";
 import { FOIRMeter } from "./FOIRMeter";
 
