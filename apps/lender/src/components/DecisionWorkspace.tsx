@@ -1,15 +1,15 @@
 "use client";
 
-import React from "react";
+import { useState, type ReactNode } from "react";
 import { CheckCircle2, XCircle, AlertTriangle } from "lucide-react";
 import { REASON_CODES, type Decision } from "@/lib/lender-demo";
 
 // Demo-only credit decision workspace. No persistence — captures a decision +
 // reason codes in local state and shows the resulting (mock) outcome.
 export function DecisionWorkspace({ initialDecision, initialReasons }: { initialDecision: Decision | null; initialReasons: string[] }) {
-  const [decision, setDecision] = React.useState<Decision | null>(initialDecision);
-  const [reasons, setReasons] = React.useState<string[]>(initialReasons);
-  const [saved, setSaved] = React.useState(false);
+  const [decision, setDecision] = useState<Decision | null>(initialDecision);
+  const [reasons, setReasons] = useState<string[]>(initialReasons);
+  const [saved, setSaved] = useState(false);
 
   const toggle = (code: string): void => {
     setSaved(false);
@@ -17,7 +17,7 @@ export function DecisionWorkspace({ initialDecision, initialReasons }: { initial
   };
   const choose = (d: Decision): void => { setDecision(d); setSaved(false); };
 
-  const options: Array<{ key: Decision; label: string; icon: React.ReactNode; cls: string; active: string }> = [
+  const options: Array<{ key: Decision; label: string; icon: ReactNode; cls: string; active: string }> = [
     { key: "approve", label: "Approve", icon: <CheckCircle2 size={18} />, cls: "border-status-success/40 text-status-success", active: "bg-status-success text-foreground-on-dark border-status-success" },
     { key: "conditional", label: "Conditional", icon: <AlertTriangle size={18} />, cls: "border-status-warning/40 text-status-warning", active: "bg-status-warning text-foreground-on-dark border-status-warning" },
     { key: "reject", label: "Reject", icon: <XCircle size={18} />, cls: "border-status-danger/40 text-status-danger", active: "bg-status-danger text-foreground-on-dark border-status-danger" },

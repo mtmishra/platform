@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import { useState, type ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LayoutDashboard, Users, FileStack, Wallet, ShieldAlert, TrendingUp, ScrollText, Menu, X } from "lucide-react";
@@ -8,7 +8,7 @@ import { LayoutDashboard, Users, FileStack, Wallet, ShieldAlert, TrendingUp, Scr
 interface NavItem {
   label: string;
   href: string;
-  icon: React.ReactNode;
+  icon: ReactNode;
 }
 
 const NAV: NavItem[] = [
@@ -50,9 +50,9 @@ function NavLinks({ pathname, onNavigate }: { pathname: string; onNavigate?: () 
   );
 }
 
-export function AdminShell({ children }: { children: React.ReactNode }) {
+export function AdminShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
 
   return (
     <div className="flex min-h-dvh">
