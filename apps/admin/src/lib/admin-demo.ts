@@ -1,16 +1,27 @@
 // Mock Admin Control Tower data (Sprint 17). Demo only — no APIs/CRM/integrations.
-// Aggregates across the borrower, DSA, lender, application, outcome, and lender-
-// repository surfaces. Deterministic so the dashboards are stable.
+// Aggregates across borrower, DSA, lender, application, outcome, and lender-
+// repository surfaces. Uses @leapmoney/demo-data for canonical platform-wide
+// constants — all portals share the same aggregate numbers.
 
 import { getLenderCount, getRejectionReasons } from "@leapmoney/lenders";
+import {
+  PLATFORM,
+  PLATFORM_FINANCIALS,
+  LENDER_NAMES,
+  PRODUCT_NAMES,
+  LEAD_SOURCE_NAMES,
+  FIRST_NAMES,
+  LAST_NAMES,
+  inr,
+  pick,
+} from "@leapmoney/demo-data";
+
+export { inr };
 
 export type AppStatus = "new" | "under_review" | "approved" | "rejected" | "disbursed";
-export type LeadSource = "Borrower Direct" | "DSA" | "Referral" | "Organic";
+export type LeadSource = (typeof LEAD_SOURCE_NAMES)[number];
 export type ScoreBand = "Excellent" | "Good" | "Fair" | "Poor";
 export type UserRole = "Borrower" | "DSA" | "Lender";
-
-const inr = (n: number): string => `₹${Math.round(n).toLocaleString("en-IN")}`;
-export { inr };
 
 // ── Platform totals ───────────────────────────────────────────────────────────
 export interface AdminKpis {
@@ -23,21 +34,15 @@ export interface AdminKpis {
   commission: number;
 }
 
-const APPLICATIONS_TOTAL = 1284;
-const DISBURSALS_TOTAL = 412;
-const AVG_TICKET = 875000;
-
 export function getKpis(): AdminKpis {
-  const lenders = getLenderCount().total;
-  const disbursedVolume = DISBURSALS_TOTAL * AVG_TICKET;
   return {
-    total_borrowers: 8640,
-    total_dsas: 240,
-    total_lenders: lenders,
-    total_applications: APPLICATIONS_TOTAL,
-    total_disbursals: DISBURSALS_TOTAL,
-    revenue: Math.round(disbursedVolume * 0.011), // ~1.1% platform take-rate
-    commission: Math.round(disbursedVolume * 0.015), // DSA commission pool
+    total_borrowers: PLATFORM.total_borrowers,
+    total_dsas: PLATFORM.total_dsas,
+    total_lenders: getLenderCount().total,
+    total_applications: PLATFORM.total_applications,
+    total_disbursals: PLATFORM.total_disbursals,
+    revenue: PLATFORM_FINANCIALS.platform_revenue,
+    commission: PLATFORM_FINANCIALS.commission_pool,
   };
 }
 
@@ -51,9 +56,6 @@ export interface AdminUser {
   joined: string;
 }
 
-const FIRST = ["Priya", "Rahul", "Anjali", "Vikram", "Sneha", "Arjun", "Kavya", "Rohan", "Meera", "Aditya", "Pooja", "Karthik", "Divya", "Sanjay", "Neha", "Amit", "Ritu", "Suresh"];
-const LAST = ["Sharma", "Verma", "Nair", "Singh", "Reddy", "Mehta", "Iyer", "Gupta", "Joshi", "Rao", "Patel", "Menon"];
-
 function buildUsers(): AdminUser[] {
   const users: AdminUser[] = [];
   const plan: Array<{ role: UserRole; count: number; prefix: string }> = [
@@ -61,16 +63,26 @@ function buildUsers(): AdminUser[] {
     { role: "DSA", count: 8, prefix: "DS" },
     { role: "Lender", count: 7, prefix: "LN" },
   ];
+  const LENDER_ORG = ["HDFC Bank", "ICICI Bank", "Bajaj Finance", "Tata Capital", "MoneyView", "KreditBee", "Axis Bank"];
   let n = 0;
   for (const p of plan) {
     for (let i = 0; i < p.count; i++) {
-      const name = p.role === "Lender" ? ["HDFC Bank", "ICICI Bank", "Bajaj Finance", "Tata Capital", "MoneyView", "KreditBee", "Axis Bank"][i % 7]! : `${FIRST[(n) % FIRST.length]} ${LAST[(n) % LAST.length]}`;
+      const name = p.role === "Lender"
+        ? LENDER_ORG[i % LENDER_ORG.length]!
+        : `${pick(FIRST_NAMES, n)} ${pick(LAST_NAMES, n)}`;
       const status: AdminUser["status"] = n % 9 === 0 ? "Pending" : n % 13 === 0 ? "Suspended" : "Active";
       const detail =
         p.role === "Borrower" ? `LeapScore ${680 + ((n * 17) % 200)}`
           : p.role === "DSA" ? `${20 + ((n * 7) % 80)} leads · #${1 + (n % 50)} rank`
             : `${getLenderCount().total} products · ${50 + (n % 40)}% approval`;
-      users.push({ id: `${p.prefix}-${1000 + i}`, name, role: p.role, detail, status, joined: `2026-0${1 + (n % 5)}-${String(1 + (n % 27)).padStart(2, "0")}` });
+      users.push({
+        id: `${p.prefix}-${1000 + i}`,
+        name,
+        role: p.role,
+        detail,
+        status,
+        joined: `2026-0${1 + (n % 5)}-${String(1 + (n % 27)).padStart(2, "0")}`,
+      });
       n++;
     }
   }
@@ -80,8 +92,13 @@ const USERS = buildUsers();
 export function getUsers(role?: UserRole): AdminUser[] {
   return role ? USERS.filter((u) => u.role === role) : USERS;
 }
+export function statusCount(): Record<string, number> {
+  const m: Record<string, number> = {};
+  for (const u of USERS) m[u.status] = (m[u.status] ?? 0) + 1;
+  return m;
+}
 
-// ── Application management ───────────────────────────────────────────────────────
+// ── Application management ────────────────────────────────────────────────────
 export interface AdminApplication {
   id: string;
   applicant: string;
@@ -93,9 +110,7 @@ export interface AdminApplication {
   score_band: ScoreBand;
   updated: string;
 }
-const PRODUCTS = ["Personal Loan", "Home Loan", "Business Loan", "LAP", "Credit Card"];
-const LENDERS = ["HDFC Bank", "ICICI Bank", "Bajaj Finance", "Axis Bank", "Tata Capital", "MoneyView", "KreditBee"];
-const SOURCES: LeadSource[] = ["Borrower Direct", "DSA", "Referral", "Organic"];
+
 const STATUSES: AppStatus[] = ["new", "under_review", "approved", "rejected", "disbursed"];
 
 function buildApplications(): AdminApplication[] {
@@ -104,23 +119,27 @@ function buildApplications(): AdminApplication[] {
     const band: ScoreBand = score >= 780 ? "Excellent" : score >= 700 ? "Good" : score >= 640 ? "Fair" : "Poor";
     return {
       id: `AP-${30000 + i}`,
-      applicant: `${FIRST[i % FIRST.length]} ${LAST[i % LAST.length]}`,
-      product: PRODUCTS[i % PRODUCTS.length]!,
+      applicant: `${pick(FIRST_NAMES, i)} ${pick(LAST_NAMES, i + 3)}`,
+      product: pick(PRODUCT_NAMES, i),
       amount: 200000 + ((i * 137) % 40) * 50000,
-      lender: LENDERS[i % LENDERS.length]!,
-      source: SOURCES[i % SOURCES.length]!,
-      status: STATUSES[i % STATUSES.length]!,
+      lender: pick(LENDER_NAMES, i),
+      source: pick(LEAD_SOURCE_NAMES, i),
+      status: pick(STATUSES, i),
       score_band: band,
       updated: `2026-06-${String(1 + (i % 17)).padStart(2, "0")}`,
     };
   });
 }
 const ADMIN_APPS = buildApplications();
-export function getApplications(): AdminApplication[] {
-  return ADMIN_APPS;
+export function getApplications(): AdminApplication[] { return ADMIN_APPS; }
+
+export function sourceCount(): Record<string, number> {
+  const m: Record<string, number> = {};
+  for (const a of ADMIN_APPS) m[a.source] = (m[a.source] ?? 0) + 1;
+  return m;
 }
 
-// ── Commission management ─────────────────────────────────────────────────────────
+// ── Commission management ─────────────────────────────────────────────────────
 export interface CommissionSummary {
   pending: number;
   approved: number;
@@ -128,20 +147,20 @@ export interface CommissionSummary {
   by_dsa: Array<{ dsa: string; pending: number; paid: number }>;
 }
 export function getCommissions(): CommissionSummary {
-  const k = getKpis();
+  const pool = PLATFORM_FINANCIALS.commission_pool;
   return {
-    pending: Math.round(k.commission * 0.22),
-    approved: Math.round(k.commission * 0.35),
-    paid: Math.round(k.commission * 0.43),
+    pending: Math.round(pool * 0.22),
+    approved: Math.round(pool * 0.35),
+    paid: Math.round(pool * 0.43),
     by_dsa: Array.from({ length: 6 }, (_, i) => ({
-      dsa: `${FIRST[i % FIRST.length]} ${LAST[i % LAST.length]}`,
+      dsa: `${pick(FIRST_NAMES, i)} ${pick(LAST_NAMES, i)}`,
       pending: 8000 + i * 2400,
       paid: 22000 + i * 5200,
     })).sort((a, b) => b.paid - a.paid),
   };
 }
 
-// ── Risk dashboard ─────────────────────────────────────────────────────────────────
+// ── Risk dashboard ────────────────────────────────────────────────────────────
 export interface RiskDashboard {
   score_bands: Array<{ band: ScoreBand; count: number }>;
   approval_rate_by_band: Array<{ band: ScoreBand; rate: number }>;
@@ -162,7 +181,7 @@ export function getRisk(): RiskDashboard {
   };
 }
 
-// ── Revenue dashboard ───────────────────────────────────────────────────────────────
+// ── Revenue dashboard ─────────────────────────────────────────────────────────
 export interface RevenueDashboard {
   revenue: number;
   disbursal_volume: number;
@@ -170,22 +189,21 @@ export interface RevenueDashboard {
   monthly: Array<{ month: string; revenue: number }>;
 }
 export function getRevenue(): RevenueDashboard {
-  const k = getKpis();
   return {
-    revenue: k.revenue,
-    disbursal_volume: DISBURSALS_TOTAL * AVG_TICKET,
-    conversion_rate: Math.round((DISBURSALS_TOTAL / APPLICATIONS_TOTAL) * 100),
+    revenue: PLATFORM_FINANCIALS.platform_revenue,
+    disbursal_volume: PLATFORM_FINANCIALS.disbursal_volume,
+    conversion_rate: Math.round((PLATFORM.total_disbursals / PLATFORM.total_applications) * 100),
     monthly: [
       { month: "Feb", revenue: 2800000 },
       { month: "Mar", revenue: 3200000 },
       { month: "Apr", revenue: 3600000 },
       { month: "May", revenue: 3900000 },
-      { month: "Jun", revenue: Math.round(k.revenue / 4) },
+      { month: "Jun", revenue: Math.round(PLATFORM_FINANCIALS.platform_revenue / 4) },
     ],
   };
 }
 
-// ── Compliance dashboard ──────────────────────────────────────────────────────────────
+// ── Compliance dashboard ──────────────────────────────────────────────────────
 export interface ComplianceDashboard {
   consents: { granted: number; active: number; withdrawn: number };
   audit_logs: Array<{ when: string; actor: string; action: string }>;
@@ -205,7 +223,7 @@ export function getCompliance(): ComplianceDashboard {
   };
 }
 
-// ── Notifications ─────────────────────────────────────────────────────────────────────
+// ── Notifications ─────────────────────────────────────────────────────────────
 export interface AdminNotification {
   id: string;
   title: string;
@@ -215,7 +233,7 @@ export interface AdminNotification {
 }
 export function getNotifications(): AdminNotification[] {
   return [
-    { id: "n1", title: "Disbursal milestone", detail: "Platform crossed ₹36 Cr in disbursed volume this quarter.", when: "30m ago", tone: "success" },
+    { id: "n1", title: "Disbursal milestone", detail: `Platform crossed ${inr(PLATFORM_FINANCIALS.disbursal_volume)} in disbursed volume.`, when: "30m ago", tone: "success" },
     { id: "n2", title: "DSA onboarding spike", detail: "18 new DSA partners pending KYC approval.", when: "2h ago", tone: "info" },
     { id: "n3", title: "High-risk cohort", detail: "Sub-640 applications up 6% week-on-week.", when: "5h ago", tone: "warning" },
     { id: "n4", title: "Consent withdrawals", detail: "12 erasure requests require processing within SLA.", when: "1d ago", tone: "danger" },

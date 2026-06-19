@@ -18,6 +18,7 @@
     "@leapmoney/types": "workspace:*",
     "@leapmoney/analytics": "workspace:*",
     "@leapmoney/lenders": "workspace:*",
+    "@leapmoney/demo-data": "workspace:*",
     "lucide-react": "^1.20.0"
   },
   "devDependencies": {
