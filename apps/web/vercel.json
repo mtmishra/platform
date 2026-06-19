@@ -3,7 +3,7 @@
   "framework": "nextjs",
   "installCommand": "cd ../.. && pnpm install --frozen-lockfile",
   "buildCommand": "cd ../.. && pnpm turbo build --filter=@leapmoney/web...",
-  "outputDirectory": ".next",
+  "outputDirectory": "out",
   "regions": ["bom1"],
   "headers": [
     {

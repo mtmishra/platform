@@ -1,2 +1,5 @@
-﻿const nextConfig = { transpilePackages: ["@leapmoney/ui"] };
+const nextConfig = {
+  output: "export",
+  transpilePackages: ["@leapmoney/ui"],
+};
 export default nextConfig;

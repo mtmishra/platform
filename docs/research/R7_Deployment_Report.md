@@ -10,13 +10,10 @@
 | Vercel CLI installed | ✅ v54.14.2 | `npm i -g vercel` |
 | `vercel.json` per app | ✅ 6 files | Created Sprint 26 |
 | Build verified | ✅ 6/6 | 93 pages, 0 errors |
-| Vercel authentication | ⏳ Requires user action | `vercel login` → browser OAuth |
-| Project deployment | ⏳ Requires auth | Run after `vercel login` |
+| Vercel authentication | ✅ Complete | `vercel login` via browser OAuth |
+| Project deployment | ✅ 6/6 READY | All apps live |
 | Custom domain DNS | ⏳ Post-deploy | Vercel dashboard → Settings → Domains |
-| Production smoke test | ⏳ Post-deploy | Script ready below |
-
-**Blocking step:** `vercel login` requires interactive browser authentication.
-Run `vercel login` in your terminal, approve in browser, then run the deploy commands in `docs/deployment/VERCEL_DEPLOY.md`.
+| Production smoke test | ⏳ Manual | URLs ready below |
 
 ---
 
@@ -34,32 +31,43 @@ Run `vercel login` in your terminal, approve in browser, then run the deploy com
 | Build system | Turborepo 2.x |
 | Install command | `cd ../.. && pnpm install --frozen-lockfile` |
 | Security headers | X-Frame-Options, nosniff, strict-origin Referrer, Permissions-Policy |
+| Deploy method | `vercel --prod` from monorepo root (rootDirectory per app via API) |
 
 ### Per-App Configuration
 
-| App | Vercel Project Name | Target Domain | Build Filter | Pages |
+| App | Vercel Project Name | Target Domain | Root Directory | Pages |
 |---|---|---|---|---|
-| web | `leapmoney-web` | leapmoney.net | `@leapmoney/web...` | 39 |
-| borrower | `leapmoney-borrower` | app.leapmoney.net | `@leapmoney/borrower...` | 23 |
-| dsa | `leapmoney-dsa` | dsa.leapmoney.net | `@leapmoney/dsa...` | 9 |
-| lender | `leapmoney-lender` | lender.leapmoney.net | `@leapmoney/lender...` | 8 |
-| admin | `leapmoney-admin` | admin.leapmoney.net | `@leapmoney/admin...` | 10 |
-| referral | `leapmoney-referral` | ref.leapmoney.net | `@leapmoney/referral...` | 4 |
+| web | `web` | leapmoney.net | `apps/web` | 39 (static export) |
+| borrower | `leapmoney-borrower` | app.leapmoney.net | `apps/borrower` | 23 |
+| dsa | `leapmoney-dsa` | dsa.leapmoney.net | `apps/dsa` | 9 |
+| lender | `leapmoney-lender` | lender.leapmoney.net | `apps/lender` | 8 |
+| admin | `leapmoney-admin` | admin.leapmoney.net | `apps/admin` | 10 |
+| referral | `leapmoney-referral` | ref.leapmoney.net | `apps/referral` | 4 |
 
 ---
 
 ## Production URLs
 
-*To be populated after `vercel login` + deploy. See `docs/deployment/VERCEL_DEPLOY.md`.*
+| Portal | Target Domain | Vercel Preview URL | Deployment ID | Status |
+|---|---|---|---|---|
+| Marketing website | https://leapmoney.net | https://web-98zz131bn-leapmoney.vercel.app | `dpl_32ZyPKThmRJPAtvVQLXh3LkUhnH8` | ✅ READY |
+| Borrower portal | https://app.leapmoney.net | https://leapmoney-borrower-44iqlz8v8-leapmoney.vercel.app | `dpl_EfV1gubxsv47NWePkL2emzoXCubv` | ✅ READY |
+| DSA portal | https://dsa.leapmoney.net | https://leapmoney-iukgmapi9-leapmoney.vercel.app | `dpl_8xdLfDAVtANcAQMB9aiAUzFG3XA1` | ✅ READY |
+| Lender portal | https://lender.leapmoney.net | https://leapmoney-lender-7unrs7jf3-leapmoney.vercel.app | `dpl_DenEneE44S5Lj2YpQrpY52w9efzv` | ✅ READY |
+| Admin control tower | https://admin.leapmoney.net | https://leapmoney-admin-ow62a16ym-leapmoney.vercel.app | `dpl_Hde9n6qjompJFgDemUFpJajo46Yf` | ✅ READY |
+| Referral stub | https://ref.leapmoney.net | https://leapmoney-referral-pzupipsw5-leapmoney.vercel.app | `dpl_67wovuT8dujM2CtB37uzYz5FNaTN` | ✅ READY |
 
-| Portal | Target Domain | Vercel Preview URL | Status |
-|---|---|---|---|
-| Marketing website | https://leapmoney.net | — | ⏳ Pending deploy |
-| Borrower portal | https://app.leapmoney.net | — | ⏳ Pending deploy |
-| DSA portal | https://dsa.leapmoney.net | — | ⏳ Pending deploy |
-| Lender portal | https://lender.leapmoney.net | — | ⏳ Pending deploy |
-| Admin control tower | https://admin.leapmoney.net | — | ⏳ Pending deploy |
-| Referral stub | https://ref.leapmoney.net | — | ⏳ Pending deploy |
+---
+
+## Deployment Blocker — Resolved
+
+**Blocker:** `NEXT_MISSING_LAMBDA` in `@vercel/next@4.19.0` (bundled in Vercel CLI v54.14.2)
+
+**Root cause:** `path.posix.join("./", entryDirectory, page)` in `serverBuild` produces a relative key (`connect-bank/consent`) while `prerenderRoute` looks up an absolute key (`/connect-bank/consent`). The mismatch causes lambda lookup to return `undefined` for all App Router static routes.
+
+**Resolution:** Deployed from monorepo root (`platform/`) with `rootDirectory` set per project via Vercel REST API. Vercel's server-side builder uses a different `@vercel/next` version that resolves this correctly. Local `vercel build` was bypassed entirely.
+
+**apps/web** uses `output: "export"` (pure static — no lambdas). All other apps use server-side rendering via Vercel's build infrastructure.
 
 ---
 
@@ -95,7 +103,7 @@ Full reference: `docs/deployment/env.production.example`
 
 Run after deployment. Open each URL and verify:
 
-### Website (leapmoney.net)
+### Website (web-98zz131bn-leapmoney.vercel.app)
 - [ ] `/` — Homepage loads, hero CTA visible
 - [ ] `/about` — About page
 - [ ] `/compare` — Lender comparison table
@@ -103,16 +111,17 @@ Run after deployment. Open each URL and verify:
 - [ ] `/register` — Registration page with RBI disclaimer
 - [ ] `/fair-practices-code` — Fair practices content
 - [ ] `/grievance-redressal` — Grievance process content
+- [ ] `/blog/credit-utilisation` — Blog article loads
 - [ ] `/not-found` (404) — Branded 404 page
 
-### Borrower Portal (app.leapmoney.net)
+### Borrower Portal (leapmoney-borrower-44iqlz8v8-leapmoney.vercel.app)
 - [ ] `/` — Dashboard with LeapScore gauge, MetricCardV2 KPIs
 - [ ] `/health` — LeapScore & Credit Health page
 - [ ] `/applications` — Applications list
 - [ ] `/match` — LeapMatch lender matching
 - [ ] `/not-found` (404) — Branded 404 with Button
 
-### DSA Portal (dsa.leapmoney.net)
+### DSA Portal (leapmoney-iukgmapi9-leapmoney.vercel.app)
 - [ ] `/` — Dashboard with pipeline and KPIs
 - [ ] `/leads` — Leads list with StaggerContainer
 - [ ] `/leads/LD-1000` — Lead detail page
@@ -120,7 +129,7 @@ Run after deployment. Open each URL and verify:
 - [ ] `/commissions` — Commission summary
 - [ ] `/performance` — Performance analytics
 
-### Lender Portal (lender.leapmoney.net)
+### Lender Portal (leapmoney-lender-7unrs7jf3-leapmoney.vercel.app)
 - [ ] `/` — Dashboard with status counts and notifications
 - [ ] `/applications` — Application inbox
 - [ ] `/applications/LA-20000` — Application review (LeapScoreGauge, FOIRMeter, ApprovalOddsNumber)
@@ -128,7 +137,7 @@ Run after deployment. Open each URL and verify:
 - [ ] `/portfolio` — Portfolio summary (MetricCardV2, CountUp)
 - [ ] `/analytics` — Analytics (DistributionChart ×6)
 
-### Admin Control Tower (admin.leapmoney.net)
+### Admin Control Tower (leapmoney-admin-ow62a16ym-leapmoney.vercel.app)
 - [ ] `/` — Dashboard with 8-card KPI grid
 - [ ] `/users` — User management with role distribution
 - [ ] `/applications` — Application pipeline
@@ -137,18 +146,22 @@ Run after deployment. Open each URL and verify:
 - [ ] `/revenue` — Revenue dashboard (TrendChart, MetricCardV2)
 - [ ] `/compliance` — Compliance (TrustBar regulatory, MetricCardV2, AnimatedCard)
 
+### Referral (leapmoney-referral-pzupipsw5-leapmoney.vercel.app)
+- [ ] `/` — Landing page loads
+
 ---
 
-## Deploy Commands (after `vercel login`)
+## Custom Domain DNS (Post-Deploy)
 
-```bash
-# Run from platform/ root
-cd apps/web      && vercel --prod; cd ../..
-cd apps/borrower && vercel --prod; cd ../..
-cd apps/dsa      && vercel --prod; cd ../..
-cd apps/lender   && vercel --prod; cd ../..
-cd apps/admin    && vercel --prod; cd ../..
-cd apps/referral && vercel --prod; cd ../..
+In each Vercel project → Settings → Domains → Add domain listed below. Then update DNS provider:
+
+```
+leapmoney.net         A      76.76.21.21
+app.leapmoney.net     CNAME  cname.vercel-dns.com
+dsa.leapmoney.net     CNAME  cname.vercel-dns.com
+lender.leapmoney.net  CNAME  cname.vercel-dns.com
+admin.leapmoney.net   CNAME  cname.vercel-dns.com
+ref.leapmoney.net     CNAME  cname.vercel-dns.com
 ```
 
 ---
@@ -157,9 +170,8 @@ cd apps/referral && vercel --prod; cd ../..
 
 | ID | Description | Severity | Resolution |
 |---|---|---|---|
-| DEPLOY-1 | `vercel login` requires interactive browser auth — cannot be automated headlessly | Blocker (one-time) | User runs `vercel login` once; all subsequent deploys are unattended |
 | DEPLOY-2 | Supabase project not yet provisioned in ap-south-1 | Pre-launch | Provision at supabase.com, set to Mumbai region |
-| DEPLOY-3 | Custom DNS not pointing to Vercel | Post-deploy | Add CNAME records per VERCEL_DEPLOY.md |
+| DEPLOY-3 | Custom DNS not pointing to Vercel | Post-deploy | Add CNAME records above |
 | PROD-1–7 | Backend integrations (bureau, KYC, Razorpay live, Redis) | Post-demo | Documented in R6_Production_Readiness_Report.md |
 | W1 | Borrower names repeat across portal datasets (by design in demo mode) | Low / Demo only | Replace mock generators with Supabase queries at launch |
 
@@ -173,4 +185,4 @@ cd apps/referral && vercel --prod; cd ../..
 | Sprint 24 | `617d935` | Admin Portal V3 Redesign |
 | Sprint 25 | `74995eb` | Final Investor Demo Polish & QA |
 | Sprint 26 | `4338366` | Production Deployment Preparation |
-| Sprint 27 | (this commit) | Deployment Report + Vercel setup docs |
+| Sprint 27 | (this commit) | Deployment live — all 6 apps READY |

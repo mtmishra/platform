@@ -1,5 +1,9 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+
+// All blog posts are prerendered at build time. Unknown slugs → 404, no lambda.
+export const dynamicParams = false;
+export const dynamic = "force-static";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { BlogArticleTemplate } from "@/components/blog/BlogArticleTemplate";
