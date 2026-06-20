@@ -6,7 +6,8 @@
   "types": "./src/index.ts",
   "scripts": {
     "type-check": "tsc --noEmit",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist",
+    "lint": "tsc --noEmit"
   },
   "dependencies": {
     "@leapmoney/match": "workspace:*"
