@@ -1,4 +1,3 @@
-import React from "react";
 import type { NextMilestone } from "@leapmoney/credit";
 
 interface ImprovementTrackerProps {
@@ -53,8 +52,8 @@ export function ImprovementTracker({ currentScore, milestone, history }: Improve
             <div key={h.month} className="flex flex-1 flex-col items-center gap-1">
               <div className="flex h-16 w-full items-end">
                 <div
-                  className="w-full rounded-sm bg-interactive-primary/30"
-                  style={{ height: `${heightPct}%` }}
+                  className="h-full w-full origin-bottom rounded-sm bg-interactive-primary/30"
+                  style={{ transform: `scaleY(${heightPct / 100})` }}
                 />
               </div>
               <span className="font-mono text-label-caps text-foreground-tertiary tabular-nums">{h.score}</span>

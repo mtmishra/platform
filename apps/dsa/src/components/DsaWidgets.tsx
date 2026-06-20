@@ -52,35 +52,18 @@ export function LeadRow({ lead }: { lead: Lead }) {
 export function Pipeline({ stages }: { stages: Array<{ stage: string; count: number }> }) {
   const max = Math.max(...stages.map((s) => s.count), 1);
   return (
-    <div className="flex flex-col gap-3 rounded-lg border border-border-token-default bg-background-card p-5 shadow-1 sm:flex-row sm:items-end sm:gap-2">
+    <div className="flex flex-col gap-3 rounded-lg border border-border-token-default bg-background-card p-5 shadow-1 sm:flex-row sm:items-center sm:gap-2">
       {stages.map((s, i) => (
         <Fragment key={s.stage}>
-          <div className="flex flex-1 flex-col items-center gap-2">
+          <div className="flex flex-1 flex-col gap-2 p-2">
             <span className="font-mono text-h1 font-bold tabular-nums text-foreground-primary">{s.count}</span>
-            <div className="flex h-20 w-full items-end">
-              <div className="w-full rounded-t-md bg-interactive-primary/70" style={{ height: `${20 + (s.count / max) * 80}%` }} />
+            <div className="h-2 w-full overflow-hidden rounded-full bg-background-page">
+              <div className="h-full origin-left rounded-full bg-interactive-primary/70" style={{ transform: `scaleX(${s.count / max})` }} />
             </div>
             <span className="text-body-sm font-medium text-foreground-secondary">{s.stage}</span>
           </div>
           {i < stages.length - 1 ? <span className="hidden self-center text-foreground-tertiary sm:block">→</span> : null}
         </Fragment>
-      ))}
-    </div>
-  );
-}
-
-export function MiniBarChart({ data }: { data: Array<{ month: string; leads: number }> }) {
-  const max = Math.max(...data.map((d) => d.leads), 1);
-  return (
-    <div className="flex items-end gap-3 rounded-lg border border-border-token-default bg-background-card p-5 shadow-1">
-      {data.map((d) => (
-        <div key={d.month} className="flex flex-1 flex-col items-center gap-1">
-          <div className="flex h-28 w-full items-end">
-            <div className="w-full rounded-t-md bg-interactive-primary/40" style={{ height: `${20 + (d.leads / max) * 80}%` }} />
-          </div>
-          <span className="font-mono text-label-caps tabular-nums text-foreground-secondary">{d.leads}</span>
-          <span className="text-label-caps uppercase text-foreground-tertiary">{d.month}</span>
-        </div>
       ))}
     </div>
   );

@@ -55,39 +55,3 @@ export function ApplicationRow({ app }: { app: LenderApplication }) {
   );
 }
 
-/** Horizontal labelled bar chart (counts). */
-export function BarList({ rows, max, colorClass }: { rows: Array<{ label: string; count: number; tone?: string }>; max?: number; colorClass?: string }) {
-  const m = max ?? Math.max(...rows.map((r) => r.count), 1);
-  return (
-    <div className="flex flex-col gap-3">
-      {rows.map((r) => (
-        <div key={r.label} className="flex items-center gap-3">
-          <span className="w-28 flex-shrink-0 text-body-sm text-foreground-secondary">{r.label}</span>
-          <div className="h-3 flex-1 overflow-hidden rounded-full bg-background-page">
-            <div className={`h-full origin-left rounded-full ${r.tone ?? colorClass ?? "bg-interactive-primary"}`} style={{ transform: `scaleX(${r.count / m})` }} />
-          </div>
-          <span className="w-8 flex-shrink-0 text-right font-mono text-body-sm tabular-nums text-foreground-primary">{r.count}</span>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-/** Vertical bar chart for trends. */
-export function ColumnChart({ data }: { data: Array<{ label: string; values: Array<{ value: number; tone: string }> }> }) {
-  const max = Math.max(...data.flatMap((d) => d.values.map((v) => v.value)), 1);
-  return (
-    <div className="flex items-end gap-4 rounded-lg border border-border-token-default bg-background-card p-5 shadow-1">
-      {data.map((d) => (
-        <div key={d.label} className="flex flex-1 flex-col items-center gap-2">
-          <div className="flex h-32 w-full items-end justify-center gap-1">
-            {d.values.map((v, i) => (
-              <div key={i} className={`w-3 rounded-t-sm ${v.tone}`} style={{ height: `${10 + (v.value / max) * 90}%` }} title={String(v.value)} />
-            ))}
-          </div>
-          <span className="text-label-caps uppercase text-foreground-tertiary">{d.label}</span>
-        </div>
-      ))}
-    </div>
-  );
-}

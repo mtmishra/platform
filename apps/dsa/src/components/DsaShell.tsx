@@ -1,14 +1,16 @@
 "use client";
 
-import React from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LayoutDashboard, Users, Building2, Share2, Wallet, TrendingUp, Menu, X } from "lucide-react";
 
+import { type ReactNode } from "react";
+
 interface NavItem {
   label: string;
   href: string;
-  icon: React.ReactNode;
+  icon: ReactNode;
 }
 
 const NAV: NavItem[] = [
@@ -49,9 +51,9 @@ function NavLinks({ pathname, onNavigate }: { pathname: string; onNavigate?: () 
   );
 }
 
-export function DsaShell({ children }: { children: React.ReactNode }) {
+export function DsaShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
 
   return (
     <div className="flex min-h-dvh">
