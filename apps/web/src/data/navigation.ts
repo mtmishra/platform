@@ -17,8 +17,10 @@ export interface NavGroup {
 export const PRODUCTS_MENU: NavLink[] = [
   { label: "LeapMatch™",      href: "/leapmatch" },
   { label: "LeapScore™",      href: "/leapscore" },
+  { label: "LeapAI™",         href: "/leapai" },
   { label: "Credit Health",   href: "/credit-health" },
   { label: "AI Comparison",   href: "/compare" },
+  { label: "How It Works",    href: "/how-it-works" },
 ];
 
 export const LOANS_MENU: NavLink[] = [
@@ -42,6 +44,8 @@ export const FOOTER_GROUPS: NavGroup[] = [
     links: [
       { label: "LeapMatch™",            href: "/leapmatch" },
       { label: "LeapScore™",            href: "/leapscore" },
+      { label: "LeapAI™ Copilot",       href: "/leapai" },
+      { label: "How It Works",          href: "/how-it-works" },
       { label: "Credit Health Dashboard", href: "/credit-health" },
       { label: "AI Bank Comparison",    href: "/compare" },
       { label: "EMI Calculator",        href: "/emi-calculator" },
