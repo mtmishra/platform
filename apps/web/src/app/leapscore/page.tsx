@@ -14,6 +14,7 @@ import {
 } from "@leapmoney/ui";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { ScoreSimulator } from "@/components/feature/ScoreSimulator";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { FeatureBreadcrumb } from "@/components/feature/FeatureBreadcrumb";
 import { JourneyStrip } from "@/components/feature/JourneyStrip";
@@ -224,6 +225,21 @@ export default function Page() {
             <p className="mt-4 text-body-sm text-foreground-tertiary">
               Dashboard preview — available after you create your free account.
             </p>
+          </Container>
+        </Section>
+
+        {/* Interactive Score Simulator */}
+        <Section background="page">
+          <Container>
+            <div className="mb-8 text-center">
+              <Label caps className="mb-3 block">Score Simulator</Label>
+              <Heading level={2} size="h1">Interactive Score Card Builder</Heading>
+              <Paragraph size="lg" color="secondary" className="mx-auto mt-2 max-w-2xl">
+                Indian lenders check more than a bureau number. Drag the sliders to see how your
+                LeapScore™ behaves under standard underwriting guidelines.
+              </Paragraph>
+            </div>
+            <ScoreSimulator />
           </Container>
         </Section>
 
