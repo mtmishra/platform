@@ -37,6 +37,22 @@ export function validateMessage(value: string): string | undefined {
   return undefined;
 }
 
+/** PAN card: 5 letters + 4 digits + 1 letter, uppercase. */
+export function validatePAN(value: string): string | undefined {
+  const v = value.trim().toUpperCase();
+  if (!v) return "PAN card number is required for bureau check.";
+  if (!/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/.test(v)) return "Enter a valid PAN (e.g. ABCDE1234F).";
+  return undefined;
+}
+
+/** Monthly income — positive integer, min ₹5,000 */
+export function validateMonthlyIncome(value: string): string | undefined {
+  const n = parseInt(value.replace(/[,\s]/g, ""), 10);
+  if (!value.trim()) return "Please enter your monthly income.";
+  if (isNaN(n) || n < 5000) return "Minimum monthly income should be ₹5,000.";
+  return undefined;
+}
+
 /** Returns true when every value in the errors map is undefined. */
 export function isFormValid(errors: Record<string, string | undefined>): boolean {
   return Object.values(errors).every((e) => !e);
