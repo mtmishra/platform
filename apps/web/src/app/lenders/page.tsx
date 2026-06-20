@@ -13,6 +13,7 @@ import { JsonLd } from "@/components/seo/JsonLd";
 import { FeatureBreadcrumb } from "@/components/feature/FeatureBreadcrumb";
 import { FaqAccordion } from "@/components/feature/FaqAccordion";
 import { FeatureCta } from "@/components/feature/FeatureCta";
+import { LenderLeadForm } from "@/components/forms/LenderLeadForm";
 import {
   buildMetadata,
   breadcrumbSchema,
@@ -68,16 +69,31 @@ export default function Page() {
 
         <Section background="page" className="py-10 lg:py-16">
           <Container>
-            <div className="max-w-2xl">
-              <Label caps className="mb-4 block">For Lenders</Label>
-              <Heading level={1} size="display-hero" className="mb-4">
-                Pre-qualified borrowers, ready to underwrite
-              </Heading>
-              <Paragraph size="lg" color="secondary" className="mb-6">
-                LeapMoney sends you applicants who already fit your policy — screened
-                by LeapScore™, FOIR-checked, and document-ready. Less wasted
-                underwriting effort, better conversion.
-              </Paragraph>
+            <div className="grid grid-cols-1 gap-10 lg:grid-cols-[1fr_440px] lg:items-start">
+              <div>
+                <Label caps className="mb-4 block">For Lenders</Label>
+                <Heading level={1} size="display-hero" className="mb-4">
+                  Pre-qualified borrowers, ready to underwrite
+                </Heading>
+                <Paragraph size="lg" color="secondary" className="mb-6">
+                  LeapMoney sends you applicants who already fit your policy — screened
+                  by LeapScore™, FOIR-checked, and document-ready. Less wasted
+                  underwriting effort, better conversion.
+                </Paragraph>
+                <div className="grid grid-cols-3 gap-4">
+                  {[
+                    { stat: "4", label: "Bureaus checked" },
+                    { stat: "FOIR", label: "Pre-assessed" },
+                    { stat: "KYC", label: "Doc-ready" },
+                  ].map((s) => (
+                    <div key={s.label} className="rounded-lg border border-border-token-default bg-background-card p-3 text-center">
+                      <p className="font-mono text-h2 font-bold text-interactive-primary">{s.stat}</p>
+                      <p className="text-body-sm text-foreground-tertiary">{s.label}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <LenderLeadForm />
             </div>
           </Container>
         </Section>

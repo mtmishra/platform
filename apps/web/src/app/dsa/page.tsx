@@ -13,6 +13,7 @@ import { JsonLd } from "@/components/seo/JsonLd";
 import { FeatureBreadcrumb } from "@/components/feature/FeatureBreadcrumb";
 import { FaqAccordion } from "@/components/feature/FaqAccordion";
 import { FeatureCta } from "@/components/feature/FeatureCta";
+import { DSALeadForm } from "@/components/forms/DSALeadForm";
 import {
   buildMetadata,
   breadcrumbSchema,
@@ -72,16 +73,31 @@ export default function Page() {
 
         <Section background="page" className="py-10 lg:py-16">
           <Container>
-            <div className="max-w-2xl">
-              <Label caps className="mb-4 block">DSA Suite</Label>
-              <Heading level={1} size="display-hero" className="mb-4">
-                Earn more. Work smarter.
-              </Heading>
-              <Paragraph size="lg" color="secondary" className="mb-6">
-                The LeapMoney DSA Suite gives you everything to source, match, and
-                close more loans — a visual lead pipeline, AI matching across 30+
-                lenders, and transparent commission tracking, all in one place.
-              </Paragraph>
+            <div className="grid grid-cols-1 gap-10 lg:grid-cols-[1fr_420px] lg:items-start">
+              <div>
+                <Label caps className="mb-4 block">DSA Suite</Label>
+                <Heading level={1} size="display-hero" className="mb-4">
+                  Earn more. Work smarter.
+                </Heading>
+                <Paragraph size="lg" color="secondary" className="mb-6">
+                  The LeapMoney DSA Suite gives you everything to source, match, and
+                  close more loans — a visual lead pipeline, AI matching across 30+
+                  lenders, and transparent commission tracking, all in one place.
+                </Paragraph>
+                <div className="grid grid-cols-3 gap-4">
+                  {[
+                    { stat: "30+", label: "Lenders" },
+                    { stat: "₹8,000", label: "Max/loan" },
+                    { stat: "₹0", label: "To join" },
+                  ].map((s) => (
+                    <div key={s.label} className="rounded-lg border border-border-token-default bg-background-card p-3 text-center">
+                      <p className="font-mono text-h2 font-bold text-interactive-primary">{s.stat}</p>
+                      <p className="text-body-sm text-foreground-tertiary">{s.label}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <DSALeadForm />
             </div>
           </Container>
         </Section>

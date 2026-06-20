@@ -15,6 +15,7 @@ import {
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { ScoreSimulator } from "@/components/feature/ScoreSimulator";
+import { EligibilityForm } from "@/components/forms/EligibilityForm";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { FeatureBreadcrumb } from "@/components/feature/FeatureBreadcrumb";
 import { JourneyStrip } from "@/components/feature/JourneyStrip";
@@ -243,6 +244,19 @@ export default function Page() {
           </Container>
         </Section>
 
+        {/* Real eligibility capture */}
+        <Section background="card">
+          <Container>
+            <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1fr_420px] lg:items-center">
+              <div>
+                <Label caps className="mb-3 block">Get Your Real Score</Label>
+                <Heading level={2} size="h1" className="mb-3">Ready to check your actual LeapScore™?</Heading>
+                <Paragraph size="lg" color="secondary">The simulator shows how scores work. Your real LeapScore™ blends all 4 bureaus with your bank cash-flow — free, in under 2 minutes, with zero CIBIL impact.</Paragraph>
+              </div>
+              <EligibilityForm formId="leapscore_page" heading="Check My Real LeapScore™ Free" />
+            </div>
+          </Container>
+        </Section>
         <JourneyStrip activeKey="leapscore" />
         <FaqAccordion faqs={FAQS} heading="LeapScore — frequently asked questions" />
         <FeatureCta

@@ -17,7 +17,11 @@ export type EventName =
   | "otp_verified"
   | "leapscore_viewed"
   | "match_results_viewed"
-  | "application_submitted";
+  | "application_submitted"
+  // Lead capture forms
+  | "eligibility_check_start"
+  | "dsa_registration_start"
+  | "lender_partnership_request";
 
 export interface AnalyticsEvent {
   name: EventName;

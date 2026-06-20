@@ -19,6 +19,7 @@ import {
 } from "@leapmoney/ui";
 import type { LoanProduct } from "@/data/loans";
 import { getLoanProducts } from "@/data/loans";
+import { EligibilityForm } from "@/components/forms/EligibilityForm";
 
 interface LoanPageTemplateProps {
   product: LoanProduct;
@@ -45,38 +46,37 @@ export function LoanPageTemplate({ product }: LoanPageTemplateProps) {
       {/* Hero */}
       <Section background="page" className="py-10 lg:py-16">
         <Container>
-          <div className="max-w-2xl">
-            <Label caps className="mb-4 block">{product.name}</Label>
-            <Heading level={1} size="display-large" className="mb-4">
-              {product.name} — {product.rateFrom}
-            </Heading>
-            <Paragraph size="lg" color="secondary" className="mb-6">
-              {product.tagline}
-            </Paragraph>
+          <div className="grid grid-cols-1 gap-10 lg:grid-cols-[1fr_420px] lg:items-start">
+            <div>
+              <Label caps className="mb-4 block">{product.name}</Label>
+              <Heading level={1} size="display-large" className="mb-4">
+                {product.name} — {product.rateFrom}
+              </Heading>
+              <Paragraph size="lg" color="secondary" className="mb-6">
+                {product.tagline}
+              </Paragraph>
 
-            <dl className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-              <div className="rounded-lg border border-border-token-default bg-background-card p-4">
-                <dt className="text-body-sm text-foreground-tertiary">Loan amount</dt>
-                <dd className="text-h3 font-semibold text-foreground-primary mt-1">{product.amountRange}</dd>
-              </div>
-              <div className="rounded-lg border border-border-token-default bg-background-card p-4">
-                <dt className="text-body-sm text-foreground-tertiary">Interest rate</dt>
-                <dd className="text-h3 font-semibold text-foreground-primary mt-1">{product.rateFrom}</dd>
-              </div>
-              <div className="rounded-lg border border-border-token-default bg-background-card p-4">
-                <dt className="text-body-sm text-foreground-tertiary">Tenure</dt>
-                <dd className="text-h3 font-semibold text-foreground-primary mt-1">{product.tenureRange}</dd>
-              </div>
-            </dl>
+              <dl className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                <div className="rounded-lg border border-border-token-default bg-background-card p-4">
+                  <dt className="text-body-sm text-foreground-tertiary">Loan amount</dt>
+                  <dd className="text-h3 font-semibold text-foreground-primary mt-1">{product.amountRange}</dd>
+                </div>
+                <div className="rounded-lg border border-border-token-default bg-background-card p-4">
+                  <dt className="text-body-sm text-foreground-tertiary">Interest rate</dt>
+                  <dd className="text-h3 font-semibold text-foreground-primary mt-1">{product.rateFrom}</dd>
+                </div>
+                <div className="rounded-lg border border-border-token-default bg-background-card p-4">
+                  <dt className="text-body-sm text-foreground-tertiary">Tenure</dt>
+                  <dd className="text-h3 font-semibold text-foreground-primary mt-1">{product.tenureRange}</dd>
+                </div>
+              </dl>
+            </div>
 
-            <Button variant="primary" size="lg">
-              <Link href="/register" className="flex items-center gap-2">
-                Check Your Eligibility <ArrowRight size={16} />
-              </Link>
-            </Button>
-            <p className="mt-4 text-body-sm text-foreground-tertiary">
-              No credit score impact · Takes 2 minutes · Free forever
-            </p>
+            <EligibilityForm
+              loanType={product.slug}
+              formId={`eligibility_${product.slug}`}
+              heading={`Check ${product.name} eligibility free`}
+            />
           </div>
         </Container>
       </Section>
@@ -221,8 +221,8 @@ export function LoanPageTemplate({ product }: LoanPageTemplateProps) {
               See the lenders most likely to approve you in minutes.
             </Paragraph>
             <Button variant="secondary" size="lg">
-              <Link href="/register" className="flex items-center gap-2">
-                Get Started Free <ArrowRight size={16} />
+              <Link href={`/${product.slug}#eligibility`} className="flex items-center gap-2">
+                Check My Eligibility Free <ArrowRight size={16} />
               </Link>
             </Button>
           </div>

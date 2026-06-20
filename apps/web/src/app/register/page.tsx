@@ -1,34 +1,35 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { ArrowRight, ShieldCheck, Zap, Users } from "lucide-react";
-import { Button, Container, Heading, Paragraph, Section, TrustBar } from "@leapmoney/ui";
+import { ShieldCheck, Zap, Users } from "lucide-react";
+import { Container, Heading, Paragraph, Section, TrustBar } from "@leapmoney/ui";
 import { buildMetadata } from "@/lib/seo";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { LeadForm } from "@/components/forms/LeadForm";
 
 export const metadata: Metadata = buildMetadata({
-  title: "Create Your Account | LeapMoney",
-  description: "Join LeapMoney — India's AI-powered loan marketplace. Get matched with the right lender in minutes with a free soft credit check.",
+  title: "Check Your Loan Eligibility Free | LeapMoney",
+  description:
+    "Check your loan eligibility in 2 minutes — free, with no impact on your CIBIL score. LeapMoney matches you to lenders most likely to approve you.",
   path: "/register",
 });
 
 const STEPS = [
   {
     step: "01",
-    title: "Create your profile",
-    detail: "Basic details, PAN, and employment — takes under 2 minutes.",
+    title: "Tell us what you need",
+    detail: "Name, mobile, and loan type — takes under 30 seconds.",
     icon: <Users size={20} />,
   },
   {
     step: "02",
-    title: "Free credit check",
-    detail: "Soft pull across all 4 bureaus — no impact on your score.",
+    title: "Free soft credit check",
+    detail: "Soft pull across all 4 bureaus — zero impact on your CIBIL score.",
     icon: <ShieldCheck size={20} />,
   },
   {
     step: "03",
-    title: "Get matched instantly",
-    detail: "LeapMatch AI ranks lenders by your approval odds, not commission.",
+    title: "Get your matched shortlist",
+    detail: "LeapMatch AI ranks lenders by your approval probability — not commission.",
     icon: <Zap size={20} />,
   },
 ];
@@ -38,18 +39,22 @@ export default function RegisterPage() {
     <>
       <Header />
       <main>
-        <Section background="page" className="py-16 lg:py-24">
+        <Section background="page" className="py-12 lg:py-20">
           <Container>
-            <div className="grid grid-cols-1 gap-12 lg:grid-cols-2 lg:gap-16">
+            <div className="grid grid-cols-1 gap-12 lg:grid-cols-2 lg:gap-16 lg:items-start">
               {/* Left: copy */}
               <div className="flex flex-col gap-6">
                 <div>
-                  <p className="mb-3 text-label-caps font-semibold uppercase tracking-wider text-interactive-primary">Get Started Free</p>
+                  <p className="mb-3 text-label-caps font-semibold uppercase tracking-wider text-interactive-primary">
+                    Free · No CIBIL Impact · 2 Minutes
+                  </p>
                   <Heading level={1} size="display-large" className="mb-4">
-                    Your loan journey starts here
+                    Check your loan eligibility free
                   </Heading>
                   <Paragraph size="lg" color="secondary">
-                    LeapMoney matches you to the right lenders based on your credit profile — transparently, fairly, and with zero hidden fees.
+                    LeapMoney matches you to the right lenders based on your actual credit
+                    profile — transparently, fairly, and for free. See which lenders will
+                    approve you before you apply.
                   </Paragraph>
                 </div>
 
@@ -68,34 +73,26 @@ export default function RegisterPage() {
                     </li>
                   ))}
                 </ol>
+
+                {/* Trust signals */}
+                <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                  {[
+                    { icon: "🔒", label: "AES-256 Encrypted" },
+                    { icon: "✅", label: "DPDP Compliant" },
+                    { icon: "🏦", label: "RBI Registered" },
+                    { icon: "⭐", label: "Soft Pull Only" },
+                  ].map((t) => (
+                    <div key={t.label} className="flex flex-col items-center gap-1 rounded-lg border border-border-token-default bg-background-card p-3 text-center">
+                      <span className="text-xl">{t.icon}</span>
+                      <span className="text-label-caps text-foreground-tertiary">{t.label}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
 
-              {/* Right: CTA card */}
-              <div className="flex flex-col justify-center">
-                <div className="rounded-2xl border border-border-token-default bg-background-card p-8 shadow-2">
-                  <Heading level={2} size="h1" className="mb-2">Create your account</Heading>
-                  <Paragraph color="secondary" className="mb-6">
-                    Registration and OTP verification are handled securely in the LeapMoney borrower app.
-                  </Paragraph>
-                  <Button variant="primary" size="lg" className="w-full">
-                    <Link href="http://localhost:3001/onboard" className="flex items-center justify-center gap-2">
-                      Start registration <ArrowRight size={18} />
-                    </Link>
-                  </Button>
-                  <p className="mt-4 text-center text-body-sm text-foreground-tertiary">
-                    Already have an account?{" "}
-                    <Link href="http://localhost:3001/login" className="font-medium text-interactive-primary hover:underline">
-                      Sign in
-                    </Link>
-                  </p>
-                  <p className="mt-6 text-center text-body-xs text-foreground-tertiary">
-                    By registering, you agree to our{" "}
-                    <Link href="/terms-of-service" className="underline">Terms of Service</Link>{" "}
-                    and{" "}
-                    <Link href="/privacy-policy" className="underline">Privacy Policy</Link>.
-                    We perform a soft credit check — no score impact.
-                  </p>
-                </div>
+              {/* Right: Lead Form */}
+              <div>
+                <LeadForm formId="register_page_lead" />
               </div>
             </div>
           </Container>
