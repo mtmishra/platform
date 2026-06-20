@@ -34,6 +34,7 @@ import { Footer } from "@/components/layout/Footer";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { organizationSchema } from "@/lib/seo";
 import { StickyMobileCta } from "@/components/feature/StickyMobileCta";
+import { LeadForm } from "@/components/forms/LeadForm";
 
 // ── Chat messages for LeapAI demo ─────────────────────────────────────────────
 const CHAT_MESSAGES = [
@@ -363,10 +364,49 @@ export default function HomePage() {
                 </div>
               </div>
 
-              {/* LeapAI demo — hidden on mobile per spec */}
-              <div className="hidden sm:block">
-                <LeapAIDemo />
+              {/* Lead capture form — primary conversion */}
+              <div>
+                <LeadForm formId="homepage_hero" />
               </div>
+            </div>
+          </Container>
+        </section>
+
+        {/* LeapAI demo section */}
+        <section className="bg-background-page py-14" aria-label="LeapAI Copilot preview">
+          <Container>
+            <div className="grid grid-cols-1 gap-10 lg:grid-cols-2 lg:items-center">
+              <div className="flex flex-col gap-4">
+                <div className="inline-flex w-fit items-center gap-2 rounded-full border border-blue-primary/20 bg-blue-primary/5 px-3 py-1.5 text-body-sm font-semibold text-blue-primary">
+                  <Bot size={13} aria-hidden="true" />
+                  LeapAI™ Copilot
+                </div>
+                <h2 className="text-display-large font-bold text-foreground-primary leading-tight">
+                  Your AI loan advisor,{" "}
+                  <span className="text-blue-primary">available 24×7</span>
+                </h2>
+                <p className="text-body-lg text-foreground-secondary max-w-[480px]">
+                  Ask LeapAI anything — which lender will approve you, why your CIBIL score is low,
+                  what rate you can negotiate. Plain language answers, not jargon.
+                </p>
+                <div className="flex flex-wrap items-center gap-4 text-body-sm text-foreground-tertiary">
+                  {["Powered by Claude AI", "Explains every decision", "No human bias"].map((item) => (
+                    <span key={item} className="flex items-center gap-1">
+                      <CheckCircle2 size={14} className="text-status-success" aria-hidden="true" />
+                      {item}
+                    </span>
+                  ))}
+                </div>
+                <div>
+                  <Link
+                    href="/leapai"
+                    className="inline-flex items-center gap-2 text-body-md font-semibold text-blue-primary hover:underline"
+                  >
+                    Learn about LeapAI™ <ArrowRight size={16} />
+                  </Link>
+                </div>
+              </div>
+              <LeapAIDemo />
             </div>
           </Container>
         </section>
