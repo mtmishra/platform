@@ -9,6 +9,7 @@ import {
   FileText,
   Gauge,
   Settings,
+  FileSearch,
 } from "lucide-react";
 
 export interface NavItem {
@@ -21,6 +22,7 @@ export interface NavItem {
 const NAV: NavItem[] = [
   { label: "Dashboard", href: "/dashboard", icon: <LayoutDashboard size={18} /> },
   { label: "Profile", href: "/profile", icon: <User size={18} /> },
+  { label: "Credit Report", href: "/credit-report/start", icon: <FileSearch size={18} /> },
   { label: "Applications", href: "/applications", icon: <FileText size={18} /> },
   { label: "LeapScore & Health", href: "/health", icon: <Gauge size={18} /> },
   { label: "Settings", href: "/settings", icon: <Settings size={18} />, disabled: true },

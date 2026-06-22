@@ -1,7 +1,7 @@
-"use client";
+﻿"use client";
 
 import React from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Button, Heading, Input, Paragraph } from "@leapmoney/ui";
 import { Check, CheckCircle2, Circle } from "lucide-react";
 
@@ -19,9 +19,12 @@ const DOCS = ["PAN", "Aadhaar", "Salary Slip", "Bank Statement", "ITR"] as const
 
 export function ApplicationWizard() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const lenderParam = searchParams.get("lender") ?? "";
   const [step, setStep] = React.useState(0);
 
   // Lightweight demo state.
+  const lenderName = { hdfc: "HDFC Bank", bajaj: "Bajaj Finance", icici: "ICICI Bank", kotak: "Kotak Bank" }[lenderParam] ?? "";
   const [loanType, setLoanType] = React.useState("Personal Loan");
   const [amount, setAmount] = React.useState("1000000");
   const [tenure, setTenure] = React.useState("60");
@@ -58,7 +61,7 @@ export function ApplicationWizard() {
           <div className="flex flex-col gap-4">
             <Heading level={2} size="h1">Loan selection</Heading>
             <Input label="Loan type" value={loanType} onChange={(e) => setLoanType(e.target.value)} />
-            <Input label="Amount (₹)" type="number" value={amount} onChange={(e) => setAmount(e.target.value)} />
+            <Input label="Amount (â‚¹)" type="number" value={amount} onChange={(e) => setAmount(e.target.value)} />
             <Input label="Tenure (months)" type="number" value={tenure} onChange={(e) => setTenure(e.target.value)} />
           </div>
         ) : null}
@@ -84,7 +87,7 @@ export function ApplicationWizard() {
         {step === 3 ? (
           <div className="flex flex-col gap-4">
             <Heading level={2} size="h1">Income</Heading>
-            <Input label="Monthly net income (₹)" type="number" value={income} onChange={(e) => setIncome(e.target.value)} />
+            <Input label="Monthly net income (â‚¹)" type="number" value={income} onChange={(e) => setIncome(e.target.value)} />
             <Input label="Salary bank" defaultValue="HDFC Bank" />
           </div>
         ) : null}
@@ -92,7 +95,7 @@ export function ApplicationWizard() {
         {step === 4 ? (
           <div className="flex flex-col gap-3">
             <Heading level={2} size="h1">Documents</Heading>
-            <Paragraph color="secondary">Tap to mark a document as uploaded (demo — no real storage).</Paragraph>
+            <Paragraph color="secondary">Tap to mark a document as uploaded (demo â€” no real storage).</Paragraph>
             {DOCS.map((d) => {
               const isUp = uploaded.includes(d);
               return (
@@ -109,10 +112,10 @@ export function ApplicationWizard() {
           <div className="flex flex-col gap-3">
             <Heading level={2} size="h1">Review</Heading>
             {[
-              ["Loan", `${loanType} · ₹${Number(amount).toLocaleString("en-IN")} · ${tenure} mo`],
+              ["Loan", `${loanType} Â· â‚¹${Number(amount).toLocaleString("en-IN")} Â· ${tenure} mo`],
               ["Applicant", name],
               ["Employer", employer],
-              ["Monthly income", `₹${Number(income).toLocaleString("en-IN")}`],
+              ["Monthly income", `â‚¹${Number(income).toLocaleString("en-IN")}`],
               ["Documents", `${uploaded.length} of ${DOCS.length} uploaded`],
             ].map(([k, v]) => (
               <div key={k} className="flex items-center justify-between border-b border-border-token-default py-2 last:border-0">
@@ -127,7 +130,7 @@ export function ApplicationWizard() {
           <div className="flex flex-col items-center gap-4 py-4 text-center">
             <span className="flex h-14 w-14 items-center justify-center rounded-full bg-status-success/10 text-status-success"><Check size={28} /></span>
             <Heading level={2} size="h1">Ready to submit</Heading>
-            <Paragraph color="secondary">We&apos;ll send your pre-filled application to the lender and start tracking its status. A soft check has already been done — submitting authorises the lender&apos;s hard pull.</Paragraph>
+            <Paragraph color="secondary">We&apos;ll send your pre-filled application to the lender and start tracking its status. A soft check has already been done â€” submitting authorises the lender&apos;s hard pull.</Paragraph>
           </div>
         ) : null}
 
@@ -144,3 +147,4 @@ export function ApplicationWizard() {
     </div>
   );
 }
+

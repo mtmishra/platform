@@ -1,12 +1,12 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { Heading, Paragraph, TrustBar, BestMatchBadge, ApprovalOddsNumber, ConfidenceBadge, MatchStrengthChart } from "@leapmoney/ui";
 import { Sparkles, Info } from "lucide-react";
 import { getDashboardData } from "@/lib/dashboard-demo";
 import { CreditJourneyTimeline } from "@/components/dashboard/CreditJourneyTimeline";
 
-export const metadata = { title: "Your matches — LeapMoney" };
+export const metadata = { title: "Your matches â€” LeapMoney" };
 
-const inr = (n: number): string => `₹${Math.round(n).toLocaleString("en-IN")}`;
+const inr = (n: number): string => `â‚¹${Math.round(n).toLocaleString("en-IN")}`;
 
 function confidence(pct: number): "high" | "medium" | "low" {
   if (pct >= 70) return "high";
@@ -22,7 +22,7 @@ export default function MatchesPage() {
       <div>
         <Heading level={1} size="display-large" className="mb-1">Your matched lenders</Heading>
         <Paragraph color="secondary">
-          Ranked by how likely each lender is to approve you — and what it really costs. All eligible
+          Ranked by how likely each lender is to approve you â€” and what it really costs. All eligible
           and ineligible lenders are shown, with no commission influence (RBI Digital Lending Directions 2025).
         </Paragraph>
         <TrustBar variant="regulatory" className="mt-4" />
@@ -45,14 +45,14 @@ export default function MatchesPage() {
             </div>
             <MatchStrengthChart value={m.approval_probability} label="Match strength" />
             <div className="grid grid-cols-2 gap-3 text-body-sm sm:grid-cols-4">
-              <div><p className="text-foreground-tertiary">Rate</p><p className="font-medium text-foreground-primary">{m.interest_rate_min}%–{m.interest_rate_max}%</p></div>
+              <div><p className="text-foreground-tertiary">Rate</p><p className="font-medium text-foreground-primary">{m.interest_rate_min}%â€“{m.interest_rate_max}%</p></div>
               <div><p className="text-foreground-tertiary">EMI</p><p className="font-medium text-foreground-primary">{inr(m.emi_estimate)}/mo</p></div>
               <div><p className="text-foreground-tertiary">APR</p><p className="font-medium text-foreground-primary">{m.annual_percentage_rate}%</p></div>
               <div><p className="text-foreground-tertiary">Disbursal</p><p className="font-medium text-foreground-primary">~{m.avg_disbursal_days}d</p></div>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-body-sm text-foreground-tertiary">{m.processing_fee_display} · ⭐ {m.user_review_score} ({m.review_count})</span>
-              <Link href="/applications/new" className="inline-flex items-center gap-1 rounded-md bg-interactive-primary px-3 py-1.5 text-body-sm font-semibold text-foreground-on-dark transition-colors duration-fast hover:bg-interactive-hover">
+              <span className="text-body-sm text-foreground-tertiary">{m.processing_fee_display} Â· â­ {m.user_review_score} ({m.review_count})</span>
+              <Link href={`/applications/new?lender=${m.lender_id}&score=${m.approval_probability}`} className="inline-flex items-center gap-1 rounded-md bg-interactive-primary px-3 py-1.5 text-body-sm font-semibold text-foreground-on-dark transition-colors duration-fast hover:bg-interactive-hover">
                 <Sparkles size={14} /> Apply
               </Link>
             </div>
@@ -87,3 +87,4 @@ export default function MatchesPage() {
     </div>
   );
 }
+

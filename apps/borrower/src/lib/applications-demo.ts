@@ -1,4 +1,4 @@
-// Mock loan-application data (Sprint 14). Demo workflow only — no APIs, CRM,
+﻿// Mock loan-application data (Sprint 14). Demo workflow only â€” no APIs, CRM,
 // lender integrations, KYC providers, or document storage. Mirrors the Sprint 10
 // `application` schema + Sprint 8 approval outputs.
 
@@ -71,7 +71,9 @@ export function buildTimeline(app: DemoApplication): TimelineStep[] {
     let label: string = step.label;
     if (step.key === "decision" && app.status === "approved") label = "Approved";
     if (step.key === "decision" && app.status === "rejected") label = "Decision: not approved";
-    return { key: step.key, label, status, at: i < done ? app.last_updated : null };
+    const hoursAgo = (done - i - 1) * 3;
+    const ts = new Date(new Date(app.last_updated).getTime() - hoursAgo * 3600 * 1000).toISOString();
+    return { key: step.key, label, status, at: i < done ? ts : null };
   });
 }
 
@@ -111,7 +113,7 @@ const SEED_APPLICATIONS: DemoApplication[] = [
     approval_probability: 92,
     confidence: "high",
     expected_decision_time: "2 hours",
-    match_reason: "Bajaj uses Experian (746) as its primary bureau — a strong fit for your profile.",
+    match_reason: "Bajaj uses Experian (746) as its primary bureau â€” a strong fit for your profile.",
     status: "disbursed",
     kyc_status: "verified",
     documents: docs(["PAN", "Aadhaar", "Salary Slip", "Bank Statement", "ITR"]),
@@ -161,3 +163,4 @@ export function getStatusSummary(): Record<ApplicationStatus, number> {
   for (const a of SEED_APPLICATIONS) base[a.status] += 1;
   return base;
 }
+
