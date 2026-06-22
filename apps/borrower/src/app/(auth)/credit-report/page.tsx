@@ -126,7 +126,7 @@ function downloadReport(report: ReportEntry) {
 }
 
 export default function CreditReportHistoryPage() {
-  const latest = MOCK_REPORTS[0];
+  const latest = MOCK_REPORTS[0]!;
 
   return (
     <div className="mx-auto flex max-w-content flex-col gap-8">

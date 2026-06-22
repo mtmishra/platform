@@ -11,7 +11,6 @@ import {
   TrendingDown,
   X,
   CheckCircle2,
-  AlertCircle,
   Clock,
   ArrowRight,
   BarChart3,
@@ -159,7 +158,6 @@ function PaymentCalendar({ dpd, year = 2026 }: { dpd: number[]; year?: number })
 function AccountRow({ t, onClick }: { t: CreditReportSummary["tradelines"][0]; onClick: () => void }) {
   const onTime = t.dpd_last_36_months.filter((d) => d === 0).length;
   const total = t.dpd_last_36_months.length;
-  const isActive = t.account_status === "standard";
   return (
     <button
       onClick={onClick}

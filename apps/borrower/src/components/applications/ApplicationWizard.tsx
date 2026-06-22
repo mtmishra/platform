@@ -1,7 +1,7 @@
 ﻿"use client";
 
 import React from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { Button, Heading, Input, Paragraph } from "@leapmoney/ui";
 import { Check, CheckCircle2, Circle } from "lucide-react";
 
@@ -19,12 +19,9 @@ const DOCS = ["PAN", "Aadhaar", "Salary Slip", "Bank Statement", "ITR"] as const
 
 export function ApplicationWizard() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const lenderParam = searchParams.get("lender") ?? "";
   const [step, setStep] = React.useState(0);
 
   // Lightweight demo state.
-  const lenderName = { hdfc: "HDFC Bank", bajaj: "Bajaj Finance", icici: "ICICI Bank", kotak: "Kotak Bank" }[lenderParam] ?? "";
   const [loanType, setLoanType] = React.useState("Personal Loan");
   const [amount, setAmount] = React.useState("1000000");
   const [tenure, setTenure] = React.useState("60");
