@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import {
@@ -295,7 +295,7 @@ function CreditSidebar({ active, onChange }: { active: InsightTab; onChange: (t:
 
 // ── Main Page ────────────────────────────────────────────────────────────────
 
-export default function CreditReportReadyPage() {
+function CreditReportReadyContent() {
   const searchParams = useSearchParams();
   const pan = searchParams.get("pan") ?? undefined;
   const report = buildCreditReport(pan);
@@ -725,5 +725,13 @@ export default function CreditReportReadyPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function CreditReportReadyPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-gray-50" />}>
+      <CreditReportReadyContent />
+    </Suspense>
   );
 }
