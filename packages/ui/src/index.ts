@@ -212,3 +212,7 @@ export {
   WelcomeBlock,
 } from "./components/ai/ConversationBlocks";
 export type { EligibilityCriterion } from "./components/ai/ConversationBlocks";
+
+// ── LeapAI portal widget (Sprint 29 T16) ─────────────────────────────────────
+export { LeapAIWidget } from "./components/ai/LeapAIWidget";
+export type { LeapAIWidgetProps } from "./components/ai/LeapAIWidget";
