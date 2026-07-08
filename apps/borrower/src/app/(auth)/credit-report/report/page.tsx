@@ -21,6 +21,7 @@ import {
   Shield,
 } from "lucide-react";
 import { buildCreditReport, type CreditReportSummary } from "@/lib/credit-report-demo";
+import { LeapScoreGauge } from "@leapmoney/ui";
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -55,69 +56,6 @@ function formatAmount(n: number): string {
 
 function monthLabel(i: number): string {
   return ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][i] ?? "";
-}
-
-// ── Score Gauge (SVG arc) ────────────────────────────────────────────────────
-
-function ScoreGauge({ score, min = 300, max = 900 }: { score: number | null; min?: number; max?: number }) {
-  const pct = score !== null ? Math.max(0, Math.min(1, (score - min) / (max - min))) : 0;
-  const r = 80;
-  const cx = 100;
-  const cy = 100;
-  const startAngle = -210;
-  const sweepAngle = 240;
-  const toRad = (d: number) => (d * Math.PI) / 180;
-
-  function arcPath(from: number, to: number) {
-    const s = toRad(from);
-    const e = toRad(to);
-    const x1 = cx + r * Math.cos(s);
-    const y1 = cy + r * Math.sin(s);
-    const x2 = cx + r * Math.cos(e);
-    const y2 = cy + r * Math.sin(e);
-    const large = to - from > 180 ? 1 : 0;
-    return `M ${x1} ${y1} A ${r} ${r} 0 ${large} 1 ${x2} ${y2}`;
-  }
-
-  const needleAngle = startAngle + pct * sweepAngle;
-  const nx = cx + (r - 10) * Math.cos(toRad(needleAngle));
-  const ny = cy + (r - 10) * Math.sin(toRad(needleAngle));
-
-  const segments = [
-    { color: "#DC2626", from: startAngle, to: startAngle + sweepAngle * 0.2 },
-    { color: "#EA580C", from: startAngle + sweepAngle * 0.2, to: startAngle + sweepAngle * 0.4 },
-    { color: "#CA8A04", from: startAngle + sweepAngle * 0.4, to: startAngle + sweepAngle * 0.6 },
-    { color: "#65A30D", from: startAngle + sweepAngle * 0.6, to: startAngle + sweepAngle * 0.8 },
-    { color: "#16A34A", from: startAngle + sweepAngle * 0.8, to: startAngle + sweepAngle },
-  ];
-
-  return (
-    <svg viewBox="0 0 200 160" className="w-full max-w-[220px]" aria-label={`Score gauge: ${score}`}>
-      {/* track */}
-      <path d={arcPath(startAngle, startAngle + sweepAngle)} stroke="#E2E8F0" strokeWidth="12" fill="none" strokeLinecap="round" />
-      {/* colored segments */}
-      {segments.map((seg, i) => (
-        <path key={i} d={arcPath(seg.from, seg.to)} stroke={seg.color} strokeWidth="12" fill="none" strokeLinecap={i === 0 ? "round" : i === segments.length - 1 ? "round" : "butt"} />
-      ))}
-      {/* needle */}
-      {score !== null && (
-        <>
-          <line x1={cx} y1={cy} x2={nx} y2={ny} stroke="#0F172A" strokeWidth="2.5" strokeLinecap="round" />
-          <circle cx={cx} cy={cy} r="5" fill="#0F172A" />
-          <circle cx={nx} cy={ny} r="3.5" fill="#0F172A" />
-        </>
-      )}
-      {/* score text */}
-      <text x={cx} y={cy + 22} textAnchor="middle" fontSize="32" fontWeight="800" fontFamily="monospace" fill={scoreColor(score)}>
-        {score ?? "—"}
-      </text>
-      <text x={cx} y={cy + 38} textAnchor="middle" fontSize="10" fill="#64748B">
-        {scoreBand(score)}
-      </text>
-      <text x={cx - r + 6} y={cy + 20} textAnchor="middle" fontSize="9" fill="#94A3B8">{min}</text>
-      <text x={cx + r - 6} y={cy + 20} textAnchor="middle" fontSize="9" fill="#94A3B8">{max}</text>
-    </svg>
-  );
 }
 
 // ── Monthly payment calendar ─────────────────────────────────────────────────
@@ -509,7 +447,11 @@ function CreditReportReadyContent() {
                 <div className="flex flex-col items-center gap-1">
                   <p className="text-xs text-gray-400">As of {new Date().toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "2-digit" })}</p>
                   <div className="relative">
-                    <ScoreGauge score={currentScore} />
+                    {currentScore !== null ? (
+                      <LeapScoreGauge value={currentScore} size={190} bandLabel={scoreBand(currentScore)} />
+                    ) : (
+                      <div className="grid h-[160px] w-[190px] place-items-center text-4xl font-bold text-gray-300">—</div>
+                    )}
                     {currentScore !== null && (
                       <div className="absolute -top-1 -right-2 flex items-center gap-1 rounded-full bg-green-100 px-2 py-0.5 text-[10px] font-bold text-green-700 shadow-sm">
                         <TrendingUp size={9} /> +{scoreChange} Points
