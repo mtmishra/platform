@@ -14,5 +14,8 @@
     "@leapmoney/config": "workspace:*",
     "typescript": "^5.6.3",
     "vitest": "^2.1.8"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.110.0"
   }
 }
