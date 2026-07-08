@@ -24,3 +24,7 @@ export type {
   AnthropicProviderOptions,
   AnthropicRawStreamEvent,
 } from "./providers/anthropic-provider";
+
+export { AuditLogger } from "./audit/audit-logger";
+export type { AuditContext, AuditLoggerOptions, AuditRecord, AuditSink } from "./audit/audit-logger";
+export { withAudit } from "./audit/with-audit";
