@@ -197,3 +197,18 @@ export type {
   StatusStep,
   ToolResultCardProps,
 } from "./components/ai/ToolCards";
+
+// ── LeapAI conversation blocks (Sprint 29 T13; Conversation OS §5) ──────────
+export {
+  ApplicationSummaryBlock,
+  AuthenticationBlock,
+  ConsentBlock,
+  CrossSellCard,
+  EligibilityBlock,
+  HumanHandoffBlock,
+  LeapMatchResponse,
+  LeapScoreResponse,
+  ProfileFieldConfirm,
+  WelcomeBlock,
+} from "./components/ai/ConversationBlocks";
+export type { EligibilityCriterion } from "./components/ai/ConversationBlocks";
