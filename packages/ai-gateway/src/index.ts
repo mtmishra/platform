@@ -28,3 +28,6 @@ export type {
 export { AuditLogger } from "./audit/audit-logger";
 export type { AuditContext, AuditLoggerOptions, AuditRecord, AuditSink } from "./audit/audit-logger";
 export { withAudit } from "./audit/with-audit";
+
+export { BudgetManager, budgetPolicyFromEnv } from "./budget/budget-manager";
+export type { BudgetDecision, BudgetPolicy, DailyUsage, UsageStore } from "./budget/budget-manager";
