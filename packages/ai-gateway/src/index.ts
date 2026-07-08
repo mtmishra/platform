@@ -37,3 +37,6 @@ export { withRedaction } from "./privacy/with-redaction";
 
 export { toChronologicalWindow } from "./conversation/history";
 export type { HistoryTurn } from "./conversation/history";
+
+export { buildTurnMessages, runConversationTurn } from "./runtime/conversation-runtime";
+export type { MemoryHooks, RuntimeEvent, RuntimeOptions, ToolExecutor } from "./runtime/conversation-runtime";
