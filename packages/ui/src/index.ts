@@ -167,3 +167,14 @@ export type {
   FinancialFinding,
   FinancialRecommendation
 } from "./components/FinancialAnalysisCard";
+
+// ── LeapAI chat foundation (Sprint 29 T12; UX Design Spec §3) ────────────────
+export { AILauncher } from "./components/ai/AILauncher";
+export type { AILauncherProps } from "./components/ai/AILauncher";
+export { ChatPanel } from "./components/ai/ChatPanel";
+export type { ChatPanelProps } from "./components/ai/ChatPanel";
+export { AIMessage, UserMessage } from "./components/ai/MessageBubble";
+export type { AIMessageProps } from "./components/ai/MessageBubble";
+export { AIThinking } from "./components/ai/AIThinking";
+export { ChatEmptyState, ChatErrorState, SuggestedPrompts } from "./components/ai/ChatStates";
+export type { ChatEmptyStateProps } from "./components/ai/ChatStates";
