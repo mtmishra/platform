@@ -414,11 +414,67 @@ export interface RecommendationSnapshotRow {
   created_at: string;
 }
 
+// ── LeapAI tables — mirror supabase/migrations/0021–0024 (Sprint 28) ─────────
+export type AiAgentProfile = "borrower" | "dsa" | "credit" | "sales" | "operations" | "founder";
+export type AiMessageRole = "system" | "user" | "assistant" | "tool";
+
+export interface AiConversationRow {
+  id: string;
+  user_id: string;
+  app: string;
+  agent_profile: AiAgentProfile;
+  title: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface AiMessageRow {
+  id: string;
+  conversation_id: string;
+  role: AiMessageRole;
+  content: string;
+  tool_calls: unknown | null;
+  provider: string | null;
+  model: string | null;
+  tokens_in: number | null;
+  tokens_out: number | null;
+  tool_use_id: string | null;
+  created_at: string;
+}
+
+export interface AiUsageRow {
+  id: string;
+  user_id: string;
+  day: string;
+  tokens_in: number;
+  tokens_out: number;
+  cost_micros: number;
+  updated_at: string;
+}
+
+export interface KbDocumentRow {
+  id: string;
+  title: string;
+  source: string;
+  url: string | null;
+  checksum: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface KbChunkRow {
+  id: string;
+  document_id: string;
+  chunk_index: number;
+  content: string;
+  embedding: unknown | null;
+  metadata: unknown | null;
+  created_at: string;
+}
+
 type Insertable<T, Auto extends keyof T> = Omit<T, Auto> & Partial<Pick<T, Auto>>;
 
-export interface Database {
-  public: {
-    Tables: {
+interface TablesDef {
       users_profile: {
         Row: UsersProfileRow;
         Insert: Insertable<UsersProfileRow, "id" | "created_at" | "updated_at" | "profile_completed" | "onboarding_step" | "role">;
@@ -648,6 +704,55 @@ export interface Database {
         Insert: Insertable<ComplianceSnapshotRow, "id" | "created_at" | "generated_at" | "consents" | "bureau_pulls" | "audit_summary">;
         Update: never;
       };
-    };
+      ai_conversation: {
+        Row: AiConversationRow;
+        Insert: Insertable<AiConversationRow, "id" | "created_at" | "updated_at" | "title">;
+        Update: Partial<AiConversationRow>;
+      };
+      ai_message: {
+        Row: AiMessageRow;
+        Insert: Insertable<
+          AiMessageRow,
+          "id" | "created_at" | "tool_calls" | "provider" | "model" | "tokens_in" | "tokens_out" | "tool_use_id"
+        >;
+        Update: never;
+      };
+      ai_usage: {
+        Row: AiUsageRow;
+        Insert: Insertable<AiUsageRow, "id" | "updated_at" | "day" | "tokens_in" | "tokens_out" | "cost_micros">;
+        Update: Partial<AiUsageRow>;
+      };
+      kb_document: {
+        Row: KbDocumentRow;
+        Insert: Insertable<KbDocumentRow, "id" | "created_at" | "updated_at" | "url">;
+        Update: Partial<KbDocumentRow>;
+      };
+      kb_chunk: {
+        Row: KbChunkRow;
+        Insert: Insertable<KbChunkRow, "id" | "created_at" | "chunk_index" | "embedding" | "metadata">;
+        Update: never;
+      };
+}
+
+// postgrest-js (v2) requires (a) `Relationships` on every table entry,
+// (b) Views/Functions keys on the schema, and (c) Row/Insert/Update types
+// assignable to Record<string, unknown> — which interfaces are NOT (no
+// implicit index signature). Without all three, every .from() call
+// silently degrades to `never`. All fixed once here via a mapped wrapper
+// instead of rewriting the hand-written entries above.
+type AsRecord<T> = { [P in keyof T]: T[P] };
+type WithRelationships<T> = {
+  [K in keyof T]: T[K] extends { Row: infer R; Insert: infer I; Update: infer U }
+    ? { Row: AsRecord<R>; Insert: AsRecord<I>; Update: AsRecord<U>; Relationships: [] }
+    : never;
+};
+
+export interface Database {
+  public: {
+    Tables: WithRelationships<TablesDef>;
+    Views: { [_ in never]: never };
+    Functions: { [_ in never]: never };
+    Enums: { [_ in never]: never };
+    CompositeTypes: { [_ in never]: never };
   };
 }
