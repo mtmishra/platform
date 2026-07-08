@@ -31,3 +31,6 @@ export { withAudit } from "./audit/with-audit";
 
 export { BudgetManager, budgetPolicyFromEnv } from "./budget/budget-manager";
 export type { BudgetDecision, BudgetPolicy, DailyUsage, UsageStore } from "./budget/budget-manager";
+
+export { redactPII, redactRequest } from "./privacy/redact";
+export { withRedaction } from "./privacy/with-redaction";
