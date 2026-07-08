@@ -3,11 +3,13 @@
 
 export type {
   AIProvider,
+  ChatContentBlock,
   ChatDelta,
   ChatMessage,
   ChatRequest,
   ChatRole,
   ProviderName,
+  ToolDefinition,
 } from "./types";
 
 export { MockAIProvider } from "./providers/mock-provider";
@@ -20,4 +22,5 @@ export type {
   AnthropicMessagesClient,
   AnthropicMessageStream,
   AnthropicProviderOptions,
+  AnthropicRawStreamEvent,
 } from "./providers/anthropic-provider";
