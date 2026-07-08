@@ -178,3 +178,22 @@ export type { AIMessageProps } from "./components/ai/MessageBubble";
 export { AIThinking } from "./components/ai/AIThinking";
 export { ChatEmptyState, ChatErrorState, SuggestedPrompts } from "./components/ai/ChatStates";
 export type { ChatEmptyStateProps } from "./components/ai/ChatStates";
+
+// ── LeapAI tool result components (Sprint 29 T14; UX §3.06–3.10) ────────────
+export {
+  AIMatchSlot,
+  AIScoreSlot,
+  CitationCard,
+  RecommendationCard,
+  StatusCard,
+  ToolResultCard,
+} from "./components/ai/ToolCards";
+export type {
+  AIMatchSlotProps,
+  AIScoreSlotProps,
+  RecommendationCardProps,
+  RecommendationItem,
+  StatusCardProps,
+  StatusStep,
+  ToolResultCardProps,
+} from "./components/ai/ToolCards";
