@@ -34,3 +34,6 @@ export type { BudgetDecision, BudgetPolicy, DailyUsage, UsageStore } from "./bud
 
 export { redactPII, redactRequest } from "./privacy/redact";
 export { withRedaction } from "./privacy/with-redaction";
+
+export { toChronologicalWindow } from "./conversation/history";
+export type { HistoryTurn } from "./conversation/history";

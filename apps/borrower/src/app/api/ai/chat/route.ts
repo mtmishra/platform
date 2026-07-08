@@ -9,7 +9,7 @@
 
 import { NextResponse, type NextRequest } from "next/server";
 import { getSystemPrompt, getModelForProfile, PROMPT_VERSION } from "@leapmoney/ai-prompts";
-import type { ChatMessage } from "@leapmoney/ai-gateway";
+import { toChronologicalWindow, type ChatMessage } from "@leapmoney/ai-gateway";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import {
   createAuditedProvider,
@@ -104,17 +104,21 @@ export async function POST(request: NextRequest): Promise<Response> {
   });
 
   // ── History → provider request ────────────────────────────────────────
-  const { data: history } = await supabase
+  // Newest-first + limit hits idx_ai_message_conversation; chronology is
+  // restored in-process (Sprint 29 Phase 0 fix — ascending+limit returned
+  // the OLDEST N turns and dropped recent context on long conversations).
+  const { data: newestFirst } = await supabase
     .from("ai_message")
-    .select("role, content")
+    .select("role, content, created_at")
     .eq("conversation_id", conversationId)
-    .order("created_at", { ascending: true })
+    .order("created_at", { ascending: false })
     .limit(HISTORY_TURNS);
+  const history = toChronologicalWindow(newestFirst ?? [], HISTORY_TURNS);
 
   const model = getModelForProfile("borrower");
   const messages: ChatMessage[] = [
     { role: "system", content: getSystemPrompt("borrower", { lifecycle: "existing" }) },
-    ...(history ?? [])
+    ...history
       .filter((m) => m.role === "user" || m.role === "assistant")
       .map((m) => ({ role: m.role as "user" | "assistant", content: m.content })),
   ];
